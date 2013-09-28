@@ -28,7 +28,6 @@ to investigate. My own experience and background also helped with this choice. T
 are hosted in the purely functional language Haskell and in the dependently-typed Coq. They are:
   * Lava (Chalmers and Kansas varieties) - Embedded in Haskell
   * ForSyDe - Embedded in Haskell
-  * Wired - Embedded in Haskell
   * Coquet - Embedded in Coq
 
 Using some mildly-complex circuits (yet to be defined) as case studies, the EHDLs will be compared
