@@ -1,4 +1,4 @@
-module Lava_tutorial.Chapter2.Chapter2 where
+module Chapter2.Chapter2 where
 
 import Lava
 
