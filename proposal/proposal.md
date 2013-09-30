@@ -26,13 +26,23 @@ Research methods to be employed
 First of all, a brief review was done of secondary literature to decide which languages/libraries
 to investigate. My own experience and background also helped with this choice. The chosen EHDLs
 are hosted in the purely functional language Haskell and in the dependently-typed Coq. They are:
+
   * Lava (Chalmers and Kansas varieties) - Embedded in Haskell
   * ForSyDe - Embedded in Haskell
   * Coquet - Embedded in Coq
 
-Using some mildly-complex circuits (yet to be defined) as case studies, the EHDLs will be compared
-based on a number of criteria. Initial research in the literature that defines the EHDLs gave me
-some ideas of interesting criteria. This list might be reduced if it turns out to be too big:
+Using some mildly-complex circuits as case studies, the EHDLs will be compared based on a number of
+criteria. The circuits to be described and analyzed in each EHDL will fall under the following
+classification:
+
+  * **Combinational / arithmetic:** Simple combinational circuit, such as an ALU, filter, etc.
+  * **Mostly sequential / state-machine:** Some simple memory component or state machine
+  * **Mix of combinational / sequential:** A very reduced instruction set processor or something
+    similar
+
+Initial research in the literature that defines the EHDLs gave me some ideas of interesting
+criteria with which to evaluate them. This list might be reduced if it turns out to be too big:
+
   * Capability/ease of simulation
   * Capability/ease of verification (of formal properties)
   * Capability to express generic (parameterized) families of circuits
