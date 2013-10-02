@@ -35,10 +35,9 @@ Using some mildly-complex circuits as case studies, the EHDLs will be compared b
 criteria. The circuits to be described and analyzed in each EHDL will fall under the following
 classification:
 
-  * **Combinational / arithmetic:** Simple combinational circuit, such as an ALU, filter, etc.
+  * **Combinational / arithmetic:** Simple combinational circuit, a mildly-powerful ALU
   * **Mostly sequential / state-machine:** Some simple memory component or state machine
-  * **Mix of combinational / sequential:** A very reduced instruction set processor or something
-    similar
+  * **Mix of combinational / sequential:** A very reduced instruction set processor
 
 Initial research in the literature that defines the EHDLs gave me some ideas of interesting
 criteria with which to evaluate them. This list might be reduced if it turns out to be too big:
