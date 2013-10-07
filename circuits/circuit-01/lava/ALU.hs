@@ -5,11 +5,9 @@ import Lava.Patterns
 
 
 halfAdder :: (Signal Bool, Signal Bool) -> (Signal Bool, Signal Bool)
-halfAdder (a, b) = (s, carry)
-    where
-      s     = xor2 (a, b)
-      carry = and2 (a, b)
+halfAdder inputs = (xor2 inputs, and2 inputs)
 
+verifyHalfAdder :: [(Signal Bool, Signal Bool)]
 verifyHalfAdder = simulateSeq halfAdder input
     where
       input = [ (low,  low)
@@ -26,6 +24,7 @@ fullAdder (cin, (a, b)) = (s, cout)
       cout     = or2 (c1, c2)
 
 
+verifyFullAdder :: [(Signal Bool, Signal Bool)]
 verifyFullAdder = simulateSeq fullAdder input
     where
       input = [ (low,  (low,  low))
@@ -42,6 +41,7 @@ rippleCarryAdder :: [(Signal Bool, Signal Bool)] -> [Signal Bool]
 rippleCarryAdder ab = s
     where (s, _) = row fullAdder (low, ab)
 
+testRippleCarryAdder :: [[Signal Bool]]
 testRippleCarryAdder = simulateSeq rippleCarryAdder input
     where
       input = [[(low,low), (low,low), (low,low), (low,low), (low,low), (low,low), (low,low), (low,low)
@@ -57,19 +57,50 @@ increment a = s
     where (s, _) = row fullAdder (high, zip a (repeat high))
 
 
-alu :: ( [Signal Bool], [Signal Bool]
-      , Signal Bool, Signal Bool, Signal Bool, Signal Bool, Signal Bool, Signal Bool)
+-- Had to group single-bit inputs separately because Lava doesn't provide a Generic
+-- instance for tuples with more than 6 elements
+alu :: ( [(Signal Bool, Signal Bool)]  -- numerical inputs
+      , (Signal Bool, Signal Bool, Signal Bool, Signal Bool, Signal Bool, Signal Bool))  -- control
       -> ([Signal Bool], Signal Bool, Signal Bool)
-alu (x, y, zx, nx, zy, ny, f, no) = (out', zr, ng)
+alu (xy, (zx, nx, zy, ny, f, no)) = (out', zr, ng)
     where
-      out' = mux (no, (out, map inv out))
-      zr   = foldl (curry or2) low out'
-      ng   = equalBool low (last out')
-      out  = let xy = zip x'' y'' in mux (f, (andLifted xy, rippleCarryAdder xy))
-      x'   = mux (zx, (x, repeat low))
-      x''  = mux (nx, (x', map inv x'))
-      y'   = mux (zy, (y, repeat low))
-      y''  = mux (ny, (y', map inv y'))
+      ((x, y), l) = (unzip xy, length x)
+      out'        = ifThenElse no (out, map inv out)
+      zr          = foldl (curry or2) low out'
+      ng          = equalBool low (last out')
+      out         = let xy'' = zip x'' y'' in mux (f, (andLifted xy'', rippleCarryAdder xy''))
+      x'          = ifThenElse zx (x, replicate l low)
+      x''         = ifThenElse nx (x', map inv x')
+      y'          = ifThenElse zy (y, replicate l low)
+      y''         = ifThenElse ny (y', map inv y')
 
-testALU = undefined
+
+testALU :: [([Signal Bool], Signal Bool, Signal Bool)]
+testALU = simulateSeq alu inputs
+    where
+      lowHigh16 = zip (replicate 16 low) (replicate 16 high)
+      inputs =
+        [ (lowHigh16, (high, low,  high, low,  high, low))
+        , (lowHigh16, (high, high, high, high, high, high))
+        , (lowHigh16, (low,  low,  high, high, low,  low))
+        ]
+{-
+|        x         |        y         |zx |nx |zy |ny | f |no |       out        |zr |ng |
+| 0000000000000000 | 1111111111111111 | 1 | 1 | 1 | 0 | 1 | 0 | 1111111111111111 | 0 | 1 |
+| 0000000000000000 | 1111111111111111 | 0 | 0 | 1 | 1 | 0 | 0 | 0000000000000000 | 1 | 0 |
+| 0000000000000000 | 1111111111111111 | 1 | 1 | 0 | 0 | 0 | 0 | 1111111111111111 | 0 | 1 |
+| 0000000000000000 | 1111111111111111 | 0 | 0 | 1 | 1 | 0 | 1 | 1111111111111111 | 0 | 1 |
+| 0000000000000000 | 1111111111111111 | 1 | 1 | 0 | 0 | 0 | 1 | 0000000000000000 | 1 | 0 |
+| 0000000000000000 | 1111111111111111 | 0 | 0 | 1 | 1 | 1 | 1 | 0000000000000000 | 1 | 0 |
+| 0000000000000000 | 1111111111111111 | 1 | 1 | 0 | 0 | 1 | 1 | 0000000000000001 | 0 | 0 |
+| 0000000000000000 | 1111111111111111 | 0 | 1 | 1 | 1 | 1 | 1 | 0000000000000001 | 0 | 0 |
+| 0000000000000000 | 1111111111111111 | 1 | 1 | 0 | 1 | 1 | 1 | 0000000000000000 | 1 | 0 |
+| 0000000000000000 | 1111111111111111 | 0 | 0 | 1 | 1 | 1 | 0 | 1111111111111111 | 0 | 1 |
+| 0000000000000000 | 1111111111111111 | 1 | 1 | 0 | 0 | 1 | 0 | 1111111111111110 | 0 | 1 |
+| 0000000000000000 | 1111111111111111 | 0 | 0 | 0 | 0 | 1 | 0 | 1111111111111111 | 0 | 1 |
+| 0000000000000000 | 1111111111111111 | 0 | 1 | 0 | 0 | 1 | 1 | 0000000000000001 | 0 | 0 |
+| 0000000000000000 | 1111111111111111 | 0 | 0 | 0 | 1 | 1 | 1 | 1111111111111111 | 0 | 1 |
+| 0000000000000000 | 1111111111111111 | 0 | 0 | 0 | 0 | 0 | 0 | 0000000000000000 | 1 | 0 |
+| 0000000000000000 | 1111111111111111 | 0 | 1 | 0 | 1 | 0 | 1 | 1111111111111111 | 0 | 1 |
+-}
 
