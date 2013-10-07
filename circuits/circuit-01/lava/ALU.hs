@@ -59,46 +59,47 @@ increment a = s
 
 -- Had to group single-bit inputs separately because Lava doesn't provide a Generic
 -- instance for tuples with more than 6 elements
-alu :: ( [(Signal Bool, Signal Bool)]  -- numerical inputs
+-- ASSUMPTION: x and l have the same length
+alu :: ( [Signal Bool], [Signal Bool]  -- numerical inputs
       , (Signal Bool, Signal Bool, Signal Bool, Signal Bool, Signal Bool, Signal Bool))  -- control
       -> ([Signal Bool], Signal Bool, Signal Bool)
-alu (xy, (zx, nx, zy, ny, f, no)) = (out', zr, ng)
+alu (x, y, (zx, nx, zy, ny, f, no)) = (out', zr, ng)
     where
-      ((x, y), l) = (unzip xy, length x)
       out'        = ifThenElse no (out, map inv out)
       zr          = foldl (curry or2) low out'
       ng          = equalBool low (last out')
       out         = let xy'' = zip x'' y'' in mux (f, (andLifted xy'', rippleCarryAdder xy''))
-      x'          = ifThenElse zx (x, replicate l low)
+      x'          = ifThenElse zx (x, replicate (length x) low)
       x''         = ifThenElse nx (x', map inv x')
-      y'          = ifThenElse zy (y, replicate l low)
+      y'          = ifThenElse zy (y, replicate (length x) low)
       y''         = ifThenElse ny (y', map inv y')
 
 
 testALU :: [([Signal Bool], Signal Bool, Signal Bool)]
 testALU = simulateSeq alu inputs
     where
-      lowHigh16 = zip (replicate 16 low) (replicate 16 high)
+      low16  = replicate 16 low
+      high16 = replicate 16 high
       inputs =
-        [ (lowHigh16, (high, low,  high, low,  high, low))
-        , (lowHigh16, (high, high, high, high, high, high))
-        , (lowHigh16, (low,  low,  high, high, low,  low))
-        , (lowHigh16, (high, high, high, low, high, low))
-        , (lowHigh16, (low, low, high, high, low, low))
-        , (lowHigh16, (high, high, low, low, low, low))
-        , (lowHigh16, (high, high, low, low, low, low))
-        , (lowHigh16, (low, low, high, high, low, high))
-        , (lowHigh16, (high, high, low, low, low, high))
-        , (lowHigh16, (low, low, high, high, high, high))
-        , (lowHigh16, (high, high, low, low, high, high))
-        , (lowHigh16, (low, high, high, high, high, high))
-        , (lowHigh16, (high, high, low, high, high, high))
-        , (lowHigh16, (low, low, high, high, high, low))
-        , (lowHigh16, (high, high, low, low, high, low))
-        , (lowHigh16, (low, low, low, low, high, low))
-        , (lowHigh16, (low, high, low, low, high, high))
-        , (lowHigh16, (low, low, low, high, high, high))
-        , (lowHigh16, (low, low, low, low, low, low))
-        , (lowHigh16, (low, high, low, high, low, high))
+        [ (low16, high16, (high, low,  high, low,  high, low))
+        , (low16, high16, (high, high, high, high, high, high))
+        , (low16, high16, (low,  low,  high, high, low,  low))
+        , (low16, high16, (high, high, high, low, high, low))
+        , (low16, high16, (low, low, high, high, low, low))
+        , (low16, high16, (high, high, low, low, low, low))
+        , (low16, high16, (high, high, low, low, low, low))
+        , (low16, high16, (low, low, high, high, low, high))
+        , (low16, high16, (high, high, low, low, low, high))
+        , (low16, high16, (low, low, high, high, high, high))
+        , (low16, high16, (high, high, low, low, high, high))
+        , (low16, high16, (low, high, high, high, high, high))
+        , (low16, high16, (high, high, low, high, high, high))
+        , (low16, high16, (low, low, high, high, high, low))
+        , (low16, high16, (high, high, low, low, high, low))
+        , (low16, high16, (low, low, low, low, high, low))
+        , (low16, high16, (low, high, low, low, high, high))
+        , (low16, high16, (low, low, low, high, high, high))
+        , (low16, high16, (low, low, low, low, low, low))
+        , (low16, high16, (low, high, low, high, low, high))
         ]
 
