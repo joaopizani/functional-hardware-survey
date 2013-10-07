@@ -54,7 +54,11 @@ andLifted = map and2
 
 increment :: [Signal Bool] -> [Signal Bool]
 increment a = s
-    where (s, _) = row fullAdder (high, zip a (repeat high))
+    where (s, _) = row fullAdder (high, zip a (replicate (length a) low))
+
+testIncrement :: [[Signal Bool]]
+testIncrement = simulateSeq increment inputs
+    where inputs = [[low, low, low], [high, low, low], [high, high, low], [high, high, high]]
 
 
 -- Had to group single-bit inputs separately because Lava doesn't provide a Generic
