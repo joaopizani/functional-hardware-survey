@@ -57,16 +57,19 @@ increment a = s
     where (s, _) = row fullAdder (high, zip a (repeat high))
 
 
-alu :: ([Signal Bool], [Signal Bool], Signal Bool, Signal Bool, Signal Bool, Signal Bool, Signal Bool, Signal Bool)
+alu :: ( [Signal Bool], [Signal Bool]
+      , Signal Bool, Signal Bool, Signal Bool, Signal Bool, Signal Bool, Signal Bool)
       -> ([Signal Bool], Signal Bool, Signal Bool)
 alu (x, y, zx, nx, zy, ny, f, no) = (out', zr, ng)
     where
-      zr   = undefined  -- map or2 (map equalBool out' (repeat low))
-      ng   = undefined
-      out' = ifBool no (map inv out, out)
-      out  = ifBool f (rippleCarryAdder x'' y'', andLifted x'' y'')
-      x'   = ifBool zx (repeat low, x)
-      x''  = ifBool nx (inv x', x')
-      y'   = ifBool zy (repeat low, y)
-      y''  = ifBool ny (inv y', y')
+      out' = mux (no, (out, map inv out))
+      zr   = foldl (curry or2) low out'
+      ng   = equalBool low (last out')
+      out  = let xy = zip x'' y'' in mux (f, (andLifted xy, rippleCarryAdder xy))
+      x'   = mux (zx, (x, repeat low))
+      x''  = mux (nx, (x', map inv x'))
+      y'   = mux (zy, (y, repeat low))
+      y''  = mux (ny, (y', map inv y'))
+
+testALU = undefined
 
