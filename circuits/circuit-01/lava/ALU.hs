@@ -13,7 +13,15 @@ verifyHalfAdder = simulateSeq halfAdder input
       input = [ (low,  low)
               , (low,  high)
               , (high, low)
-              , (high, high) ]
+              , (high, high)
+              ]
+{-
+      output = [ (low, low)
+               , (high, low)
+               , (high, low)
+               , (low, high)
+               ]
+-}
 
 
 fullAdder :: (Signal Bool, (Signal Bool, Signal Bool)) -> (Signal Bool, Signal Bool)
@@ -35,6 +43,17 @@ verifyFullAdder = simulateSeq fullAdder input
               , (high, (low,  high))
               , (high, (high, low))
               , (high, (high, high)) ]
+{-
+      outputs = [ (low, low)
+                , (high, low)
+                , (high, low)
+                , (low, high)
+                , (high, low)
+                , (low, high)
+                , (low, high)
+                , (high, high)
+                ]
+-}
 
 
 rippleCarryAdder :: [(Signal Bool, Signal Bool)] -> [Signal Bool]
@@ -44,8 +63,14 @@ rippleCarryAdder ab = s
 testRippleCarryAdder :: [[Signal Bool]]
 testRippleCarryAdder = simulateSeq rippleCarryAdder input
     where
-      input = [[(low,low), (low,low), (low,low), (low,low), (low,low), (low,low), (low,low), (low,low)
-              , (low,low), (low,low), (low,low), (low,low), (low,low), (low,low), (low,low), (low,low) ]]
+      input = [ [ (low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low)
+                , (low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low) ]
+              , [ (low,high),(low,high),(low,high),(low,high),(low,high),(low,high),(low,high),(low,high)
+                , (low,high),(low,high),(low,high),(low,high),(low,high),(low,high),(low,high),(low,high) ]
+              ]
+{-
+      outputs = [replicate 16 low, replicate 16 high]
+-}
 
 
 andLifted :: [(Signal Bool, Signal Bool)] -> [Signal Bool]
@@ -58,7 +83,19 @@ increment a = s
 
 testIncrement :: [[Signal Bool]]
 testIncrement = simulateSeq increment inputs
-    where inputs = [[low, low, low], [high, low, low], [high, high, low], [high, high, high]]
+    where
+      inputs = [ replicate 16 low
+               , replicate 16 high
+               , (replicate 13 low) ++ [high, low, high]
+               , (replicate 13 high) ++ [low, high, high]
+               ]
+{-
+      outputs = [ (replicate 15 low) ++ [high]
+                , replicate 16 low
+                , (replicate 13 low) ++ [high, high, low]
+                , (replicate 14 high) ++ [low, low]
+                ]
+-}
 
 
 -- Had to group single-bit inputs separately because Lava doesn't provide a Generic
@@ -78,32 +115,49 @@ alu (x, y, (zx, nx, zy, ny, f, no)) = (out', zr, ng)
       y'          = ifThenElse zy (y, replicate (length x) low)
       y''         = ifThenElse ny (y', map inv y')
 
-
 testALU :: [([Signal Bool], Signal Bool, Signal Bool)]
 testALU = simulateSeq alu inputs
     where
       low16  = replicate 16 low
       high16 = replicate 16 high
-      inputs =
-        [ (low16, high16, (high, low,  high, low,  high, low))
-        , (low16, high16, (high, high, high, high, high, high))
-        , (low16, high16, (low,  low,  high, high, low,  low))
-        , (low16, high16, (high, high, high, low, high, low))
-        , (low16, high16, (low, low, high, high, low, low))
-        , (low16, high16, (high, high, low, low, low, low))
-        , (low16, high16, (high, high, low, low, low, low))
-        , (low16, high16, (low, low, high, high, low, high))
-        , (low16, high16, (high, high, low, low, low, high))
-        , (low16, high16, (low, low, high, high, high, high))
-        , (low16, high16, (high, high, low, low, high, high))
-        , (low16, high16, (low, high, high, high, high, high))
-        , (low16, high16, (high, high, low, high, high, high))
-        , (low16, high16, (low, low, high, high, high, low))
-        , (low16, high16, (high, high, low, low, high, low))
-        , (low16, high16, (low, low, low, low, high, low))
-        , (low16, high16, (low, high, low, low, high, high))
-        , (low16, high16, (low, low, low, high, high, high))
-        , (low16, high16, (low, low, low, low, low, low))
-        , (low16, high16, (low, high, low, high, low, high))
-        ]
+      inputs = [ (low16, high16, (high, low,  high, low,  high, low))
+               , (low16, high16, (high, high, high, high, high, high))
+               , (low16, high16, (high, high, high, low, high, low))
+               , (low16, high16, (low, low, high, high, low, low))
+               , (low16, high16, (high, high, low, low, low, low))
+               , (low16, high16, (low, low, high, high, low, high))
+               , (low16, high16, (high, high, low, low, low, high))
+               , (low16, high16, (low, low, high, high, high, high))
+               , (low16, high16, (high, high, low, low, high, high))
+               , (low16, high16, (low, high, high, high, high, high))
+               , (low16, high16, (high, high, low, high, high, high))
+               , (low16, high16, (low, low, high, high, high, low))
+               , (low16, high16, (high, high, low, low, high, low))
+               , (low16, high16, (low, low, low, low, high, low))
+               , (low16, high16, (low, high, low, low, high, high))
+               , (low16, high16, (low, low, low, high, high, high))
+               , (low16, high16, (low, low, low, low, low, low))
+               , (low16, high16, (low, high, low, high, low, high))
+               ]
+{-
+      outputs = [ (low16,                            high, low)
+                , (replicate 15 low ++ [high],       low,  low)
+                , (replicate 16 high,                low, high)
+                , (replicate 16 low,                 high, low)
+                , (replicate 16 high,                low, high)
+                , (replicate 16 high,                low, high)
+                , (replicate 16 low,                 high, low)
+                , (replicate 16 low,                 high, low)
+                , (replicate 15 low ++ [high],       low, low)
+                , (replicate 15 low ++ [high],       low, low)
+                , (replicate 16 low,                 high, low)
+                , (replicate 16 high,                low, high)
+                , (replicate 15 high ++ [low],       low, high)
+                , (replicate 16 high,                low, high)
+                , (replicate 15 low ++ [high],       low, low)
+                , (replicate 16 high,                low, high)
+                , (replicate 16 low,                 high, low)
+                , (replicate 16 high,                low, high)
+                ]
+-}
 
