@@ -1,10 +1,8 @@
 module CPU where
 
 import Lava
+import ALU (SB, alu)
 
-
--- | Simple abbreviation of Signal Bool
-type SB = Signal Bool
 
 -- | A Hack instruction is a vector of 16 bits
 type HackInstruction = (SB, SB, SB, SB, SB, SB, SB, SB, SB, SB, SB, SB, SB, SB, SB, SB)

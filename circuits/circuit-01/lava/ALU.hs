@@ -4,10 +4,14 @@ import Lava
 import Lava.Patterns
 
 
-halfAdder :: (Signal Bool, Signal Bool) -> (Signal Bool, Signal Bool)
+-- | Simple abbreviation of Signal Bool
+type SB = Signal Bool
+
+
+halfAdder :: (SB, SB) -> (SB, SB)
 halfAdder inputs = (xor2 inputs, and2 inputs)
 
-verifyHalfAdder :: [(Signal Bool, Signal Bool)]
+verifyHalfAdder :: [(SB, SB)]
 verifyHalfAdder = simulateSeq halfAdder input
     where
       input = [ (low,  low)
@@ -24,7 +28,7 @@ verifyHalfAdder = simulateSeq halfAdder input
 -}
 
 
-fullAdder :: (Signal Bool, (Signal Bool, Signal Bool)) -> (Signal Bool, Signal Bool)
+fullAdder :: (SB, (SB, SB)) -> (SB, SB)
 fullAdder (cin, (a, b)) = (s, cout)
     where
       (ab, c1) = halfAdder (a, b)
@@ -32,7 +36,7 @@ fullAdder (cin, (a, b)) = (s, cout)
       cout     = or2 (c1, c2)
 
 
-verifyFullAdder :: [(Signal Bool, Signal Bool)]
+verifyFullAdder :: [(SB, SB)]
 verifyFullAdder = simulateSeq fullAdder input
     where
       input = [ (low,  (low,  low))
@@ -56,11 +60,11 @@ verifyFullAdder = simulateSeq fullAdder input
 -}
 
 
-rippleCarryAdder :: [(Signal Bool, Signal Bool)] -> [Signal Bool]
+rippleCarryAdder :: [(SB, SB)] -> [SB]
 rippleCarryAdder ab = s
     where (s, _) = row fullAdder (low, ab)
 
-testRippleCarryAdder :: [[Signal Bool]]
+testRippleCarryAdder :: [[SB]]
 testRippleCarryAdder = simulateSeq rippleCarryAdder input
     where
       input = [ [ (low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low)
@@ -73,15 +77,15 @@ testRippleCarryAdder = simulateSeq rippleCarryAdder input
 -}
 
 
-andLifted :: [(Signal Bool, Signal Bool)] -> [Signal Bool]
+andLifted :: [(SB, SB)] -> [SB]
 andLifted = map and2
 
 
-increment :: [Signal Bool] -> [Signal Bool]
+increment :: [SB] -> [SB]
 increment a = s
     where (s, _) = row fullAdder (high, zip a (replicate (length a) low))
 
-testIncrement :: [[Signal Bool]]
+testIncrement :: [[SB]]
 testIncrement = simulateSeq increment inputs
     where
       inputs = [ replicate 16 low
@@ -98,12 +102,15 @@ testIncrement = simulateSeq increment inputs
 -}
 
 
+-- | The control bits of the ALU (six)
+type ALUControlBits = (SB, SB, SB, SB, SB, SB)
+
 -- Had to group single-bit inputs separately because Lava doesn't provide a Generic
 -- instance for tuples with more than 6 elements
 -- ASSUMPTION: x and l have the same length
-alu :: ( [Signal Bool], [Signal Bool]  -- numerical inputs
-      , (Signal Bool, Signal Bool, Signal Bool, Signal Bool, Signal Bool, Signal Bool))  -- control
-      -> ([Signal Bool], Signal Bool, Signal Bool)
+alu :: ( [SB], [SB]        -- numerical inputs
+      , ALUControlBits )   -- control bits of the ALU
+      -> ([SB], SB, SB)
 alu (x, y, (zx, nx, zy, ny, f, no)) = (out', zr, ng)
     where
       out'        = ifThenElse no (out, map inv out)
@@ -115,7 +122,7 @@ alu (x, y, (zx, nx, zy, ny, f, no)) = (out', zr, ng)
       y'          = ifThenElse zy (y, replicate (length x) low)
       y''         = ifThenElse ny (y', map inv y')
 
-testALU :: [([Signal Bool], Signal Bool, Signal Bool)]
+testALU :: [([SB], SB, SB)]
 testALU = simulateSeq alu inputs
     where
       low16  = replicate 16 low
