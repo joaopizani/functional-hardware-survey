@@ -1,7 +1,8 @@
 module CPU where
 
 import Lava
-import ALU (SB, alu)
+
+import ALU (SB)
 
 
 -- | A Hack instruction is a vector of 16 bits
@@ -41,4 +42,15 @@ instructionDecoder i@(i00,i01,i02,i03,i04,i05,i06,i07,i08,i09,i10,i11,i12,i13,i1
     c7 = undefined
     c8 = undefined
     c9 = undefined
+
+
+
+reg :: (Signal Bool, Signal Bool) -> Signal Bool
+reg (input, load) = out
+  where
+    dff = mux (load, (out, input))
+    out = delay low dff
+
+regN :: Int -> ([Signal Bool], Signal Bool) -> [Signal Bool]
+regN n (input, load) = map reg $ zip input (replicate n load)
 
