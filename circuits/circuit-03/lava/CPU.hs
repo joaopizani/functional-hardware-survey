@@ -2,7 +2,7 @@ module CPU where
 
 import Lava
 
-import ALU (SB)
+import ALU (SB, increment, ALUControlBits)
 import Register (regN)
 
 
@@ -24,15 +24,15 @@ cpu (inM, instruction, reset) = (outM, writeM, addressM, pc)
     addressM = undefined
     pc       = undefined
 
-    (c1,c2,c3,c4,c5,c6,c7,c8,c9) = instructionDecoder instruction
+    (c1,c2,c3,c4,c5,c6,ca) = instructionDecoder instruction
 
 
 -- | Control bits inside the CPU (nine)
-type CPUControlBits = (SB, SB, SB, SB, SB, SB, SB, SB, SB)
+type CPUControlBits = (SB, SB, SB, SB, SB, SB, ALUControlBits)
 
 instructionDecoder :: HackInstruction -> CPUControlBits
 instructionDecoder i@(i00,i01,i02,i03,i04,i05,i06,i07,i08,i09,i10,i11,i12,i13,i14,i15)
-    = (c1,c2,c3,c4,c5,c6,c7,c8,c9)
+    = (c1,c2,c3,c4,c5,c6,ca)
   where
     c1 = undefined
     c2 = undefined
@@ -40,7 +40,32 @@ instructionDecoder i@(i00,i01,i02,i03,i04,i05,i06,i07,i08,i09,i10,i11,i12,i13,i1
     c4 = undefined
     c5 = undefined
     c6 = undefined
-    c7 = undefined
-    c8 = undefined
-    c9 = undefined
+    ca = (i04, i05, i06, i07, i08, i09)
+
+
+-- | The program counter is a straightforward counter, which can be reset and set to a particular
+-- value, and counts from this value upwards, and with 0 right after Nmax.
+programCounter :: Int -> (SB, SB, [SB]) -> [SB]
+programCounter n (reset, set, address) = out
+  where
+    incr     = increment out
+    out      = delay (replicate n low) increset  -- begin with all high to force first zero
+    incaddr  = mux (set, (incr, address))
+    increset = mux (reset, (incaddr, replicate n low))
+
+testPC1 :: [[SB]]
+testPC1 = simulateSeq (programCounter 3) inputs
+  where
+    inputs =
+      [ (low, low, [low, low, low])
+      , (low, low, [low, low, low])
+      , (low, low, [low, low, low])
+      , (low, high, [high, low, low])
+      , (low, low, [low, low, low])
+      , (low, low, [low, low, low])
+      , (high, low, [low, low, low])
+      , (low, low, [low, low, low])
+      , (low, low, [low, low, low])
+      , (low, low, [low, low, low])
+      , (low, low, [low, low, low]) ]
 
