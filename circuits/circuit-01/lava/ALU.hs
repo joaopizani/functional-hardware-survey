@@ -115,7 +115,7 @@ alu (x, y, (zx, nx, zy, ny, f, no)) = (out', zr, ng)
     where
       out'        = ifThenElse no (out, map inv out)
       zr          = foldl (curry or2) low out'
-      ng          = equalBool low (last out')
+      ng          = equalBool high (last out')
       out         = let xy'' = zip x'' y'' in mux (f, (andLifted xy'', rippleCarryAdder xy''))
       x'          = ifThenElse zx (x, replicate (length x) low)
       x''         = ifThenElse nx (x', map inv x')
