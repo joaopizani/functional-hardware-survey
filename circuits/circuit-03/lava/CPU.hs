@@ -2,7 +2,7 @@ module CPU where
 
 import Lava
 
-import ALU (SB, increment, ALUControlBits)
+import ALU (alu, SB, increment, ALUControlBits)
 import Register (regN)
 
 
@@ -19,12 +19,20 @@ cpu :: ( [Signal Bool]    -- inM: M value input (M = contents of RAM[A]
 
 cpu (inM, instruction, reset) = (outM, writeM, addressM, pc)
   where
-    outM     = undefined
-    writeM   = undefined
-    addressM = undefined
-    pc       = undefined
+    (i00,i01,i02,i03,i04,i05,i06,i07,i08,i09,i10,i11,i12,i13,i14,i15) = instruction
+    insList = [i00,i01,i02,i03,i04,i05,i06,i07,i08,i09,i10,i11,i12,i13,i14,i15]
 
-    (c1,c2,c3,c4,c5,c6,ca) = instructionDecoder instruction
+    aReg                 = regN 16 (aMux, setA)
+    aMux                 = mux (cAMux, (insList, aluOut))
+    (aluOut, stZR, stNG) = alu (aluD, aluAM, cALU)
+    aluD                 = undefined
+    aluAM                = undefined
+    outM                 = aluOut
+    writeM               = undefined
+    addressM             = undefined
+    pc                   = undefined
+
+    (cAMux,setA,c3,c4,c5,c6,cALU) = instructionDecoder instruction
 
 
 -- | Control bits inside the CPU (nine)
@@ -32,15 +40,15 @@ type CPUControlBits = (SB, SB, SB, SB, SB, SB, ALUControlBits)
 
 instructionDecoder :: HackInstruction -> CPUControlBits
 instructionDecoder i@(i00,i01,i02,i03,i04,i05,i06,i07,i08,i09,i10,i11,i12,i13,i14,i15)
-    = (c1,c2,c3,c4,c5,c6,ca)
+    = (cAMux, setA, c3, c4, c5, c6, cALU)
   where
-    c1 = undefined
-    c2 = undefined
-    c3 = undefined
-    c4 = undefined
-    c5 = undefined
-    c6 = undefined
-    ca = (i04, i05, i06, i07, i08, i09)
+    cAMux = i03
+    setA  = undefined
+    c3    = undefined
+    c4    = undefined
+    c5    = undefined
+    c6    = undefined
+    cALU  = (i04, i05, i06, i07, i08, i09)
 
 
 -- | The program counter is a straightforward counter, which can be reset and set to a particular
@@ -49,10 +57,12 @@ programCounter :: Int -> (SB, SB, [SB]) -> [SB]
 programCounter n (reset, set, address) = out
   where
     incr     = increment out
-    out      = delay (replicate n low) increset  -- begin with all high to force first zero
+    out      = delay (replicate n low) increset
     incaddr  = mux (set, (incr, address))
     increset = mux (reset, (incaddr, replicate n low))
 
+-- Expected behaviour: counts normally from zero, then is set to one and counts from there.
+-- Finally, while in a high count, is reset and starts over from zero.
 testPC1 :: [[SB]]
 testPC1 = simulateSeq (programCounter 3) inputs
   where
