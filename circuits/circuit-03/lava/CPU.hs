@@ -18,21 +18,34 @@ programCounter n (reset, set, address) = out
 
 -- Expected behaviour: counts normally from zero, then is set to one and counts from there.
 -- Finally, while in a high count, is reset and starts over from zero.
-testPC1 :: [[SB]]
-testPC1 = simulateSeq (programCounter 3) inputs
+testPC3 :: [[SB]]
+testPC3 = simulateSeq (programCounter wordSize) inputs
   where
+    wordSize = 3
+    reset    = high
+    set      = high
+    whatever = replicate wordSize low
+    one      = high : replicate (wordSize - 1) low
     inputs =
-      [ (low, low, [low, low, low])
-      , (low, low, [low, low, low])
-      , (low, low, [low, low, low])
-      , (low, high, [high, low, low])
-      , (low, low, [low, low, low])
-      , (low, low, [low, low, low])
-      , (high, low, [low, low, low])
-      , (low, low, [low, low, low])
-      , (low, low, [low, low, low])
-      , (low, low, [low, low, low])
-      , (low, low, [low, low, low]) ]
+      [ (low,   low, whatever)
+      , (low,   low, whatever)
+      , (low,   low, whatever)
+      , (low,   set, one)
+      , (low,   low, whatever)
+      , (low,   low, whatever)
+      , (reset, low, whatever)
+      , (low,   low, whatever)
+      , (low,   low, whatever)
+      , (low,   low, whatever)
+      , (low,   low, whatever)
+      , (low,   low, whatever) ]
+{-
+    zero  = whatever
+    two   = low  : high : replicate (wordSize - 2) low
+    three = high : high : replicate (wordSize - 2) low
+    four  = low  : low  : high
+    outputs = [zero, one, two, three, one, two, three, zero, one, two, three, four]
+-}
 
 
 
