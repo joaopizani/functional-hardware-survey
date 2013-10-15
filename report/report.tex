@@ -1,0 +1,86 @@
+\documentclass[a4paper]{article}
+
+%% Unicode support
+\usepackage[utf8x]{inputenc}
+\usepackage{ucs}
+\usepackage{autofe}
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage{a4}
+\usepackage{epstopdf}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{color}
+
+
+%% Code
+\usepackage{inconsolata}
+\usepackage{minted}
+\usepackage{fancyvrb}
+\usemintedstyle{default}
+\newminted{haskell}{gobble=4,linenos,mathescape,fontfamily=tt,fontsize=\footnotesize,xleftmargin=\parindent}
+
+
+
+%% Metainformation
+%% PDF stuff
+\usepackage{datetime}
+\usepackage{ifpdf}
+\ifpdf
+\pdfinfo{
+    /Author (Joao Paulo Pizani Flor)
+    /Title (A comparison of functional Embedded Domain-Specific Languages for hardware)
+    /Keywords (EDSL, HDL, Hardware Description, Functional Programming, Haskell, Coq, Lava, Coquet)
+    /CreationDate (D:\pdfdate)
+}
+\fi
+
+\title{A comparison of functional Embedded Domain-Specific Languages for hardware}
+
+\date{\today}
+
+\author
+{
+    João Paulo Pizani Flor \\
+    Department of Information and Computing Sciences, \\
+    Utrecht University - The Netherlands \\
+    e-mail: j.p.pizaniflor@students.uu.nl
+}
+
+
+
+%% The document itself
+\begin{document}
+    \maketitle
+
+    \section{Introduction}
+    \label{sec:intro}
+        This report describes the solution to one of the practical assignments (project nr. 2)
+        of the master course "Program Verification" at Utrecht University, taught in the 3rd period
+        of the academic year 2012/2013.
+
+    \section{Modelling the algorithm itself}
+    \label{sec:algorithm}
+        The system we were asked to model consisted of a set of processes $ Sys_{n} $:
+        \[
+            Sys_{n} = \{ \text{PMIN}(n-1, 0) \} \cup \{ \text{PMIN}(i, i+1) \mid i < n-1 \}
+        \]
+
+
+    \section{Formalizing the specifications to be verified}
+    \label{sec:specifications}
+
+        Given the ``basic'' definitions above, now we give HOL definitions formalizing the
+        specifications to be verified. First of all, there will be three categories of HOL
+        definitions, one category for each of the approaches we considered (set, function, list).
+
+        \subsection{Specifications using the set model}
+        \label{subsec:spec_set}
+            When using the set model, the specifications correspond to the following HOL
+            definitions:
+
+
+\end{document}
