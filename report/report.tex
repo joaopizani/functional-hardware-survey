@@ -58,29 +58,96 @@
 
     \section{Introduction}
     \label{sec:intro}
-        This report describes the solution to one of the practical assignments (project nr. 2)
-        of the master course "Program Verification" at Utrecht University, taught in the 3rd period
-        of the academic year 2012/2013.
+        Hardware design has become nowadays an activity which is, to say the least, extremely
+        complex, if not error-prone. The size of circuits has increased. Also, low-level
+        concerns such as power consumption, error correction, parallelization and layout
+        in general have to be incorporated earlier and earlier in the design process, breaking
+        modularity and making it harder to validate and verify the correctness of circuits.
 
-    \section{Modelling the algorithm itself}
-    \label{sec:algorithm}
-        The system we were asked to model consisted of a set of processes $ Sys_{n} $:
-        \[
-            Sys_{n} = \{ \text{PMIN}(n-1, 0) \} \cup \{ \text{PMIN}(i, i+1) \mid i < n-1 \}
-        \]
+        In this context, researchers have been suggesting for a long time (since the 1980s, in
+        fact) the usage of functional programming languages to model circuits. One particular line
+        of research is to create Embedded Domain-Specific Languages for hardware description based
+        on existing functional programming languages, such as Haskell.
+
+        There is a multitude of EDSLs for hardware description out there, but they vary wildly and
+        on a number of aspects: host language, level of abstraction, capabilities of simulation,
+        formal verification, synthesis (generation of netlists) and integration with other tools, to
+        name a few. All this variety can make the task of choosing a hardware EDSL for the task at
+        hand extremely daunting and time-consuming.
+
+        To establish some order in this chaos, and to perform a practical analysis of some
+        representative functional hardware EDSLs is the goal of this experimentation project. By
+        reading the materials produced in this project (circuit models, test cases, generated
+        netlists, report), a hardware designer wishing to use a functional hardware EDSL for his
+        next design should gain some insight about the strengths and weaknesses of each language and
+        have an easier time choosing one.
+
+    \section{Research methods}
+    \label{sec:methods}
+        In this project, we compared a number of functional hardware EDSLs that we considered
+        representative (more details on the choice of EDSLs further ahead). The comparison was
+        performed on a number of \emph{aspects} for each EDSL, and the analysis was done by
+        considering a sample set of circuits used as case studies.
+
+        We tried to model all circuits in all EDSLs, and as similarly as possible in all of them. To
+        avoid using any of the analyzed EDSLs as ``base'', we had the circuits specified.
+
+        Lorem ipsum.
 
 
-    \section{Formalizing the specifications to be verified}
-    \label{sec:specifications}
+%% Research question
+%% =================
+%% In this experimentation project we compare several embedded hardware description languages,
+%% also questioning along the way what constitutes good criteria for comparison, as well as
+%% what circuits can be used as good case studies to evaluate the languages based on the chosen
+%% criteria.
+%% 
+%% A further question to be investigated in this project is what recent developments in
+%% Haskell (compiler extensions, etc.), as well as dependently-typed programming, could be used to
+%% enhance the EHDLs studied.
+%% 
+%% Research methods to be employed
+%% ===============================
+%% First of all, a brief review was done of secondary literature to decide which languages/libraries
+%% to investigate. My own experience and background also helped with this choice. The chosen EHDLs
+%% are hosted in the purely functional language Haskell and in the dependently-typed Coq. They are:
+%% 
+%%   * Lava (Chalmers and Kansas varieties) - Embedded in Haskell
+%%   * ForSyDe - Embedded in Haskell
+%%   * Coquet - Embedded in Coq
+%% 
+%% Using some mildly-complex circuits as case studies, the EHDLs will be compared based on a number of
+%% criteria. The circuits to be described and analyzed in each EHDL will fall under the following
+%% classification:
+%% 
+%%   * **Combinational / arithmetic:** Simple combinational circuit, a mildly-powerful ALU
+%%   * **Mostly sequential / state-machine:** Some simple memory component or state machine
+%%   * **Mix of combinational / sequential:** A very reduced instruction set processor
+%% 
+%% Initial research in the literature that defines the EHDLs gave me some ideas of interesting
+%% criteria with which to evaluate them. This list might be reduced if it turns out to be too big:
+%% 
+%%   * Capability/ease of simulation
+%%   * Capability/ease of verification (of formal properties)
+%%   * Capability to express generic (parameterized) families of circuits
+%%     - Parameterized by functional as well as non-functional parameters
+%%   * Integration with other tools (implementation)
+%%     - Synthesis, theorem provers, etc.
+%%   * Level of embedding
+%%   * Extensibility
+%%     - Multiple interpretations for circuits
+%%     - User-defined datatypes
+%% 
+%% Expected outputs of this project
+%% ================================
+%% The main output I expect from this project is a comparative analysis of the EHDLs. An interesting
+%% side-product will be the code describing the case study circuits in the various languages. This
+%% code shall hopefully be useful as a learning source for people interested in experimenting with
+%% functional hardware design.
+%% 
+%% Last, but not least, one output of this project which I also find interesting is the set of
+%% comparison criteria itself, along with the justification of why they were chosen.
 
-        Given the ``basic'' definitions above, now we give HOL definitions formalizing the
-        specifications to be verified. First of all, there will be three categories of HOL
-        definitions, one category for each of the approaches we considered (set, function, list).
-
-        \subsection{Specifications using the set model}
-        \label{subsec:spec_set}
-            When using the set model, the specifications correspond to the following HOL
-            definitions:
 
 
 \end{document}
