@@ -59,3 +59,4 @@ aluProc = zipWith3SY "aluProc" aluFunc
 aluSysDef :: SysDef (Signal WordType -> Signal WordType -> Signal ALUControl -> Signal (WordType, ALUFlags))
 aluSysDef = newSysDef aluProc "alu" ["x", "y", "ctrl"] ["outs"]
 
+
