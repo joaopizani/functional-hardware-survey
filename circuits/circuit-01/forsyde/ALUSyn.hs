@@ -1,5 +1,5 @@
 {-# LANGUAGE TemplateHaskell, DeriveDataTypeable #-}
-module ALU where
+module ALUSyn where
 
 import ForSyDe
 import Data.Bits
@@ -27,29 +27,39 @@ type ALUFlags = (Bit, Bit)
 
 -- Shorter synonyms, will be used often. Also, we could define here GLOBALLY
 -- that signals should be active-low (if we wanted to)
-b2bo :: Bit -> Bool
-b2bo = bitToBool
+bo :: Bit -> Bool
+bo = bitToBool
 
-bo2b :: Bool -> Bit
-bo2b = boolToBit
+bb :: Bool -> Bit
+bb = boolToBit
 
-inv :: WordType -> WordType
-inv = complement
 
+ff :: ALUOp -> WordType -> WordType -> WordType
+ff f x y = case f of {ALUSum -> x + y;  ALUAnd -> x .&. y; }
+
+fz :: Bit -> WordType -> WordType
+fz z w = if bo z then 0 else w
+
+fn :: Bit -> WordType -> WordType
+fn n w = if bo n then complement w else w
+
+tz :: WordType -> Bit
+tz w = bb (w == 0)
+
+tn :: WordType -> Bit
+tn w = bb (w < 0)
 
 aluFunc :: ProcFun (WordType -> WordType -> ALUControl -> (WordType, ALUFlags))
 aluFunc =
     $(newProcFun
         [d|
             aluFunc :: WordType -> WordType -> ALUControl -> (WordType, ALUFlags)
-            aluFunc x y (zx, nx, zy, ny, f, no) = (outn, (zr, ng))
-                where
-                    (xz, yz) = (if b2bo zx then 0 else x,       if b2bo zy then 0 else y)
-                    (xn, yn) = (if b2bo nx then inv xz else xz, if b2bo ny then inv yz else yz)
-                    out      = case f of { ALUSum -> xn + yn;  ALUAnd -> xn .&. yn; }
-                    outn     = if b2bo no then inv out else out
-                    zr       = bo2b (outn == 0)
-                    ng       = bo2b (outn < 0)
+            aluFunc x y (zx, nx, zy, ny, f, no) =
+                ( fn no  (ff f (fn nx (fz zx x)) (fn ny (fz zy y)) )
+                , ( tz $ fn no  (ff f (fn nx (fz zx x)) (fn ny (fz zy y)) )
+                  , tn $ fn no  (ff f (fn nx (fz zx x)) (fn ny (fz zy y)) )
+                  )
+                )
         |]
     )
 

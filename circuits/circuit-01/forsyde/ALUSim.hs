@@ -1,5 +1,5 @@
 {-# LANGUAGE TemplateHaskell, DeriveDataTypeable #-}
-module ALU where
+module ALUSim where
 
 import ForSyDe
 import Data.Bits
@@ -27,11 +27,11 @@ type ALUFlags = (Bit, Bit)
 
 -- Shorter synonyms, will be used often. Also, we could define here GLOBALLY
 -- that signals should be active-low (if we wanted to)
-b2bo :: Bit -> Bool
-b2bo = bitToBool
+bo :: Bit -> Bool
+bo = bitToBool
 
-bo2b :: Bool -> Bit
-bo2b = boolToBit
+bb :: Bool -> Bit
+bb = boolToBit
 
 inv :: WordType -> WordType
 inv = complement
@@ -44,12 +44,12 @@ aluFunc =
             aluFunc :: WordType -> WordType -> ALUControl -> (WordType, ALUFlags)
             aluFunc x y (zx, nx, zy, ny, f, no) = (outn, (zr, ng))
                 where
-                    (xz, yz) = (if b2bo zx then 0 else x,       if b2bo zy then 0 else y)
-                    (xn, yn) = (if b2bo nx then inv xz else xz, if b2bo ny then inv yz else yz)
+                    (xz, yz) = (if bo zx then 0 else x,       if bo zy then 0 else y)
+                    (xn, yn) = (if bo nx then inv xz else xz, if bo ny then inv yz else yz)
                     out      = case f of { ALUSum -> xn + yn;  ALUAnd -> xn .&. yn; }
-                    outn     = if b2bo no then inv out else out
-                    zr       = bo2b (outn == 0)
-                    ng       = bo2b (outn < 0)
+                    outn     = if bo no then inv out else out
+                    zr       = bb (outn == 0)
+                    ng       = bb (outn < 0)
         |]
     )
 
