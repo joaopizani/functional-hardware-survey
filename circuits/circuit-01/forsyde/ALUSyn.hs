@@ -27,46 +27,48 @@ type ALUFlags = (Bit, Bit)
 
 -- Shorter synonyms, will be used often. Also, we could define here GLOBALLY
 -- that signals should be active-low (if we wanted to)
-bo :: Bit -> Bool
-bo = bitToBool
+b2bo :: Bit -> Bool
+b2bo = bitToBool
 
-bb :: Bool -> Bit
-bb = boolToBit
+bo2b :: Bool -> Bit
+bo2b = boolToBit
 
 
-ff :: ALUOp -> WordType -> WordType -> WordType
-ff f x y = case f of {ALUSum -> x + y;  ALUAnd -> x .&. y; }
+zProc :: ProcId -> Signal Bit -> Signal WordType -> Signal WordType
+zProc name = zipWithSY name zeroFunc
+    where zeroFunc = $(newProcFun [d| zeroFunc :: Bit -> WordType -> WordType
+                                      zeroFunc z w = if b2bo z then 0 else w |])
 
-fz :: Bit -> WordType -> WordType
-fz z w = if bo z then 0 else w
+nProc :: ProcId -> Signal Bit -> Signal WordType -> Signal WordType
+nProc name = zipWithSY name negFunc
+    where negFunc = $(newProcFun [d| negFunc :: Bit -> WordType -> WordType
+                                     negFunc n w = if b2bo n then complement w else w |])
 
-fn :: Bit -> WordType -> WordType
-fn n w = if bo n then complement w else w
+compProc :: Signal ALUOp -> Signal WordType -> Signal WordType -> Signal WordType
+compProc = zipWith3SY "compProc" compFunc
+    where compFunc = $(newProcFun [d| compFunc :: ALUOp -> WordType -> WordType -> WordType
+                                      compFunc o x y = case o of
+                                                           ALUSum -> x + y
+                                                           ALUAnd -> x .&. y |])
 
-tz :: WordType -> Bit
-tz w = bb (w == 0)
+tzProc :: Signal WordType -> Signal Bit
+tzProc = mapSY "tzProc" $(newProcFun [d| tz :: WordType -> Bit
+                                         tz w = bo2b (w == 0) |])
 
-tn :: WordType -> Bit
-tn w = bb (w < 0)
+tnProc :: Signal WordType -> Signal Bit
+tnProc = mapSY "tnProc" $(newProcFun [d| tn :: WordType -> Bit
+                                         tn w = bo2b (w < 0) |])
 
-aluFunc :: ProcFun (WordType -> WordType -> ALUControl -> (WordType, ALUFlags))
-aluFunc =
-    $(newProcFun
-        [d|
-            aluFunc :: WordType -> WordType -> ALUControl -> (WordType, ALUFlags)
-            aluFunc x y (zx, nx, zy, ny, f, no) =
-                ( fn no  (ff f (fn nx (fz zx x)) (fn ny (fz zy y)) )
-                , ( tz $ fn no  (ff f (fn nx (fz zx x)) (fn ny (fz zy y)) )
-                  , tn $ fn no  (ff f (fn nx (fz zx x)) (fn ny (fz zy y)) )
-                  )
-                )
-        |]
-    )
+aluProc :: Signal ALUControl -> Signal WordType -> Signal WordType -> Signal (WordType, ALUFlags)
+aluProc c x y = zipSY "aluProc" out flags
+    where
+        (zx,nx,zy,ny,f,no) = unzip6SY "ctrlProc" c
+        comp = compProc f (nProc "nx" nx $ zProc "zx" zx $ x) (nProc "ny" ny $ zProc "zy" zy $ y)
+        out  = nProc "no" no comp
+        flags = zipSY "flagsProc" (tzProc out) (tnProc out)
 
-aluProc :: Signal WordType -> Signal WordType -> Signal ALUControl -> Signal (WordType, ALUFlags)
-aluProc = zipWith3SY "aluProc" aluFunc
 
-aluSysDef :: SysDef (Signal WordType -> Signal WordType -> Signal ALUControl -> Signal (WordType, ALUFlags))
-aluSysDef = newSysDef aluProc "alu" ["x", "y", "ctrl"] ["outs"]
+aluSysDef :: SysDef (Signal ALUControl -> Signal WordType -> Signal WordType -> Signal (WordType, ALUFlags))
+aluSysDef = newSysDef aluProc "alu" ["ctrl", "x", "y"] ["outs"]
 
 
