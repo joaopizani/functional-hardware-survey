@@ -56,3 +56,24 @@ aluProc = zipWith3SY "aluProc" aluFunc
 aluSysDef :: SysDef (Signal ALUControl -> Signal WordType -> Signal WordType -> Signal (WordType, ALUFlags))
 aluSysDef = newSysDef aluProc "alu" ["ctrl", "x", "y"] ["outs"]
 
+
+-- TESTING using simulation
+aluSim :: [ALUControl] -> [WordType] -> [WordType] -> [(WordType, ALUFlags)]
+aluSim = simulate aluSysDef
+
+aluTest1 :: Bool
+aluTest1 = aluSim ctrls xs ys == outs
+    where
+        ctrls = [ (H,L,H,L,ALUSum,L),  (H,H,H,H,ALUSum,H),  (H,H,H,L,ALUSum,L),  (L,L,H,H,ALUAnd,L)
+                , (H,H,L,L,ALUAnd,L),  (L,L,H,H,ALUAnd,H),  (H,H,L,L,ALUAnd,H),  (L,L,H,H,ALUSum,H)
+                , (H,H,L,L,ALUSum,H),  (L,H,H,H,ALUSum,H),  (H,H,L,H,ALUSum,H),  (L,L,H,H,ALUSum,L)
+                , (H,H,L,L,ALUSum,L),  (L,L,L,L,ALUSum,L),  (L,H,L,L,ALUSum,H),  (L,L,L,H,ALUSum,H)
+                , (L,L,L,L,ALUAnd,L),  (L,H,L,H,ALUAnd,H) ]
+        xs   = replicate (length ctrls) 0
+        ys   = replicate (length ctrls) (negate 1)
+        outs = [ (0,  (H,L)), (1,  (L,L)), (-1, (L,H)), (0,  (H,L))
+               , (-1, (L,H)), (-1, (L,H)), (0,  (H,L)), (0,  (H,L))
+               , (1,  (L,L)), (1,  (L,L)), (0,  (H,L)), (-1, (L,H))
+               , (-2, (L,H)), (-1, (L,H)), (1,  (L,L)), (-1, (L,H))
+               , (0,  (H,L)), (-1, (L,H)) ]
+
