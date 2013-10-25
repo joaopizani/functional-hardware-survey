@@ -13,7 +13,7 @@ type WordType = Int16
 -- | Operation type. Low means Sum, High means bitwise And
 type ALUOp = Bit
 
--- | Control bits of the ALU: zero X, negate X, zero Y, negate Y, (sum=0, and=1), negate out
+-- | Control bits of the ALU: zero X, negate X, zero Y, negate Y, (sum=1, and=0), negate out
 type ALUControl = (Bit, Bit, Bit, Bit, ALUOp, Bit)
 
 -- | Output flags: whether out is zero, whether out is negative
@@ -32,7 +32,7 @@ nProc name = zipWithSY name $(newProcFun [d| f :: Bit -> WordType -> WordType
 
 compProc :: Signal ALUOp -> Signal WordType -> Signal WordType -> Signal WordType
 compProc = zipWith3SY "compProc" $(newProcFun [d| f :: ALUOp -> WordType -> WordType -> WordType
-                                                  f o x y = if o == H then x .&. y else x + y |])
+                                                  f o x y = if o == H then x + y else x .&. y |])
 
 tzProc :: Signal WordType -> Signal Bit
 tzProc = mapSY "tzProc" $(newProcFun [d| f :: WordType -> Bit

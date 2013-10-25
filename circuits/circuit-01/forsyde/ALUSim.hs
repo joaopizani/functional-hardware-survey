@@ -33,30 +33,26 @@ bo = bitToBool
 bb :: Bool -> Bit
 bb = boolToBit
 
-inv :: WordType -> WordType
-inv = complement
 
-
-aluFunc :: ProcFun (WordType -> WordType -> ALUControl -> (WordType, ALUFlags))
+aluFunc :: ProcFun (ALUControl -> WordType -> WordType -> (WordType, ALUFlags))
 aluFunc =
     $(newProcFun
         [d|
-            aluFunc :: WordType -> WordType -> ALUControl -> (WordType, ALUFlags)
-            aluFunc x y (zx, nx, zy, ny, f, no) = (outn, (zr, ng))
+            aluFunc :: ALUControl -> WordType -> WordType -> (WordType, ALUFlags)
+            aluFunc (zx, nx, zy, ny, f, no) x y = (out,  (bb (out == 0), bb (out < 0)) )
                 where
-                    (xz, yz) = (if bo zx then 0 else x,       if bo zy then 0 else y)
-                    (xn, yn) = (if bo nx then inv xz else xz, if bo ny then inv yz else yz)
-                    out      = case f of { ALUSum -> xn + yn;  ALUAnd -> xn .&. yn; }
-                    outn     = if bo no then inv out else out
-                    zr       = bb (outn == 0)
-                    ng       = bb (outn < 0)
+                    zf z w = if bo z then 0 else w
+                    nf n w = if bo n then complement w else w
+                    (xn, yn) = (nf nx $ zf zx $ x,  nf ny $ zf zy $ y)
+                    out      = nf no $ case f of
+                                           ALUSum -> xn + yn
+                                           ALUAnd -> xn .&. yn
         |]
     )
 
-aluProc :: Signal WordType -> Signal WordType -> Signal ALUControl -> Signal (WordType, ALUFlags)
+aluProc :: Signal ALUControl -> Signal WordType -> Signal WordType -> Signal (WordType, ALUFlags)
 aluProc = zipWith3SY "aluProc" aluFunc
 
-aluSysDef :: SysDef (Signal WordType -> Signal WordType -> Signal ALUControl -> Signal (WordType, ALUFlags))
-aluSysDef = newSysDef aluProc "alu" ["x", "y", "ctrl"] ["outs"]
-
+aluSysDef :: SysDef (Signal ALUControl -> Signal WordType -> Signal WordType -> Signal (WordType, ALUFlags))
+aluSysDef = newSysDef aluProc "alu" ["ctrl", "x", "y"] ["outs"]
 
