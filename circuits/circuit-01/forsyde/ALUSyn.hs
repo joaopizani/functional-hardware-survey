@@ -44,12 +44,11 @@ tnProc = mapSY "tnProc" $(newProcFun [d| f :: WordType -> Bit
 
 
 aluProc :: Signal ALUControl -> Signal WordType -> Signal WordType -> Signal (WordType, ALUFlags)
-aluProc c x y = zipSY "aluProc" out flags
+aluProc c x y = zipSY "aluProc" out (zipSY "flagsProc" (tzProc out) (tnProc out))
     where
         (zx,nx,zy,ny,f,no) = unzip6SY "ctrlProc" c
         comp = compProc f (nProc "nx" nx $ zProc "zx" zx $ x) (nProc "ny" ny $ zProc "zy" zy $ y)
         out  = nProc "no" no comp
-        flags = zipSY "flagsProc" (tzProc out) (tnProc out)
 
 
 aluSysDef :: SysDef (Signal ALUControl -> Signal WordType -> Signal WordType -> Signal (WordType, ALUFlags))
