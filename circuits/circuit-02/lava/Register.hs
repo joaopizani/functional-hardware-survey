@@ -91,12 +91,12 @@ decode2To4 :: (SB,SB) -> (SB,SB,SB,SB)
 decode2To4 (i0,i1) = (inv i0 <&> inv i1, i0 <&> inv i1, inv i0 <&> i1, i0 <&> i1)
 
 
-decode4To16 :: (SB,SB,SB,SB) -> (SB,SB,SB,SB,SB,SB,SB,SB,SB,SB,SB,SB,SB,SB,SB,SB)
+decode4To16 :: (SB,SB,SB,SB) -> [SB]
 decode4To16 (s0,s1,s2,s3) =
-    ( m00 <&> m10, m00 <&> m11, m00 <&> m12, m00 <&> m13
+    [ m00 <&> m10, m00 <&> m11, m00 <&> m12, m00 <&> m13
     , m01 <&> m10, m01 <&> m11, m01 <&> m12, m01 <&> m13
     , m02 <&> m10, m02 <&> m11, m02 <&> m12, m02 <&> m13
-    , m03 <&> m10, m03 <&> m11, m03 <&> m12, m03 <&> m13 )
+    , m03 <&> m10, m03 <&> m11, m03 <&> m12, m03 <&> m13 ]
     where
         (m00,m01,m02,m03) = decode2To4 (s0,s1)
         (m10,m11,m12,m13) = decode2To4 (s2,s3)
@@ -138,4 +138,13 @@ decode6To64 (s0, s1, s2, s3, s4, s5) =
     , s0N <&> s1  <&> s2  <&> s3  <&> s4  <&> s5 ,  s0  <&> s1  <&> s2  <&> s3  <&> s4  <&> s5 ]
     where
         (s0N, s1N, s2N, s3N, s4N, s5N) = (inv s0, inv s1, inv s2, inv s3, inv s4, inv s5)
+
+
+
+ram16Rows :: Int -> ([SB], (SB,SB,SB,SB), SB) -> [SB]
+ram16Rows n (input, addr, load) = mux16WordN n (addr, registers)
+    where
+        memLine sel = regN n (input, sel <&> load)
+        registers = map memLine (decode4To16 addr)
+
 
