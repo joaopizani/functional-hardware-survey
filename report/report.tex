@@ -75,12 +75,12 @@
         name a few. All this variety can make the task of choosing a hardware EDSL for the task at
         hand extremely daunting and time-consuming.
 
-        To establish some order in this chaos, and to perform a practical analysis of some
-        representative functional hardware EDSLs is the goal of this experimentation project. By
-        reading the materials produced in this project (circuit models, test cases, generated
-        netlists, report), a hardware designer wishing to use a functional hardware EDSL for his
-        next design should gain some insight about the strengths and weaknesses of each language and
-        have an easier time choosing one.
+        The goal of this experimentation project is to establish some order in this landscape, and
+        to perform a practical analysis of some representative functional hardware EDSLs. By reading
+        the materials produced in this project (circuit models, test cases, generated netlists,
+        report), a hardware designer wishing to use a functional hardware EDSL for his next design
+        should gain some insight about the strengths and weaknesses of each language and have an
+        easier time choosing one.
 
     \section{Methodology}
     \label{sec:methods}
@@ -93,12 +93,22 @@
         all of them. To avoid using any of the analyzed EDSLs as ``base'', we had the circuits
         specified in a neutral hardware description language.
 
-
-    \section{The research space}
-    \label{sec:languages}
-
         \subsection{The languages}
         \label{subsec:languages}
+            The embedded Hardware Description Languages we decided to analyze are:
+            \begin{description}
+                \item[Lava] The Lava language, developed initially at Chalmers University in Sweden.
+                    Lava is deeply embedded in Haskell, and provides features such as netlist
+                    generation and circuit verification using SAT-solvers. There are several
+                    ``dialects'' of Lava available, and the one used for this project is considered
+                    the ``canonical'' one, originally developed at Chalmers.
+
+                \item[ForSyDe] The Haskell ForSyDe library is an EDSL based on the ``Formal System
+                    Design'' approach, developed at the swedish Royal Institute of Technology (KTH).
+                    It offers both shallow and deep embeddings, and uses a significantly different
+                    approach to circuit modelling, using \emph{Template Haskell} to allow the
+                    designer to describe circuit with ``plain'' Haskell syntax.
+            \end{description}
 
         \subsection{The circuits to be modeled}
         \label{subsec:circuits}
