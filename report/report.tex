@@ -38,7 +38,7 @@
 }
 \fi
 
-\title{A comparison of functional Embedded Domain-Specific Languages for hardware}
+\title{Comparing functional Embedded Domain-Specific Languages for hardware description}
 
 \date{\today}
 
@@ -75,12 +75,17 @@
         name a few. All this variety can make the task of choosing a hardware EDSL for the task at
         hand extremely daunting and time-consuming.
 
-        The goal of this experimentation project is to establish some order in this landscape, and
-        to perform a practical analysis of some representative functional hardware EDSLs. By reading
-        the materials produced in this project (circuit models, test cases, generated netlists,
-        report), a hardware designer wishing to use a functional hardware EDSL for his next design
-        should gain some insight about the strengths and weaknesses of each language and have an
-        easier time choosing one.
+        The main goal of this experimentation project is to establish some order in this landscape,
+        and to perform a practical analysis of some representative functional hardware EDSLs. By
+        reading the materials produced in this project (circuit models, test cases, generated
+        netlists, report), a hardware designer wishing to use a functional hardware EDSL for his
+        next design should gain some insight about the strengths and weaknesses of each language and
+        have an easier time choosing one.
+
+        As an additional result of this research, we intend to identify recent, cutting-edge
+        developments in the Haskell language and its implementations that the analyzed EDSLs could
+        benefit from. Also, we intend to discuss to which extent some shortcomings of the EDSLs
+        could be overcome by having them hosted in a dependently-typed language.
 
     \section{Methodology}
     \label{sec:methods}
@@ -90,8 +95,10 @@
         considering a \emph{sample set of circuits} used as case studies.
 
         We tried to model all circuits in all EDSLs considered, and as similarly as possible in
-        all of them. To avoid using any of the analyzed EDSLs as ``base'', we had the circuits
-        specified in a neutral hardware description language.
+        all of them. To avoid using any of the analyzed EDSLs as ``base'', we provide a neutral,
+        behavioural description of the circuits.
+
+        \newpage
 
         \subsection{The languages}
         \label{subsec:languages}
@@ -105,10 +112,10 @@
 
                 \item[ForSyDe] The Haskell ForSyDe library is an EDSL based on the ``Formal System
                     Design'' approach\cite{forsyde1999}, developed at the swedish Royal Institute of
-                    Technology (KTH).  It offers both shallow and deep embeddings, and uses a
+                    Technology (KTH).  It offers both shallow and deep embeddings, and provides a
                     significantly different approach to circuit modelling, using \emph{Template
-                        Haskell} to allow the designer to describe circuit with ``plain'' Haskell
-                    syntax.
+                        Haskell} to allow the designer to describe combinational functions with
+                    Haskell's own constructs.
 
                 \item[Coquet] The Coquet\cite{coquet2011} EDSL differs from the other 2 mainly
                     because it's embedded in a dependently-typed programming language (the Coq theorem
@@ -118,21 +125,60 @@
             \end{description}
 
             The Lava EDSL has several ``dialects'', among which are Xilinx-Lava, York-Lava,
-            Kansas-Lava and Chalmers-Lava. Xilinx-Lava was developed by Satnam Singh and has a greater emphasis on the
-            \emph{layout} of the described circuits, focusing on their implementation in Xilinx's
-            FPGAs. York-Lava was developed as part of the Reduceron project, and is a variation of
-            Chalmers-Lava, omitting some features and adding some others, like a ``Prelude'' of
-            commonly used circuits ((de)multiplexers, (de)coders, etc.), RAM memory blocks, among
-            others.
+            Kansas-Lava and Chalmers-Lava. Xilinx-Lava was developed by Satnam Singh and puts a
+            greater emphasis on the \emph{layout} of the described circuits, focusing on their
+            implementation in Xilinx's FPGAs. York-Lava was developed as part of the Reduceron
+            project, and is a variation of Chalmers-Lava, omitting some features and adding some
+            others, like a ``Prelude'' of commonly used circuits ((de)multiplexers, (de)coders,
+            etc.), RAM memory blocks, among others. Chalmers-Lava is considered the ``standard''
+            dialect, also being the one which was first developed.
 
-            %% Kansas-Lava, Chalmers-Lava
-
-
-        \subsection{The circuits to be modeled}
-        \label{subsec:circuits}
+            %% Kansas-Lava
 
         \subsection{The aspects evaluated}
         \label{subsec:aspects}
+
+
+    \section{Modeled circuits}
+    \label{sec:circuits}
+        When thinking of which circuits to model using the analyzed EDSLs, some principles guided
+        us. First of all, they shouldn't be too simple but also not too complex. Some very simple
+        circuits (adders, counters, etc.) are very often shown as examples in the papers that define
+        the EDSLs themselves, as well as in tutorials. On the other hand, we also did not want to
+        model too complex circuits; that would require too much effort on the hardware design
+        itself, and diverge from the focus of this project, which is to evaluate and analyze the
+        EDSLs.
+
+        Another principle that guided our choice is that the circuits should be immediately familiar
+        to anyone with some minimal experience in hardware design. We avoided, therefore,
+        considering application-specific circuits such as those for Digital Signal Processing (DSP),
+        implementing communication protocols, etc. Having ruled out this class of circuits, we were
+        left to choose from circuits that form a general-purpose computing machine, such as
+        arithmetic units, memory blocks, control units and so forth.
+
+        Finally, we wanted to choose among circuits that already had a well-defined,
+        \emph{behavioural} description, to avoid using any of the analyzed EDSLs as ``basis'' of
+        comparison.
+
+        Taking these considerations into account, we chose to implement, in each of the EDSLs
+        analyzed, three circuits originating from the book ``The Elements of Computing
+        Systems''\cite{nand2tetris-book}. This book aims to give the reader a deep understanding of
+        how computer systems work by taking a hands-on approach, in which the reader is given the
+        most basic logic gates and builds, step-by-step, all the hardware and software components
+        necessary to implement a complete computer system.
+
+        \newpage
+
+        From the hardware design part of the book, we took our three circuits to be modeled:
+        \begin{itemize}
+            \item A simple Arithmetic Logic Unit (ALU), from here onwards referred to
+                as ``circuit 1''.
+            \item A RAM memory block with 64 words, from here onwards referred to as ``circuit 2''.
+            \item A CPU with an extremely reduced instruction set (capable of executing the
+                \emph{Hack} assembly language defined in the book) from here onwards referred to as
+                ``circuit 3''.
+        \end{itemize}
+
 
 
     \bibliographystyle{plain}
@@ -144,16 +190,7 @@
 %% Haskell (compiler extensions, etc.), as well as dependently-typed programming, could be used to
 %% enhance the EHDLs studied.
 %% 
-%% Research methods to be employed
-%% ===============================
-%% First of all, a brief review was done of secondary literature to decide which languages/libraries
-%% to investigate. My own experience and background also helped with this choice. The chosen EHDLs
-%% are hosted in the purely functional language Haskell and in the dependently-typed Coq. They are:
-%% 
-%%   * Lava (Chalmers and Kansas varieties) - Embedded in Haskell
-%%   * ForSyDe - Embedded in Haskell
-%%   * Coquet - Embedded in Coq
-%% 
+
 %% Using some mildly-complex circuits as case studies, the EHDLs will be compared based on a number of
 %% criteria. The circuits to be described and analyzed in each EHDL will fall under the following
 %% classification:
@@ -176,6 +213,7 @@
 %%     - Multiple interpretations for circuits
 %%     - User-defined datatypes
 %% 
+
 %% Expected outputs of this project
 %% ================================
 %% The main output I expect from this project is a comparative analysis of the EHDLs. An interesting
