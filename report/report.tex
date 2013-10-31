@@ -179,6 +179,46 @@
                 ``circuit 3''.
         \end{itemize}
 
+        \subsection{The ALU circuit}
+        \label{subsec:circuit-alu}
+            The Arithmetic Logic Unit built by us is a 2-input ALU, in which each of the inputs (as
+            well as the output) is a 16-bit long word. It is capable of computing several functions,
+            and the choice of which function to compute is made by setting the ALU's 6
+            \emph{control bits}. To become more familiar with this circuit, let's first take a look
+            at its block diagram, shown in figure \ref{fig:alu-block}
+            \begin{figure}[h]
+                \begin{center}
+                    \includegraphics[width=0.6\textwidth]{imgs/alu-block.pdf}
+                \end{center}
+                \label{fig:alu-block}
+                \caption{Block diagram of circuit 1, showing its input and output ports.}
+            \end{figure}
+
+            Each of the 6 control bits to the ALU has, in isolation, a well-defined effect on the
+            inputs or outputs to the ALU core. The bits \texttt{(zx, nx, zy, ny)} control
+            ``pre-processing'' steps for the inputs \texttt{x} and \texttt{y}, with the following
+            behaviour:
+            \begin{description}
+                \item[zx and zy] \emph{Zeroes} the x input (respectively y). The ALU core will
+                    receive \texttt{0} as input.
+                \item[nx and ny] Performs \emph{bitwise negation} of input x (respectively y).
+            \end{description}
+
+            Therefore, the ALU ``core'' itself (adder, and gate) has, as inputs, the results of
+            performing these pre-processing steps controlled by \texttt{(zx, nx, zy, ny)}.
+            Furthermore, the \emph{output} of the ALU core can also be \emph{bitwise negated} as a
+            ``post-processing'' step, controlled by bit \texttt{no}.
+
+            Finally, the control bit \texttt{f} can be used to select which operation is to be
+            performed by the ALU core: if we wish to add the two inputs, we need to set $f = 1$, and
+            if we want bitwise conjunction, then we need to set $f = 0$.
+
+
+        \subsection{The RAM circuit}
+        \label{subsec:ram-circuit}
+
+        \subsection{The Hack CPU circuit}
+        \label{subsec:hack-cpu-circuit}
 
 
     \bibliographystyle{plain}
