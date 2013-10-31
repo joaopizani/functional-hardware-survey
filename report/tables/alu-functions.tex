@@ -1,0 +1,51 @@
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{ccccccc}
+            \toprule
+            \textbf{zx} & \textbf{nx} & \textbf{zy} &
+            \textbf{ny} & \textbf{f} & \textbf{no} & \textbf{out=}
+            \tabularnewline
+            \midrule
+
+            1  &  0  &  1  &  0  &  1  &  0  &   $0$  \\
+
+            1  &  1  &  1  &  1  &  1  &  1  &   $1$  \\
+
+            1  &  1  &  1  &  0  &  1  &  1  &   $-1$  \\
+
+            0  &  0  &  1  &  1  &  0  &  0  &   $x$  \\
+
+            1  &  1  &  0  &  0  &  0  &  0  &   $y$  \\
+
+            0  &  0  &  1  &  1  &  0  &  1  &   $\neg x$  \\
+
+            1  &  1  &  0  &  0  &  0  &  1  &   $\neg y$  \\
+
+            0  &  0  &  1  &  1  &  1  &  1  &   $-x$  \\
+
+            1  &  1  &  0  &  0  &  1  &  1  &   $-y$  \\
+
+            0  &  1  &  1  &  1  &  1  &  1  &   $x + 1$  \\
+
+            1  &  1  &  0  &  1  &  1  &  1  &   $y + 1$  \\
+
+            0  &  0  &  1  &  1  &  1  &  0  &   $x - 1$  \\
+
+            1  &  1  &  0  &  0  &  1  &  0  &   $y - 1$  \\
+
+            0  &  0  &  0  &  0  &  1  &  0  &   $x + y$  \\
+
+            0  &  1  &  0  &  0  &  1  &  1  &   $x - y$  \\
+
+            0  &  0  &  0  &  1  &  1  &  1  &   $y - x$  \\
+
+            0  &  0  &  0  &  0  &  0  &  0  &   $x \wedge y$  \\
+
+            0  &  1  &  0  &  1  &  0  &  1  &   $x \vee y$  \\
+
+            \bottomrule
+        \end{tabular}
+    \end{center}
+    \label{tab:alu-functions}
+    \caption{Functions that the ALU can calculate, given different settings of the control bits}
+\end{table}

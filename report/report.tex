@@ -1,20 +1,20 @@
 \documentclass[a4paper]{article}
 
-%% Unicode support
-\usepackage[utf8x]{inputenc}
-\usepackage{ucs}
-\usepackage{autofe}
-
 \usepackage{times}
 \usepackage[T1]{fontenc}
 \usepackage{a4}
 \usepackage{epstopdf}
 \usepackage{graphicx}
 \usepackage{mathtools}
-\usepackage{amssymb}
+\usepackage{amssymb}  % lots of math symbols
 \usepackage{hyperref}
 \usepackage{color}
+\usepackage{booktabs}  % nice tables
 
+%% Unicode support
+\usepackage[utf8x]{inputenc}
+\usepackage{ucs}
+\usepackage{autofe}
 
 %% Code
 \usepackage{inconsolata}
@@ -22,6 +22,7 @@
 \usepackage{fancyvrb}
 \usemintedstyle{default}
 \newminted{haskell}{gobble=4,linenos,mathescape,fontfamily=tt,fontsize=\footnotesize,xleftmargin=\parindent}
+
 
 
 
@@ -209,13 +210,43 @@
             Furthermore, the \emph{output} of the ALU core can also be \emph{bitwise negated} as a
             ``post-processing'' step, controlled by bit \texttt{no}.
 
-            Finally, the control bit \texttt{f} can be used to select which operation is to be
-            performed by the ALU core: if we wish to add the two inputs, we need to set $f = 1$, and
-            if we want bitwise conjunction, then we need to set $f = 0$.
+            Finally, the control bit $f$ can be used to select which operation is to be performed by
+            the ALU core: if we wish to add the two inputs, we need to set $f = 1$, and if we want
+            bitwise conjunction, then we need to set $f = 0$.
+
+            Besides the main (16-bit wide) output of the ALU, there are two other output
+            \emph{flags}, that indicate predicates over the main output:
+            \begin{description}
+                \item[zr] Is high whenever $out = 0$.
+                \item[ng] Is high whenever $out < 0$.
+            \end{description}
+
+            With the ALU in the context of a microprocessor, these flags can be used, for example,
+            to facilitate conditional jumps.
+
+            Even though there are $2^{6} = 64$ possible combinations for the values of the control
+            bits, only 18 of these combinations result in interesting functions -- that because
+            several combinations of control bits can be used to calculate the same function. We show
+            these 18 functions that the ALU can calculate on table \ref{tab:alu-functions}.
+            \input{tables/alu-functions}
+
+            %% Talk about the construction of the ALU in terms of its parts.
 
 
         \subsection{The RAM circuit}
         \label{subsec:ram-circuit}
+            Circuit 2 is a block of RAM with 64 lines and in which each line is a 16-bit word.
+            Actually, using the term ``RAM'' to refer to this component is an abuse of terminology,
+            as this circuit is nothing more than a register bank.
+
+            All the input and output ports of the circuit are pictured in its block diagram, shown
+            in figure \ref{fig:ram-block}
+            \begin{figure}[h]
+                \begin{center}
+                    \includegraphics[width=0.3\textwidth]{imgs/ram-block.pdf}
+                \end{center}
+                \label{fig:ram-block}
+            \end{figure}
 
         \subsection{The Hack CPU circuit}
         \label{subsec:hack-cpu-circuit}
@@ -226,11 +257,6 @@
 
 %% Research question
 %% =================
-%% A further question to be investigated in this project is what recent developments in
-%% Haskell (compiler extensions, etc.), as well as dependently-typed programming, could be used to
-%% enhance the EHDLs studied.
-%% 
-
 %% Using some mildly-complex circuits as case studies, the EHDLs will be compared based on a number of
 %% criteria. The circuits to be described and analyzed in each EHDL will fall under the following
 %% classification:
