@@ -9,26 +9,27 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="184.25197"
-   height="262.20471"
+   width="190.72719"
+   height="242.09338"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 1">
+   sodipodi:docname="ram-block.pdf">
   <defs
      id="defs4">
     <marker
        inkscape:stockid="Arrow2Send"
        orient="auto"
-       refY="0.0"
-       refX="0.0"
+       refY="0"
+       refX="0"
        id="Arrow2Send"
-       style="overflow:visible;">
+       style="overflow:visible">
       <path
          id="path3806"
-         style="fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round;"
-         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
-         transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)"
+         inkscape:connector-curvature="0" />
     </marker>
     <marker
        inkscape:stockid="Arrow2Send"
@@ -67,16 +68,20 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="37.677969"
-     inkscape:cy="164.01311"
+     inkscape:cx="114.14109"
+     inkscape:cy="143.76946"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1345"
-     inkscape:window-height="813"
-     inkscape:window-x="184"
-     inkscape:window-y="90"
-     inkscape:window-maximized="0" />
+     inkscape:window-height="715"
+     inkscape:window-x="19"
+     inkscape:window-y="24"
+     inkscape:window-maximized="0"
+     fit-margin-top="3"
+     fit-margin-left="3"
+     fit-margin-bottom="3"
+     fit-margin-right="3" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -93,11 +98,12 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-790.15741)">
+     transform="translate(3.7321429,-790.02509)">
     <g
-       id="g4237"
-       transform="translate(0,14.142136)">
+       id="g5230">
       <g
+         style="fill:#b2b2b2;fill-opacity:1"
+         transform="translate(0,14.142136)"
          id="g3759">
         <rect
            style="fill:#b2b2b2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -108,7 +114,7 @@
            y="823.0575" />
         <path
            sodipodi:type="star"
-           style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3.6455009;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           style="fill:#b2b2b2;fill-opacity:1;stroke:#000000;stroke-width:3.6455009;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
            id="path3755"
            sodipodi:sides="3"
            sodipodi:cx="15.152288"
@@ -127,11 +133,11 @@
       <text
          sodipodi:linespacing="125%"
          id="text3763"
-         y="929.12354"
+         y="943.26569"
          x="46.410164"
          style="font-size:26px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          xml:space="preserve"><tspan
-           y="929.12354"
+           y="943.26569"
            x="46.410164"
            id="tspan3765"
            sodipodi:role="line">RAM64</tspan></text>
