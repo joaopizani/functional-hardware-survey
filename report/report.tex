@@ -183,10 +183,11 @@
         \subsection{The ALU circuit}
         \label{subsec:circuit-alu}
             The Arithmetic Logic Unit built by us is a 2-input ALU, in which each of the inputs (as
-            well as the output) is a 16-bit long word. It is capable of computing several functions,
-            and the choice of which function to compute is made by setting the ALU's 6
-            \emph{control bits}. To become more familiar with this circuit, let's first take a look
-            at its block diagram, shown in figure \ref{fig:alu-block}
+            well as the output) is a 16-bit long word (interpreted as an integer in two's-complement
+            encoding). It is capable of computing several functions, and the choice of which
+            function to compute is made by setting the ALU's 6 \emph{control bits}. To become more
+            familiar with this circuit, let's first take a look at its block diagram, shown in
+            figure \ref{fig:alu-block}
             \begin{figure}[h]
                 \begin{center}
                     \includegraphics[width=0.6\textwidth]{imgs/alu-block.pdf}
@@ -250,6 +251,42 @@
 
         \subsection{The Hack CPU circuit}
         \label{subsec:hack-cpu-circuit}
+            Circuit 3, the largest and most complex circuit among the ones we have chosen to
+            implement, is the Central Processing Unit for the \emph{Hack} computer, the machine
+            described in the book ``The Elements of Computing Systems''\cite{nand2tetris-book}.
+
+            The Hack computer is based on the \emph{Harvard architecture}, that means that it has
+            different storage component and signal pathways for instructions and data. Therefore,
+            the Hack CPU expects to be connected to \emph{two} memory blocks, the instruction memory
+            and the data memory. Having this in mind facilitates the understanding of the CPU's
+            block diagram, shown in figure \ref{fig:cpu-block}
+            \begin{figure}[h]
+                \begin{center}
+                    \includegraphics[width=0.8\textwidth]{imgs/cpu-block.pdf}
+                \end{center}
+                \label{fig:cpu-block}
+                \caption{Block diagram of circuit 3, the Hack CPU}
+            \end{figure}
+
+            The Hack architecture has an \emph{extremely} reduced instruction set, and consists in
+            fact of only two instructions (each 16-bit wide): A (meaning ``address'') and
+            C (meaning ''compute''). The A instruction can be used as a means to load numerical
+            literals into the data memory, as well as setting a special ``cache'' register inside
+            the CPU. The C instruction is the one responsible for effectively performing
+            computations using the ALU, testing outputs and jumping. More details about programming
+            in the Hack assembly language can be found in \cite{nand2tetris-book}.
+
+            %The meaning of each of the CPU's input and output ports becomes much clearer when we
+            %look at the context in which the CPU is inserted, namely, the memory modules to which it
+            %is connected. So, let's analyze the CPU's ports by taking a look at figure
+            \ref{fig:cpu-memory}.
+            \begin{figure}[h]
+                \begin{center}
+                    \includegraphics[width=0.9\textwidth]{imgs/cpu-memory.pdf}
+                \end{center}
+                \label{fig:cpu-memory}
+                \caption{The Hack CPU connected to the memory blocks it needs to work}
+            \end{figure}
 
 
     \bibliographystyle{plain}
