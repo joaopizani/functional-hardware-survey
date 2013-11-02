@@ -241,13 +241,29 @@
             as this circuit is nothing more than a register bank.
 
             All the input and output ports of the circuit are pictured in its block diagram, shown
-            in figure \ref{fig:ram-block}
+            in figure \ref{fig:ram-block}.
             \begin{figure}[h]
                 \begin{center}
-                    \includegraphics[width=0.3\textwidth]{imgs/ram-block.pdf}
+                    \includegraphics[width=0.4\textwidth]{imgs/ram-block.pdf}
                 \end{center}
                 \label{fig:ram-block}
+                \caption{Block diagram of circuit 2, a RAM of 64 lines}
             \end{figure}
+
+            The circuit has one 16-bit output, named ``out'', and three inputs (``in'', ``address''
+            and ``load''). The ``in'' port is 16-bit wide and holds a value to be written into the
+            RAM. The ``address'' port has a width of $\log_{2} 64 = 6$ bits and holds the address
+            in which reading or writing is to be performed. Finally, the 1-bit ``load'' input
+            controls whether the value currently at ``in'' should be written to the selected
+            address. There is also one \emph{implicit} input for a clock signal in this component.
+            Implicit, in this case, means that the clock signal is not present in any of the models
+            that we developed for this circuit, but must be present at any physical implementation.
+
+            The temporal behaviour of this memory block is as follows: At any point in time, the
+            output ``out'' holds the value stored at the memory location specified by ``address''.
+            If the ``load'' pin is high, then the value at ``in'' is loaded into the memory word
+            specificied by ``address''. The loaded value will then be emitted on the output at the
+            \textbf{next} clock cycle.
 
         \subsection{The Hack CPU circuit}
         \label{subsec:hack-cpu-circuit}
@@ -262,7 +278,7 @@
             block diagram, shown in figure \ref{fig:cpu-block}
             \begin{figure}[h]
                 \begin{center}
-                    \includegraphics[width=0.8\textwidth]{imgs/cpu-block.pdf}
+                    \includegraphics[width=0.9\textwidth]{imgs/cpu-block.pdf}
                 \end{center}
                 \label{fig:cpu-block}
                 \caption{Block diagram of circuit 3, the Hack CPU}
@@ -276,16 +292,16 @@
             computations using the ALU, testing outputs and jumping. More details about programming
             in the Hack assembly language can be found in \cite{nand2tetris-book}.
 
-            %The meaning of each of the CPU's input and output ports becomes much clearer when we
-            %look at the context in which the CPU is inserted, namely, the memory modules to which it
-            %is connected. So, let's analyze the CPU's ports by taking a look at figure
+            The meaning of each of the CPU's input and output ports becomes much clearer when we
+            look at the context in which the CPU is inserted, namely, the memory modules to which it
+            is connected. So, let's analyze the CPU's ports by taking a look at figure
             \ref{fig:cpu-memory}.
             \begin{figure}[h]
                 \begin{center}
-                    \includegraphics[width=0.9\textwidth]{imgs/cpu-memory.pdf}
+                    \includegraphics[width=1.0\textwidth]{imgs/cpu-memory.pdf}
                 \end{center}
                 \label{fig:cpu-memory}
-                \caption{The Hack CPU connected to the memory blocks it needs to work}
+                \caption{The Hack CPU connected to the data and instruction memory blocks}
             \end{figure}
 
 
