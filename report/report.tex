@@ -304,6 +304,51 @@
                 \caption{The Hack CPU connected to the data and instruction memory blocks}
             \end{figure}
 
+    \section{Analysis of the EDSLs}
+    \label{sec:edsls}
+
+        \subsection{Lava}
+        \label{subsec:lava}
+
+        \subsection{ForSyDe}
+        \label{subsec:forsyde}
+            The Haskell ForSyDe library is an implementation of the ``Formal System Design''
+            approach to hardware modelling\cite{forsyde1999}. The ForSyDe approach per se has
+            several significant differences when compared to Lava, and even when the two EDSLs agree
+            on \emph{what to do}, sometimes they differ on how to achieve those goals.
+
+            To better understand what characterizes the ForSyDe methodology, we first have to
+            establish some vocabulary:
+            \begin{description}
+                \item[System] In ForSyDe, a system or circuit is a network of processes
+                    interconnected by \emph{signals}.
+                \item[Signal] A signal is, intuitively, a stream of information that flows between
+                    processes. More concretely, it carries events of some type, and each event has
+                    an associated tag. The meaning of the tag is defined by the \emph{model of
+                        computation} used.
+                \item[Process] A process is nothing more than a pure function on signals. A process
+                    \emph{is able} to hold internal state. But, given the same input (possibly
+                    infinite) signals, it produces the same output signals.
+            \end{description}
+
+            % Talk about models of computation
+            % Picture of the synchronous model (plusFour)
+
+            % Talk about shallow and deep embedded signals (deep only supports synchronous)
+
+            % Disadvantages: name handling, not actively maintained
+            % Advantages: more modular VHDL generated (hierarchical). Higher-level descriptions
+
+        \subsection{Coquet}
+        \label{subsec:coquet}
+
+
+    \section{Results summary}
+    \label{sec:results}
+
+    \section{Conclusions}
+    \label{sec:conclusions}
+
 
     \bibliographystyle{plain}
     \bibliography{references}
