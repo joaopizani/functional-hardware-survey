@@ -41,34 +41,56 @@ mux4SysDef = newSysDef (mux4 "muxA") "mux4Sys" ["sel", "inputs"] ["out"]
 
 
 mux16 :: ProcId -> Signal (FSVec D4 Bit) -> Signal (FSVec D16 WordType) -> Signal WordType
-mux16 l ss is = mux4 (l ++ ":m1") (sv ! d1) $ zipxSY (l ++ ":zipMs") (m00 +> m01 +> m02 +> m03 +> empty)
+mux16 l ss is = mux4 (l ++ ":m1") sv1 $ zipxSY (l ++ ":zipMs") (m00 +> m01 +> m02 +> m03 +> empty)
     where
-        sv  = V.map (zipxSY (l ++ ":rezipSel")) $ group d2 $ unzipxSY (l ++ ":unzipSel") ss
-        iv  = V.map (zipxSY (l ++ ":rezipInp")) $ group d4 $ unzipxSY (l ++ ":unzipInp") is
-        m00 = mux4 (l ++ ":m00") (sv ! d0) (iv ! d0)
-        m01 = mux4 (l ++ ":m01") (sv ! d0) (iv ! d1)
-        m02 = mux4 (l ++ ":m02") (sv ! d0) (iv ! d2)
-        m03 = mux4 (l ++ ":m03") (sv ! d0) (iv ! d3)
+        sv' = unzipxSY (l ++ ":unzipSel") ss
+        iv' = unzipxSY (l ++ ":unzipInp") is
+        sv0 = zipxSY (l ++ ":rezipSel0") (V.select d0 d1 d2 sv')
+        sv1 = zipxSY (l ++ ":rezipSel1") (V.select d2 d1 d2 sv')
+        iv0 = zipxSY (l ++ ":rezipInp0") (V.select d0 d1 d4 iv')
+        iv1 = zipxSY (l ++ ":rezipInp1") (V.select d4 d1 d4 iv')
+        iv2 = zipxSY (l ++ ":rezipInp2") (V.select d8 d1 d4 iv')
+        iv3 = zipxSY (l ++ ":rezipInp3") (V.select d12 d1 d4 iv')
+        m00 = mux4 (l ++ ":m00") sv0 iv0  -- TODO: map with zipped names and see VHDL
+        m01 = mux4 (l ++ ":m01") sv0 iv1
+        m02 = mux4 (l ++ ":m02") sv0 iv2
+        m03 = mux4 (l ++ ":m03") sv0 iv3
 
 mux16SysDef :: SysDef (Signal (FSVec D4 Bit) -> Signal (FSVec D16 WordType) -> Signal WordType)
 mux16SysDef = newSysDef (mux16 "muxA") "mux16Sys" ["sel", "inputs"] ["out"]
 
 
-mux64 :: Signal (FSVec D6 Bit) -> Signal (FSVec D64 WordType) -> Signal WordType
-mux64 = undefined
+mux64 :: ProcId -> Signal (FSVec D6 Bit) -> Signal (FSVec D64 WordType) -> Signal WordType
+mux64 l ss is = mux4 (l ++ ":m1") sv1 $ zipxSY (l ++ ":zipMs") (m00 +> m01 +> m02 +> m03 +> empty)
+    where
+        sv' = unzipxSY (l ++ ":unzipSel") ss
+        iv' = unzipxSY (l ++ ":unzipInp") is
+        sv0 = zipxSY (l ++ ":rezipSel0") (V.select d0 d1 d4 sv')
+        sv1 = zipxSY (l ++ ":rezipSel1") (V.select d4 d1 d2 sv')
+        iv0 = zipxSY (l ++ ":rezipInp0") (V.select d0  d1 d16 iv')  -- TODO: parameterize VHDL
+        iv1 = zipxSY (l ++ ":rezipInp1") (V.select d16 d1 d16 iv')
+        iv2 = zipxSY (l ++ ":rezipInp2") (V.select d32 d1 d16 iv')
+        iv4 = zipxSY (l ++ ":rezipInp3") (V.select d48 d1 d16 iv')
+        m00 = mux16 (l ++ ":m00") sv0 iv0  -- TODO: map with zipped names and see VHDL
+        m01 = mux16 (l ++ ":m01") sv0 iv1
+        m02 = mux16 (l ++ ":m02") sv0 iv2
+        m03 = mux16 (l ++ ":m03") sv0 iv4
+
+mux64SysDef :: SysDef (Signal (FSVec D6 Bit) -> Signal (FSVec D64 WordType) -> Signal WordType)
+mux64SysDef = newSysDef (mux64 "muxA") "mux64Sys" ["sel", "inputs"] ["out"]
+
+
+ram64 :: Signal WordType -> Signal (FSVec D6 Bit) -> Signal Bit -> Signal WordType
+ram64 = undefined
 
 
 
 {-
-
-mux64WordN :: Int -> ((SB,SB,SB,SB,SB,SB), [[SB]]) -> [SB]  -- 64 inputs, 1 output
-mux64WordN n ((s0,s1,s2,s3,s4,s5), w0:w1:w2:w3:w4:w5:w6:w7:w8:w9:w10:w11:w12:w13:w14:w15:w16:w17:w18:w19:w20:w21:w22:w23:w24:w25:w26:w27:w28:w29:w30:w31:w32:w33:w34:w35:w36:w37:w38:w39:w40:w41:w42:w43:w44:w45:w46:w47:w48:w49:w50:w51:w52:w53:w54:w55:w56:w57:w58:w59:w60:w61:w62:w63:_) = m0
+ram64Rows :: Int -> ([SB], (SB,SB,SB,SB,SB,SB), SB) -> [SB]
+ram64Rows n (input, addr, load) = mux64WordN n (addr, registers)
     where
-        m0  = mux4WordN n ((s4,s5), (m10,m11,m12,m13))
-        m10 = mux16WordN n ((s0,s1,s2,s3), [w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10,w11,w12,w13,w14,w15])
-        m11 = mux16WordN n ((s0,s1,s2,s3), [w16,w17,w18,w19,w20,w21,w22,w23,w24,w25,w26,w27,w28,w29,w30,w31])
-        m12 = mux16WordN n ((s0,s1,s2,s3), [w32,w33,w34,w35,w36,w37,w38,w39,w40,w41,w42,w43,w44,w45,w46,w47])
-        m13 = mux16WordN n ((s0,s1,s2,s3), [w48,w49,w50,w51,w52,w53,w54,w55,w56,w57,w58,w59,w60,w61,w62,w63])
+        memLine sel = regN n (input, sel <&> load)
+        registers = map memLine (decode6To64 addr)
 
 
 decode6To64 :: (SB,SB,SB,SB,SB,SB) -> [SB]
@@ -109,9 +131,4 @@ decode6To64 (s0, s1, s2, s3, s4, s5) =
         (s0N, s1N, s2N, s3N, s4N, s5N) = (inv s0, inv s1, inv s2, inv s3, inv s4, inv s5)
 
 
-ram64Rows :: Int -> ([SB], (SB,SB,SB,SB,SB,SB), SB) -> [SB]
-ram64Rows n (input, addr, load) = mux64WordN n (addr, registers)
-    where
-        memLine sel = regN n (input, sel <&> load)
-        registers = map memLine (decode6To64 addr)
 -}

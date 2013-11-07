@@ -134,10 +134,22 @@
             etc.), RAM memory blocks, among others. Chalmers-Lava is considered the ``standard''
             dialect, also being the one which was first developed.
 
+            %% TODO
             %% Kansas-Lava
 
         \subsection{The aspects evaluated}
         \label{subsec:aspects}
+            %% TODO
+            %%   * Capability/ease of simulation
+            %%   * Capability/ease of verification (of formal properties)
+            %%   * Capability to express generic (parameterized) families of circuits
+            %%     - Parameterized by functional as well as non-functional parameters
+            %%   * Integration with other tools (implementation)
+            %%     - Synthesis, theorem provers, etc.
+            %%   * Level of embedding
+            %%   * Extensibility
+            %%     - Multiple interpretations for circuits
+            %%     - User-defined datatypes
 
 
     \section{Modeled circuits}
@@ -349,7 +361,7 @@
                 used. ForSyDe has (currently) process constructors for the following models of
                 computation:
                 \begin{description}
-                    \item[Synchronous] Lorem ipsum
+                    \item[Synchronous] Lorem ipsum  %% TODO
                     \item[Untimed] Lorem ipsum
                     \item[Continuous] Lorem ipsum
                 \end{description}
@@ -364,7 +376,6 @@
                 port and one integer output, and in which the value of the output is equal to the
                 input plus 4. The interface and internal architecture of this system
                 (\emph{addFour}) is depicted in figure \ref{fig:forsyde-addFour}.
-                % Picture of the synchronous model (plusFour)
                 \begin{figure}[h]
                     \begin{center}
                         \includegraphics[width=1.0\textwidth]{imgs/forsyde-addFour.pdf}
@@ -382,8 +393,8 @@
             \subsubsection{Synchronous Process Constructors}
             \label{subsubsec:forsyde-synchprocs}
 
+            %% TODO
             % Talk about shallow and deep embedded signals (deep only supports synchronous)
-
             % Disadvantages: name handling, not actively maintained
             % Advantages: more modular VHDL generated (hierarchical). Higher-level descriptions
 
@@ -414,16 +425,6 @@
 %% Initial research in the literature that defines the EHDLs gave me some ideas of interesting
 %% criteria with which to evaluate them. This list might be reduced if it turns out to be too big:
 %% 
-%%   * Capability/ease of simulation
-%%   * Capability/ease of verification (of formal properties)
-%%   * Capability to express generic (parameterized) families of circuits
-%%     - Parameterized by functional as well as non-functional parameters
-%%   * Integration with other tools (implementation)
-%%     - Synthesis, theorem provers, etc.
-%%   * Level of embedding
-%%   * Extensibility
-%%     - Multiple interpretations for circuits
-%%     - User-defined datatypes
 %% 
 
 %% Expected outputs of this project
