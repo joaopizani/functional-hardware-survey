@@ -309,6 +309,7 @@
 
         \subsection{Lava}
         \label{subsec:lava}
+            The Lava EDSL\ldots
 
         \subsection{ForSyDe}
         \label{subsec:forsyde}
@@ -325,14 +326,61 @@
                 \item[Signal] A signal is, intuitively, a stream of information that flows between
                     processes. More concretely, it carries events of some type, and each event has
                     an associated tag. The meaning of the tag is defined by the \emph{model of
-                        computation} used.
+                    computation}\ref{subsubsec:forsyde-mocs} used.
                 \item[Process] A process is nothing more than a pure function on signals. A process
                     \emph{is able} to hold internal state. But, given the same input (possibly
                     infinite) signals, it produces the same output signals.
+                \item[Process constructor] Every ciruit in ForSyDe, even simple combinational ones,
+                    is built with a \emph{process constructor}. A process constructor can be seen as
+                    a skeleton of behaviour, and it clearly separates computation from
+                    synchronization aspects. A process constructor takes a combinational function
+                    (called \emph{process function}) as parameter -- expressing the computation
+                    aspect of the process, and possibly some extra values. There are combinational
+                    and sequential process constructors, and some representative examples from each
+                    class will be described in more detail in a specific subsection
+                    \ref{subsubsec:forsyde-synchprocs}.
             \end{description}
 
             % Talk about models of computation
-            % Picture of the synchronous model (plusFour)
+            \subsubsection{Models of Computation}
+            \label{subsubsec:forsyde-mocs}
+                The definition of signal given above is purposefully ``vague'' mainly because the
+                precise definition of signals is given by the \emph{model of computation} being
+                used. ForSyDe has (currently) process constructors for the following models of
+                computation:
+                \begin{description}
+                    \item[Synchronous] Lorem ipsum
+                    \item[Untimed] Lorem ipsum
+                    \item[Continuous] Lorem ipsum
+                \end{description}
+
+                Among those, perhaps the most ``notable'' one is the Synchronous MoC, because it
+                reflects the usual interpretation of signals as wires and the vast majority of
+                digital designs nowadays having a global clock. Also, all of our studied circuits
+                were modelled in ForSyDe using the Synchronous MoC. Therefore, it is interesting to
+                take a deeper look at it.
+
+                First, lets take a look at the behaviour of a system which has an one integer input
+                port and one integer output, and in which the value of the output is equal to the
+                input plus 4. The interface and internal architecture of this system
+                (\emph{addFour}) is depicted in figure \ref{fig:forsyde-addFour}.
+                % Picture of the synchronous model (plusFour)
+                \begin{figure}[h]
+                    \begin{center}
+                        \includegraphics[width=1.0\textwidth]{imgs/forsyde-addFour.pdf}
+                    \end{center}
+                    \label{fig:forsyde-addFour}
+                    \caption{The addFour circuit, example of usage of the Synchronous MoC}
+                \end{figure}
+
+                In this system, each of the constituent processes is built using the \texttt{mapSY}
+                process constructor, a constructor of the synchronous model of computation (its name
+                ends in ``SY''). It takes a combinational function (in this case ``+1'') and
+                evaluates it for each event in the input signal, generating a corresponding event in
+                the output signal.
+
+            \subsubsection{Synchronous Process Constructors}
+            \label{subsubsec:forsyde-synchprocs}
 
             % Talk about shallow and deep embedded signals (deep only supports synchronous)
 
