@@ -27,6 +27,12 @@ verifyHalfAdder = simulateSeq halfAdder input
                ]
 -}
 
+prop_halfAdderNeverBothTrue :: (SB, SB) -> Signal Bool
+prop_halfAdderNeverBothTrue inputs = ok
+    where
+        ok = nand2 (summ, carry)
+        (summ, carry) = halfAdder inputs
+
 
 fullAdder :: (SB, (SB, SB)) -> (SB, SB)
 fullAdder (cin, (a, b)) = (s, cout)
@@ -34,7 +40,6 @@ fullAdder (cin, (a, b)) = (s, cout)
       (ab, c1) = halfAdder (a, b)
       (s, c2)  = halfAdder (ab, cin)
       cout     = or2 (c1, c2)
-
 
 verifyFullAdder :: [(SB, SB)]
 verifyFullAdder = simulateSeq fullAdder input
@@ -59,6 +64,9 @@ verifyFullAdder = simulateSeq fullAdder input
                 ]
 -}
 
+prop_FullAdderCommutative :: (SB, (SB, SB)) -> Signal Bool
+prop_FullAdderCommutative (c, (a, b)) = fullAdder (c, (a, b)) <==> fullAdder (c, (b, a))
+
 
 rippleCarryAdder :: [(SB, SB)] -> [SB]
 rippleCarryAdder ab = s
@@ -67,14 +75,16 @@ rippleCarryAdder ab = s
 testRippleCarryAdder :: [[SB]]
 testRippleCarryAdder = simulateSeq rippleCarryAdder input
     where
-      input = [ [ (low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low)
-                , (low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low) ]
-              , [ (low,high),(low,high),(low,high),(low,high),(low,high),(low,high),(low,high),(low,high)
-                , (low,high),(low,high),(low,high),(low,high),(low,high),(low,high),(low,high),(low,high) ]
-              ]
+      input =
+        [ [ (low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low)
+          , (low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low) ]
+        , [ (low,high),(low,high),(low,high),(low,high),(low,high),(low,high),(low,high),(low,high)
+          , (low,high),(low,high),(low,high),(low,high),(low,high),(low,high),(low,high),(low,high) ]
+        ]
 {-
       outputs = [replicate 16 low, replicate 16 high]
 -}
+
 
 
 andLifted :: [(SB, SB)] -> [SB]
@@ -100,6 +110,10 @@ testIncrement = simulateSeq increment inputs
                 , (replicate 14 high) ++ [low, low]
                 ]
 -}
+
+prop_IncrementIsAlwaysDifferentThanInput_n :: Int -> Property
+prop_IncrementIsAlwaysDifferentThanInput_n n = forAll (list n) (\x -> verifyIncrement x)
+    where verifyIncrement x = inv (x <==> increment x)
 
 
 -- | The control bits of the ALU (six)
