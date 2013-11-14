@@ -139,23 +139,60 @@
 
         \subsection{The aspects evaluated}
         \label{subsec:aspects}
-            %% TODO
+            For each of the hardware description EDSLs we experimented with, a number of
+            \emph{aspects} were evaluated. The evaluated aspects do not necessarily make sense for
+            \emph{all} EDSLs, therefore our presentation follows a language-centric approach, in
+            which we expose the strenghts and weaknesses of each EDSL concerning the applicable
+            aspects.
 
-            \textbf{TODO}
-            \par
+            Without further ado, the following aspects are considered in the analysis:
 
-            \begin{itemize}
-                \item Capability/ease of simulation
-                \item Capability/ease of verification (of formal properties)
-                \item Capability to express generic (parameterized) families of circuits
-                    \subitem Parameterized by functional as well as non-functional parameters
-                \item Integration with other tools (implementation)
-                    \subitem Synthesis, theorem provers, etc.
-                \item Level of embedding
-                \item Extensibility
-                    \subitem Multiple interpretations for circuits
-                    \subitem User-defined datatypes
-            \end{itemize}
+            \begin{description}
+                \item[Simulation]
+                    The capability of simulating circuits modeled in the EDSL (and the ease with
+                    which it can be performed). Simulation is understood in this context as
+                    \emph{functional} simulation, i.e, obtaining the outputs calculated by the
+                    circuit for certain input combinations.
+
+                \item[Verification]
+                    The capability of verifying \emph{formal properties} concerning the behaviour of
+                    circuits (and the ease with which verification can be performed). The properties
+                    we are interested in are those which are \emph{universally quantified} over the
+                    circuit's inputs. As an example of such a property, we might have:
+                    \[
+                        \forall a \forall b \forall \text{sel}
+                            \left( \text{MUX}(a,b,\text{sel}) = a \right)
+                            \vee
+                            \left( \text{MUX}(a,b,\text{sel}) = b \right)
+                    \]
+
+                \item[Genericity]
+                    Whether (and how well) the EDSL allows the modelling of \emph{generic} or
+                    \emph{parameterized} circuits. An example of a generic circuit is a multiplexer
+                    with 2 n-bit inputs and 1 n-bit output, or a multiplexer with n 1-bit inputs and
+                    1 1-bit output. Besides parametrization in the \emph{size} if inputs and
+                    outputs, we will also analyze whether the EDSL provides chances for
+                    parametrization on other functional and/or non-functional attributes.
+
+                \item[Depth of embedding]
+                    Whether the EDSL models circuits with a \emph{shallow} embedding (using
+                    predicates or functions of the host language), a \emph{deep embedding}
+                    (in which circuits are members of a dedicated data type), or anything in
+                    between. The depth of embedding of an EDSL might have consequences for other
+                    aspects being analyzed.
+
+                \item[Integration with other tools]
+                    How well does the EDSL allow for interaction with (getting input from / generating
+                    output for) other tools in the hardware design process. For example, synthesis
+                    tools for FPGAs or ASICs, timing analysis tools, model checkers, etc.
+
+                \item[Extensibility]
+                    The extent to which the user can \emph{add} new interpretations, data types, and
+                    combinator forms to the language. For example, the user might want to model
+                    circuits that consume and produce custom datatypes, or might be interested in
+                    extracting \emph{metrics} from a circuit such as power consumption, number of
+                    elementary gates, etc.
+            \end{description}
 
 
     \section{Modeled circuits}
