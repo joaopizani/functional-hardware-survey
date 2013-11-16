@@ -443,6 +443,30 @@
 
         \subsection{Coquet}
         \label{subsec:coquet}
+            The third analyzed EDSL for hardware description, Coquet, % ref here
+            is strikingly different from both others. Most of these differences can be explained in
+            one way or another by its choice of host ``language'' -- Coq. % note: Coq isn't a lang
+
+            Coq is an interactive theorem prover based on \emph{intuitionistic type theory}. In the
+            context of Coq, the concepts of ``term'' and ``type'' are far more intertwined than,
+            say, in Haskell. Types in Coq can contain references to terms and vice-versa. A very
+            typical example of these so-called \emph{dependent types} is the type(-family) of
+            vectors with a certain length:
+            \begin{verbatim}
+    Inductive vec A : nat -> Type :=
+        |nil  : vec A 0
+        |cons : forall (h : A) (n : nat),  vec A n -> vec A (S n).
+            \end{verbatim}
+
+            By having the length of the vector being part of the type, we can \emph{enforce} several
+            useful properties of functions operating on vector. In fact, the type-system of Coq is
+            so expressive that it can encode any proposition of \emph{intuitionistic propositional
+                logic}, a formal logic in which almost all of mathematics can be proven.
+
+            Given such expressive power, one can imagine that it might be useful to express circuits
+            in Coq, and to use it to prove interesting properties about these circuits. This is
+            exactly the goal of Coquet. How this goal is achieved and the modelling of our studied
+            circuits in Coquet is discussed in the following subsections.
 
 
     \section{Results summary}
