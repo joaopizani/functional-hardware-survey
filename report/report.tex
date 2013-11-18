@@ -443,9 +443,11 @@
 
         \subsection{Coquet}
         \label{subsec:coquet}
-            The third analyzed EDSL for hardware description, Coquet, % ref here
+            The third analyzed EDSL for hardware description, Coquet\cite{coquet2011},
             is strikingly different from both others. Most of these differences can be explained in
-            one way or another by its choice of host ``language'' -- Coq. % note: Coq isn't a lang
+            one way or another by its choice of host ``language'' -- Coq.\footnote{``Coq'' is not
+                the name of a language, but a theorem-proving system that uses different languages
+                for defining terms, interactive commands, and user-defined tactics}
 
             Coq is an interactive theorem prover based on \emph{intuitionistic type theory}. In the
             context of Coq, the concepts of ``term'' and ``type'' are far more intertwined than,
@@ -454,19 +456,62 @@
             vectors with a certain length:
             \begin{verbatim}
     Inductive vec A : nat -> Type :=
-        |nil  : vec A 0
-        |cons : forall (h : A) (n : nat),  vec A n -> vec A (S n).
+        | nil  : vec A 0
+        | cons : forall (h : A) (n : nat),  vec A n -> vec A (S n).
             \end{verbatim}
 
             By having the length of the vector being part of the type, we can \emph{enforce} several
-            useful properties of functions operating on vector. In fact, the type-system of Coq is
+            useful properties of functions operating on vectors. In fact, the type-system of Coq is
             so expressive that it can encode any proposition of \emph{intuitionistic propositional
                 logic}, a formal logic in which almost all of mathematics can be proven.
 
             Given such expressive power, one can imagine that it might be useful to express circuits
-            in Coq, and to use it to prove interesting properties about these circuits. This is
-            exactly the goal of Coquet. How this goal is achieved and the modelling of our studied
-            circuits in Coquet is discussed in the following subsections.
+            in Coq, and use it to prove interesting properties about these circuits. This is exactly
+            the goal of Coquet. How this goal is achieved and the modelling of our studied circuits
+            in Coquet is discussed in the following subsections.
+
+            \subsubsection{Modelling circuits}
+            \label{subsubsec:coquet-modelling}
+                Coquet is a deep-embedded DSL, thus it represents circuits as a datatype. By using
+                dependent types, a designer modelling a circuit in Coquet is able to prevent certain
+                kinds of ``errors'' much earlier in the design process, because the
+                \emph{well-formedness} is guaranteed by construction, i.e, every circuit built using
+                the constructors provided by Coquet are well-formed by definition. Let's take a look
+                at the \emph{Circuit} data type definition:
+                \begin{verbatim}
+    Context {tech : Techno}
+    Inductive ℂ : Type -> Type -> Type :=
+    | Atom : ∀ {n m : Type} {Hfn : Fin n} {Hfm : Fin m}, techno n m -> ℂ n m
+    | Plug : ∀ {n m : Type} {Hfn : Fin n} {Hfm : Fin m} (f : m -> n), ℂ n m
+    | Ser : ∀ {n m p : Type}, ℂ n m -> ℂ m p -> ℂ n p
+    | Par : ∀ {n m p q : Type}, ℂ n p -> ℂ m q -> ℂ (n + m) (p + q)
+    | Loop : ∀ {n m p : Type}, ℂ (n + p) (n + p) -> ℂ n m
+                \end{verbatim}
+
+                The \texttt{ℂ} type is parameterized by two types (in the definition above
+                represented by the letters n, m, p\ldots). These types are the \emph{input} and
+                \emph{output} types of the circuit, respectively. These parameters can be
+                instantiated to any types which have instances for the \texttt{Fin} type class.
+                These types \textbf{do not} represent what is ``carried'' on the wires, on the other
+                hand, they are meant to represent the ``structure'' of the input and output ports:
+                basically how many of them there are, how are they grouped and how are they named.
+
+                %% Parameterized by techno, the fundamental gate of the technology
+
+                %% Example sum circuit
+                %% Tags for facilitating distinction
+
+                % Example of circuit: Adder
+
+            \subsubsection{Circuit semantics in Coquet}
+            \label{subsub:coquet-semantics}
+
+
+
+            % Improvements:
+            % * Coquet has already meaning relations defined in the context of streams. A stream is
+            %   a function from nat -> A. With we generalize on the nat, we can approximate
+            %   ForSyDe's concept of Signal.
 
 
     \section{Results summary}
@@ -479,20 +524,6 @@
     \bibliographystyle{plain}
     \bibliography{references}
 
-%% Research question
-%% =================
-%% Using some mildly-complex circuits as case studies, the EHDLs will be compared based on a number of
-%% criteria. The circuits to be described and analyzed in each EHDL will fall under the following
-%% classification:
-%% 
-%%   * **Combinational / arithmetic:** Simple combinational circuit, a mildly-powerful ALU
-%%   * **Mostly sequential / state-machine:** Some simple memory component or state machine
-%%   * **Mix of combinational / sequential:** A very reduced instruction set processor
-%% 
-%% Initial research in the literature that defines the EHDLs gave me some ideas of interesting
-%% criteria with which to evaluate them. This list might be reduced if it turns out to be too big:
-%% 
-%% 
 
 %% Expected outputs of this project
 %% ================================
@@ -503,7 +534,6 @@
 %% 
 %% Last, but not least, one output of this project which I also find interesting is the set of
 %% comparison criteria itself, along with the justification of why they were chosen.
-
 
 
 \end{document}
