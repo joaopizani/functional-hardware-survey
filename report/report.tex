@@ -488,20 +488,75 @@
     | Loop : ∀ {n m p : Type}, ℂ (n + p) (n + p) -> ℂ n m
                 \end{verbatim}
 
-                The \texttt{ℂ} type is parameterized by two types (in the definition above
-                represented by the letters n, m, p\ldots). These types are the \emph{input} and
-                \emph{output} types of the circuit, respectively. These parameters can be
-                instantiated to any types which have instances for the \texttt{Fin} type class.
-                These types \textbf{do not} represent what is ``carried'' on the wires, on the other
-                hand, they are meant to represent the ``structure'' of the input and output ports:
-                basically how many of them there are, how are they grouped and how are they named.
+                The \texttt{ℂ} type is parameterized by two types. These types are the \emph{input} and
+                \emph{output} types of the circuit, respectively. They \textbf{do not} represent
+                what is ``carried'' on the wires, but the \emph{structure} of the circuit's input
+                and output ports: How many of them there are, how they grouped and how they are
+                named.
 
-                %% Parameterized by techno, the fundamental gate of the technology
+                There are 2 \emph{atomic} constructors from which an element of \texttt{ℂ} can be
+                built and 3 \emph{combinators}, which build a circuit based on other circuit(s). By
+                observing the serial and parallel composition combinators (\texttt{Ser} and
+                \texttt{Par}, respectively), we notice that the input and output types match exactly
+                as expected.
 
-                %% Example sum circuit
+                The 2 atomic constructors constrain the types \texttt{n} and \texttt{m} by requiring
+                them to have instances of the ``Fin'' type class, i.e, they have to be \emph{finite}
+                types (types from which a finite list of unique elements can be obtained). This
+                constraint is important given the interpretation that these types (\texttt{n} and
+                \texttt{m}) have: each element of \texttt{n} (respectively \texttt{m}) stands for an
+                input (respectively output) ``wire'' in the circuit interface.
+
+                The case of the ``Atom'' constructor is particularly revealing of how Coquet works:
+                this constructor is parameterized by an \emph{instance} of the type class
+                \texttt{Techno} for the types \texttt{n} and \texttt{m}. What this instance provides
+                (in the code fragment that reads ``\texttt{techno n m}'') is the \emph{type of the
+                    fundamental gate} in the technology being used. We could choose our modeled
+                circuits to have, for example, NAND, NOR, or other (more exotic) gates as
+                fundamental.
+
+                As an ``usage example'' of Coquet, we show two simple circuits (\texttt{NOT} and
+                \texttt{HALFADD}), along with proofs that they implement the expected functions over
+                booleans. Let's start with \texttt{NOT}:
+                \begin{verbatim}
+    Definition NOT x nx : ℂ [:x] [:nx]  :=  Fork2 _ |> (NOR x x nx).
+
+    Instance NOT_Implement {x nx} : Implement (NOT x nx) _ _ negb.
+    Proof.
+        intros ins outs H.
+        unfold NOT in H.
+        tac.
+    Qed.
+                \end{verbatim}
+
+                The input type of \texttt{NOT} is a \emph{tagged unit} with tag \texttt{x},
+                similarly, the output type has tag \texttt{nx}. There is some \emph{notation}
+                introduced by Coquet to make the creation of tagged units more convenient. The
+                \texttt{NOT} circuit is a serial composition of a \texttt{Fork2} circuit (which
+                simply splits the input into two identical copies) and a \texttt{NOR} circuit, which
+                is the underlying fundamental gate in this case.
+
+                Below the definition of the circuit itself we state and prove the fact that our
+                circuit implements the desired function (boolean negation, \texttt{negb}). More
+                details on exactly what is meant by ``implements'', as well as the workings of plugs
+                and tags, are exposed in the next sections. Now let's take a look at a half-adder
+                described in Coquet:
+                \begin{verbatim}
+    Program Definition HADD a b s c : ℂ ([:a] + [:b]) ([:s] + [:c]) :=
+        Fork2 ([:a] + [:b]) |> (XOR a b s & AND a b c).
+
+    Instance HADD_Implement {a b s c} :
+        Implement (HADD a b s c) _ _
+        (fun (x : bool * bool) => match x with
+                                  | (a, b) => (xorb a b, andb a b)
+                                  end.
+        ).
+        Proof.
+            unfold HADD;  intros ins outs H;  tac.
+        Qed.
+                \end{verbatim}
+
                 %% Tags for facilitating distinction
-
-                % Example of circuit: Adder
 
             \subsubsection{Circuit semantics in Coquet}
             \label{subsub:coquet-semantics}
