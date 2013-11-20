@@ -247,8 +247,8 @@
                 \begin{center}
                     \includegraphics[width=0.6\textwidth]{imgs/alu-block.pdf}
                 \end{center}
-                \label{fig:alu-block}
-                \caption{Block diagram of circuit 1, showing its input and output ports.}
+                \caption{Block diagram of circuit 1, showing its input and output ports.
+                    \label{fig:alu-block}}
             \end{figure}
 
             Each of the 6 control bits to the ALU has, in isolation, a well-defined effect on the
@@ -301,8 +301,8 @@
                 \begin{center}
                     \includegraphics[width=0.4\textwidth]{imgs/ram-block.pdf}
                 \end{center}
-                \label{fig:ram-block}
-                \caption{Block diagram of circuit 2, a RAM of 64 lines}
+                \caption{Block diagram of circuit 2, a RAM of 64 lines
+                    \label{fig:ram-block}}
             \end{figure}
 
             The circuit has one 16-bit output, named ``out'', and three inputs (``in'', ``address''
@@ -335,8 +335,8 @@
                 \begin{center}
                     \includegraphics[width=0.9\textwidth]{imgs/cpu-block.pdf}
                 \end{center}
-                \label{fig:cpu-block}
-                \caption{Block diagram of circuit 3, the Hack CPU}
+                \caption{Block diagram of circuit 3, the Hack CPU
+                    \label{fig:cpu-block}}
             \end{figure}
 
             The Hack architecture has an \emph{extremely} reduced instruction set, and consists in
@@ -355,8 +355,8 @@
                 \begin{center}
                     \includegraphics[width=1.0\textwidth]{imgs/cpu-memory.pdf}
                 \end{center}
-                \label{fig:cpu-memory}
-                \caption{The Hack CPU connected to the data and instruction memory blocks}
+                \caption{The Hack CPU connected to the data and instruction memory blocks
+                    \label{fig:cpu-memory}}
             \end{figure}
 
     \section{Analysis of the EDSLs}
@@ -423,8 +423,8 @@
                     \begin{center}
                         \includegraphics[width=1.0\textwidth]{imgs/forsyde-addFour.pdf}
                     \end{center}
-                    \label{fig:forsyde-addFour}
-                    \caption{The addFour circuit, example of usage of the Synchronous MoC}
+                    \caption{The addFour circuit, example of usage of the Synchronous MoC
+                        \label{fig:forsyde-addFour}}
                 \end{figure}
 
                 In this system, each of the constituent processes is built using the \texttt{mapSY}
@@ -478,7 +478,9 @@
                 \emph{well-formedness} is guaranteed by construction, i.e, every circuit built using
                 the constructors provided by Coquet are well-formed by definition. Let's take a look
                 at the \emph{Circuit} data type definition:
-                \begin{verbatim}
+                \begin{figure}[h]
+                    \begin{center}
+                        \begin{verbatim}
     Context {tech : Techno}
     Inductive ℂ : Type -> Type -> Type :=
     | Atom : ∀ {n m : Type} {Hfn : Fin n} {Hfm : Fin m}, techno n m -> ℂ n m
@@ -486,7 +488,11 @@
     | Ser : ∀ {n m p : Type}, ℂ n m -> ℂ m p -> ℂ n p
     | Par : ∀ {n m p q : Type}, ℂ n p -> ℂ m q -> ℂ (n + m) (p + q)
     | Loop : ∀ {n m p : Type}, ℂ (n + p) (n + p) -> ℂ n m
-                \end{verbatim}
+                        \end{verbatim}
+                    \end{center}
+                    \caption{The Circuit (ℂ) datatype in Coquet
+                        \label{fig:coquet-circuit-type}}
+                \end{figure}
 
                 The \texttt{ℂ} type is parameterized by two types. These types are the \emph{input} and
                 \emph{output} types of the circuit, respectively. They \textbf{do not} represent
@@ -532,31 +538,83 @@
                 The input type of \texttt{NOT} is a \emph{tagged unit} with tag \texttt{x},
                 similarly, the output type has tag \texttt{nx}. There is some \emph{notation}
                 introduced by Coquet to make the creation of tagged units more convenient. The
-                \texttt{NOT} circuit is a serial composition of a \texttt{Fork2} circuit (which
-                simply splits the input into two identical copies) and a \texttt{NOR} circuit, which
-                is the underlying fundamental gate in this case.
+                \texttt{NOT} circuit is a serial composition (denoted as \texttt{|>} of a
+                \texttt{Fork2} circuit (which simply splits the input into two identical copies) and
+                a \texttt{NOR} circuit, which is the underlying fundamental gate in this case.
 
                 Below the definition of the circuit itself we state and prove the fact that our
                 circuit implements the desired function (boolean negation, \texttt{negb}). More
                 details on exactly what is meant by ``implements'', as well as the workings of plugs
-                and tags, are exposed in the next sections. Now let's take a look at a half-adder
+                and tags, are exposed further ahead. Now let's take a look at a half-adder
                 described in Coquet:
                 \begin{verbatim}
-    Program Definition HADD a b s c : ℂ ([:a] + [:b]) ([:s] + [:c]) :=
+    Definition HADD a b s c : ℂ ([:a] + [:b]) ([:s] + [:c]) :=
         Fork2 ([:a] + [:b]) |> (XOR a b s & AND a b c).
 
     Instance HADD_Implement {a b s c} :
         Implement (HADD a b s c) _ _
-        (fun (x : bool * bool) => match x with
-                                  | (a, b) => (xorb a b, andb a b)
-                                  end.
-        ).
+        (fun (x : bool * bool) => match x with (a,b) => (xorb a b, andb a b) end).
         Proof.
             unfold HADD;  intros ins outs H;  tac.
         Qed.
                 \end{verbatim}
 
-                %% Tags for facilitating distinction
+                First of, the sum types that are given as parameters to \texttt{ℂ} indicate that we
+                have two input ports and two output ports. By using \texttt{Fork2} on a binary sum
+                (\texttt{[:a] + [:b]}), we create as output a sum type in which each of the
+                components is in itself a sum: that matches exactly the interface of the component
+                after the \texttt{|>} operator. On the right side of the serial composition, we have
+                a parallel composition of \texttt{XOR} and \texttt{AND}, giving two outputs:
+                respectively the sum (\texttt{[:s]}) and carry-out (\texttt{[:c]}) 
+
+                Together with the definition, we prove that the \texttt{HADD} circuit implements the
+                boolean function we would expect, and the proof is similar to the case of
+                \texttt{NOT}. It makes use of a Coquet custom tactic (\texttt{tac}), but a more
+                throughout example of proof of functional correctness will be given futher ahead.
+                Also, in the case of the adder used in our case study (ripple-carry adder), we prove
+                that the circuit implements the \emph{actual} addition function on binary integers,
+                and not some boolean equivalent.
+
+                As a last detail on the ``user interface'' of Coquet, there is the definition of
+                what exactly are the input and output types (a circuit of type \texttt{ℂ n m} has
+                input type \texttt{n} and output type \texttt{m}). Usually, in the Coquet
+                paper\cite{coquet2011} and in the examples provided with the library, input and
+                output types are \emph{sum types} in which the terms of the sum are \emph{tagged
+                    units}. Using tags serves a form of ``documentation'', giving someone reading
+                the circuit model an idea of what role does each input/output port play. The
+                \emph{type family} of tagged unit types is defined as follows:
+                \begin{verbatim}
+    Inductive tag (t : string) : Type := _tag : tag t
+
+    Notation "[: x ]" := (tag x).
+    Notation "[! x ]" := (_tag x).
+    Notation "[!!]"   := (_tag _).
+                \end{verbatim}
+
+                For each string \texttt{t}, there is a type \texttt{tag t}, and this type has
+                exactly one inhabitant. There are also, as part of Coquet, some definitions to make
+                working with sum types less tiresome. For example, there is the function
+                \texttt{sumn} which, given a type \texttt{t} and a natural \texttt{n}, returns a
+                sum type with \texttt{n} elements and in which each element has type \texttt{t}.
+                This might be useful if we are defining a n-bit adder:
+                \begin{verbatim}
+    Definition RIPPLE cin a b cout s n :
+        ℂ  ([:cin] + sumn [:a] n + sumn [:b] n)  (sumn [:s] n + [:cout]) := ...
+                \end{verbatim}
+
+                While the provided examples use sums of tagged units as the input/output types, they
+                can be more general: as seen in the definition of the circuit type (Fig.
+                \ref{fig:coquet-circuit-type}), the only requirement is that they belong to the
+                \texttt{Fin} type class, which is defined as follows:
+
+                \begin{verbatim}
+    Class Fin A := {
+        eq_fin : eqT A;
+        enum   : list A;
+        axiom  : forall (x : A), count (equal x) enum = 1
+    }.
+                \end{verbatim}
+
 
             \subsubsection{Circuit semantics in Coquet}
             \label{subsub:coquet-semantics}
