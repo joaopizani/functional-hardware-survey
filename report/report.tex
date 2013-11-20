@@ -396,7 +396,6 @@
                     \ref{subsubsec:forsyde-synchprocs}.
             \end{description}
 
-            % Talk about models of computation
             \subsubsection{Models of Computation}
             \label{subsubsec:forsyde-mocs}
                 The definition of signal given above is purposefully ``vague'' mainly because the
@@ -433,13 +432,20 @@
                 evaluates it for each event in the input signal, generating a corresponding event in
                 the output signal.
 
+                TODO: Talk about shallow and deep embedded signals (deep only supports synchronous).
+
             \subsubsection{Synchronous Process Constructors}
             \label{subsubsec:forsyde-synchprocs}
 
-            %% TODO
-            % Talk about shallow and deep embedded signals (deep only supports synchronous)
-            % Disadvantages: name handling, not actively maintained
-            % Advantages: more modular VHDL generated (hierarchical). Higher-level descriptions
+            \subsubsection{Circuits modeled}
+            \label{subsubsec:forsyde-circuits}
+                TODO: expose and discuss the circuits we modeled as case study, highlighting the
+                advantages and disadvantages of ForSyDe found while modelling them.
+
+                Advantages: more modular VHDL generated (hierarchical). Higher-level descriptions.
+
+                Disadvantages: name handling, not actively maintained
+
 
         \subsection{Coquet}
         \label{subsec:coquet}
@@ -620,11 +626,35 @@
             \label{subsub:coquet-semantics}
 
 
+            \subsubsection{Possible improvements and future work}
+            \label{subsubsec:coquet-improv}
+                The approach to circuit modelling is \emph{very} generic, and leaves room for
+                extension in several aspects, even though the library is already provided with some
+                reasnoable deafults.
 
-            % Improvements:
-            % * Coquet has already meaning relations defined in the context of streams. A stream is
-            %   a function from nat -> A. With we generalize on the nat, we can approximate
-            %   ForSyDe's concept of Signal.
+                For example, the definition of the \emph{meaning relation} for circuits (by
+                induction on circuit structure) is parameterized by the \emph{type \texttt{T} of was
+                    is carried in the wires}. Even though the library already provides examples for
+                booleans and streams of booleans, it could also be interesting to add cases for
+                dealing with some three-valued logics, or a case for IEEE1164's std\_logic type,
+                used often in VHDL.
+
+                Another interesting point is that Coquet defines a \texttt{stream} type family, and
+                then proceeds to define several interesting function over \texttt{stream}, as well
+                as an instance for the meaning relation. The type family is defined as follows:
+                \begin{verbatim}
+    Definition stream A := nat -> A.
+                \end{verbatim}
+                If instead of using \texttt{nat} in the above definition, we generalized it a bit
+                more (abstracting a new type parameter), we arrive at the concept of an ``event
+                stream'':
+                \begin{verbatim}
+    Definition events tag A : tag -> A.
+                \end{verbatim}
+                This is exactly how ForSyDe defines its ``signals'', so we could model circuits in
+                models of computation other than the synchronous model (which is the one allowed by
+                the current \texttt{stream} definition).
+
 
 
     \section{Results summary}
