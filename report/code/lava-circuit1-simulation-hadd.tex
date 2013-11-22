@@ -1,0 +1,10 @@
+\begin{haskellcode}
+    verifyHalfAdder :: [(SB, SB)]
+    verifyHalfAdder = simulateSeq halfAdder input
+        where
+            input = [ (low,  low)
+                    , (low,  high)
+                    , (high, low)
+                    , (high, high)
+                    ]
+\end{haskellcode}

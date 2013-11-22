@@ -21,7 +21,7 @@
 \usepackage{minted}
 \usepackage{fancyvrb}
 \usemintedstyle{default}
-\newminted{haskell}{gobble=4,linenos,mathescape,fontfamily=tt,fontsize=\footnotesize,xleftmargin=\parindent}
+\newminted{haskell}{gobble=4,linenos,mathescape,fontfamily=tt,xleftmargin=\parindent}
 
 
 
@@ -55,6 +55,7 @@
 
 %% The document itself
 \begin{document}
+
     \maketitle
 
     \section{Introduction}
@@ -125,17 +126,6 @@
                     \emph{families} of circuits (using proofs by induction).
             \end{description}
 
-            The Lava EDSL has several ``dialects'', among which are Xilinx-Lava, York-Lava,
-            Kansas-Lava and Chalmers-Lava. Xilinx-Lava was developed by Satnam Singh and puts a
-            greater emphasis on the \emph{layout} of the described circuits, focusing on their
-            implementation in Xilinx's FPGAs. York-Lava was developed as part of the Reduceron
-            project, and is a variation of Chalmers-Lava, omitting some features and adding some
-            others, like a ``Prelude'' of commonly used circuits ((de)multiplexers, (de)coders,
-            etc.), RAM memory blocks, among others. Chalmers-Lava is considered the ``standard''
-            dialect, also being the one which was first developed.
-
-            %% TODO
-            %% Kansas-Lava
 
         \subsection{The aspects evaluated}
         \label{subsec:aspects}
@@ -364,7 +354,234 @@
 
         \subsection{Lava}
         \label{subsec:lava}
-            The Lava EDSL\ldots
+            Lava\cite{lava1998} is an EDSL for hardware description developed originally around 1998
+            at Chalmers University of Technology, in Sweden. It uses Haskell as the host language,
+            and circuits described in Lava are \emph{deeply embedded}.
+
+            The Lava EDSL has several ``dialects'', among which are Xilinx-Lava, York-Lava,
+            Kansas-Lava and Chalmers-Lava. Xilinx-Lava was developed by Satnam Singh and puts a
+            greater emphasis on the \emph{layout} of the described circuits, focusing on their
+            implementation in Xilinx's FPGAs. York-Lava was developed as part of the Reduceron
+            project, and is a variation of Chalmers-Lava, omitting some features and adding some
+            others, like a ``Prelude'' of commonly used circuits ((de)multiplexers, (de)coders,
+            etc.), RAM memory blocks, among others. Chalmers-Lava is considered the ``standard''
+            dialect, also being the one which was first developed, therefore it was chosen as the
+            one to be studied in this project.
+
+            Before diving into the inner workings of the Chalmers Lava library, we first need to
+            make clear that there are two very distinct versions of this library. The original paper
+            that defines the Lava language\cite{lava1998} contains the first version, while the
+            current version is the one defined in \cite{observable-sharing-1999}. This current
+            version of Chalmers Lava is the one in which our case study is implemented.
+
+            As already said, Lava uses a \emph{deep embedding}, and the datatype used to represent a
+            circuit is \texttt{Signal}, defined in figure \ref{fig:lava-signal}. As can be noticed
+            from the definition, the \emph{actual} circuit type (\texttt{S}) is ``wrapped'' around
+            the ``Ref'' type constructor. This has to do with the approach that Lava takes to
+            solving the problem of observable sharing, which is to rely on comparing
+            \emph{references to object} given by the Haskell implementation, to detect cycles in
+            syntax graphs representing circuits. This approach is the cause of some of Lava's
+            advantages as well as disadvantages, which will be discussed further ahead.
+
+            \begin{figure}[h]
+                \begin{center}
+                    \input{code/lava-signal.tex}
+                \end{center}
+                \caption{Lava's \texttt{Signal} datatype, used to represent circuits.
+                    \label{fig:lava-signal}}
+            \end{figure}
+
+            Having defined a circuit operating on values of a type \texttt{a} to have type
+            \texttt{Signal a}, then there are several circuit combinators provided by Lava, which
+            take circuits as inputs and provide circuits as outputs. For example, on figure
+            \ref{fig:lava-boolean-combinators} we show some boolean circuit combinators:
+
+            \begin{figure}[h]
+                \begin{center}
+                    \input{code/lava-boolean-combinators.tex}
+                \end{center}
+                \caption{Some of Lava's boolean circuit combinators.
+                    \label{fig:lava-boolean-combinators}}
+            \end{figure}
+
+            With Lava, one can also model circuits operating on \texttt{Int}s (and there are, in
+            fact, several interesting integer circuit combinators already included in the Lava
+            library). However, our goal in this project was to model \emph{boolean} circuits, and,
+            besides that, integer circuits offer a reduced set of features.
+
+
+            \subsubsection{Circuits modeled}
+            \label{subsubsec:lava-circuits}
+                TODO: expose and discuss the circuits modeled in Lava, in light of the aspects being
+                analyzed.
+
+                In order to be able to describe circuit 1, the ALU (described in more detail on
+                section \ref{subsec:circuit-alu}), we first needed to model the necessary
+                subcircuits. The ``core'' of the ALU is composed of a 16-bit ripple-carry adder and
+                a 16-bit \texttt{AND} gate. To model the ripple-carry adder we used full adders as
+                subcomponents, which in turn used half adders. To get used to the wat in which
+                circuits are described in Lava, let us first take a look at the definition of the
+                hierarchy of adders:
+                \input{code/lava-circuit1-model-adders.tex}
+
+                Based on this small model we can already make some observations concerning the
+                aspects that we are analyzing. These observations are:
+                \begin{itemize}
+                    \item All circuits in Lava must be modeled as \emph{uncurried} functions, that
+                        is, if multiple inputs are needed, they need to be packed into a tuple, the
+                        same ``packing'' happens also in the case of multiple outputs.
+
+                    \item The \emph{basic} type of input/output for all circuits modeled is
+                        \texttt{Signal Bool}. This is not coincidental: Lava's VHDL generation
+                        backend can only work with circuits whose input/output types are
+                        \texttt{Signal Bool} or any nested combination of tuples and lists thereof.
+                        This limitation makes Lava have a low \textbf{extensibility}, not allowing
+                        -- for example -- user-defined types.
+
+                    \item In Lava, (families of) circuits with variable-sized inputs/outputs are
+                        modeled by using lists (as can be seen in the definition of
+                        \texttt{rippleCarryAdder}). This approach has a good \textbf{genericity},
+                        but is \textbf{not type-safe enough}. For example, we could have a circuit
+                        \texttt{C1}, which uses the assumption that its inputs are 32-bit wide.
+                        There is no way to enforce, at \emph{Haskell compilation time}, that the
+                        inputs with correct size are provided.  Possible problems could only be
+                        detected at simulation or VHDL generation.
+                \end{itemize}
+
+                Now, after having defined all the necessary subcomponents, lets take a look at the
+                ALU circuit itself:
+                \input{code/lava-circuit1-model-alu.tex}
+
+                In the definition of the ALU itself, we would like to have a user-defined datatype
+                to represent the kinds of functions that can be computed by the ALU (functions
+                listed on table \ref{tab:alu-functions}). However, due to the limitations of the
+                VHDL backend already discussed, we have to define \texttt{ALUControlBits} as simply
+                a \emph{type synonym} for a 6-tuple of bits.
+
+                Besides modelling the three circuits in Lava, we also simulated them. The definition
+                of the ALU circuit in \cite{nand2tetris-book} has a pretty extensive truth table to
+                test the circuit model, which was used to simulate the ALU. However, let's take a
+                look at a simpler simulation case, that of a half-adder:
+                \input{code/lava-circuit1-simulation-hadd.tex}
+
+                Our \texttt{halfAdder} circuit is combinational, therefore we could have used the
+                function \texttt{simulate} if we wanted to test its behaviour when given one single
+                combination of inputs. However, in this case we give the circuit under test a
+                \emph{sequence} of inputs and check the corresponding sequence of outputs.
+
+                The attentive reader might be asking why is this simulation not an automated test,
+                i.e, why are we \textbf{not} comparing the results of the simulation with an
+                \emph{expected} output sequence. This has to do with the way in which Lava handles
+                the problem of observable sharing: values of type \texttt{Signal a} encapsulate
+                effectively a \emph{runtime reference} to an object of type \texttt{a}. Therefore,
+                even though \emph{actual} and \emph{expected} outputs might appear to be equal, they
+                are considered different by Lava. Here is the offending \texttt{Eq} instance from
+                the Lava library (module \texttt{Lava.Signal}):
+                \begin{haskellcode}
+    instance Eq (Signal a) where
+        Signal (Symbol r1) == Signal (Symbol r2) = r1 == r2
+                \end{haskellcode}
+
+                With the setback of not having \emph{automated} testing, we can say that Lava does
+                provide good \textbf{simulation} capabilities, with an interface that is easy to
+                understand for functional programmers.
+
+                Now, before moving on to the next circuit
+                studied, let's take a look at how Lava handles \emph{formal verification} with two
+                examples: checking that a full adder is commutative and that the output of an
+                incrementer circuit is always different from its input:
+                \input{code/lava-circuit1-verify-fulladder.tex}
+
+                A property over a circuit in Lava is modeled as a circuit containing \emph{one
+                    boolean output}, which -- for the property to be true -- needs to be \emph{true}
+                for any combination of inputs (these properties are called \emph{safety
+                    properties}). Lava performs the verification by converting the circuit model to
+                a CNF logical formula and executing an external SAT solver on the negation of the
+                formula: the property being verified is \emph{valid} if and only if the negated
+                formula is unsatisfiable. The verification for the incrementer introduces another
+                detail of this kind of verification:
+                \input{code/lava-circuit1-verify-incrementer.tex}
+
+                We can see by the type of the verification function that it is a \emph{property
+                    generator}, i.e, for each integer \texttt{n}, it gives a property. An
+                incrementer is a circuit with generic input/output size, but the SAT-solving
+                approach to verification can only prove properties for \emph{circuits of fixed
+                    size}. Therefore, we can only verify a finite number of particular instances of
+                the circuit.
+
+                Moving on to circuit 2 (the RAM block), we will take a look at how Lava handles
+                sequential circuits. The sequential ``primitive'' circuit in Lava is \texttt{delay}.
+                It takes two boolean signals as input and outputs a single boolean signal. Its
+                semantics is that the output signal will correspond tho the input signal
+                \emph{delayed} by one clock cycle, with the other parameter being the first value of
+                the output.  Using this fundamental circuit, we modeled the first building block of
+                our hierarchy of memory elements: a 1-bit register with input and load signals:
+                \input{code/lava-circuit2-model-reg.tex}
+
+                In this model, we use a \texttt{mux} to control whether the next state of the output
+                will be simply the previous state, or the input value will be ``loaded'' into the
+                register. Now, a 1-bit register can easily be ``lifted'' into a generic n-bit
+                circuit:
+                \input{code/lava-circuit2-model-regN.tex}
+
+                The \texttt{regN} definition is \emph{generic}, and parameterized by the size of the
+                input and output (\texttt{n}). This means that \emph{for each value of n, there is a
+                circuit \texttt{regN n}}; of course we can only simulate and synthesize specific
+                instances of this family of circuits, as the example below:
+                \input{code/lava-circuit2-simulation-regN.tex}
+
+                The \texttt{simulateSeq} function, which we already used to test the ALU (a
+                combinational circuit), is actually intended for the simulation of sequential
+                circuits: the list of inputs its given is the sequence of values present at the
+                input ports of the circuit under test -- one element of the list for each clock
+                cycle. The list of outputs given by \texttt{simulateSeq} has a similar
+                interpretation.
+
+                Having the core sequential component for our memory bank (\texttt{regN}), we modeled
+                some other helper components (such as an \emph{address decoder} and a 64-to-1
+                \emph{multiplexer}). With all the components at our disposal, we then modeled the
+                RAM block itself:
+                \input{code/lava-circuit2-model-ram64.tex}
+
+                All the registers in the memory bank are connected to the ``global'' input word for
+                the bank, but the load signal for any particular register is active \emph{iff} the
+                global \texttt{load} signal is active \emph{and} (\texttt{<\&>}) that particular
+                memory line is selected. Finally, to be precise, \texttt{ram64Rows} actually defines
+                a family of circuits, one for each value of \texttt{n}. The one we are interested in
+                is \texttt{ram64Rows 16}, for a RAM block with 64 lines, in which each line is 16
+                bits wide.
+
+                Finally, the last circuit we studied under Lava (circuit 3) is the Hack CPU
+                (described in more detail on section \ref{subsec:hack-cpu-circuit}). The CPU circuit
+                is mostly combinational, as it contains \emph{no form of pipelining} and
+                exactly one instruction is executed per clock cycle. However, there is one
+                sequential subcomponent of the CPU: the \emph{program counter}:
+                \input{code/lava-circuit3-model-pc.tex}
+
+                The program counter counts cyclically between $ 0 $ and $ 2^{n-1} $, and can have
+                its value reset or set to a particular value at any moment. Having defined the
+                program counter, there are still some helper subcomponents to define before writing
+                the model for the CPU itself: most importantly, we need an \emph{instruction
+                    decoder}, responsible for interpreting each \texttt{Hack} instruction and
+                outputting several \emph{control bits} that are used to direct the data flow inside
+                the CPU during each instruction execution cycle:
+                \input{code/lava-circuit3-model-instruction-decoder.tex}
+
+                Here we notice again some limitations of Lava with regards to datatypes: We are
+                limited to lists and tuples of \texttt{Signal Bool} (to keep the circuit
+                synthesizable). Here we decided to model the \emph{Hack} instruction itself and
+                the control flags as tuples, to prevent size-related runtime errors. However, using
+                tuples made the model more ``cluttered'', as tuples are \emph{not} data structures
+                prone to slicing and regrouping.
+
+                Using \emph{fixed-length vectors}, perhaps based on the recent ``Type-level
+                Naturals'' GHC
+                \footnote{The Glorious Glasgow Haskell Compilation System:
+                    \url{http://www.haskell.org/ghc}}
+                extension
+                (introduced in GHC 7.6 and being improved for GHC 7.8) would make modelling in Lava
+                \emph{safer} and more comfortable.
+
 
         \subsection{ForSyDe}
         \label{subsec:forsyde}
@@ -403,9 +620,19 @@
                 used. ForSyDe has (currently) process constructors for the following models of
                 computation:
                 \begin{description}
-                    \item[Synchronous] Lorem ipsum  %% TODO
-                    \item[Untimed] Lorem ipsum
-                    \item[Continuous] Lorem ipsum
+                    \item[Synchronous] All processes in this MoC have a global, implicit
+                        \texttt{clock} input, and the tags in the signals are increasing natural
+                        numbers. Therefore, a signal can be viewed as a \emph{stream} of values, one
+                        for each clock cycle. At each clock cycle, \emph{all} processes consume
+                        exactly one value from each of its inputs and produce one value at each of
+                        its outputs.
+
+                    \item[Untimed] In the untimed MoC, the processes fire individually and there is
+                        no notion of global clock. A process only evaluates when its inputs have a
+                        minimum number of values ready to be read. The number of needed values can
+                        vary per input, but is constant throughout execution.
+
+                    \item[Continuous] TODO
                 \end{description}
 
                 Among those, perhaps the most ``notable'' one is the Synchronous MoC, because it
@@ -624,6 +851,7 @@
 
             \subsubsection{Circuit semantics in Coquet}
             \label{subsub:coquet-semantics}
+                TODO: Meaning relation, etc.
 
 
             \subsubsection{Possible improvements and future work}

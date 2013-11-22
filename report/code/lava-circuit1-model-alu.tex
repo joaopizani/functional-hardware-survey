@@ -1,0 +1,15 @@
+\begin{haskellcode}
+    type ALUControlBits = (SB, SB, SB, SB, SB, SB)
+
+    alu :: ([SB], [SB], ALUControlBits) -> ([SB], SB, SB)
+    alu (x, y, (zx, nx, zy, ny, f, no)) = (out', zr, ng)
+        where
+            out' = ifThenElse no (out, map inv out)
+            zr   = foldl (curry or2) low out'
+            ng   = equalBool high (last out')
+            out  = let xy'' = zip x'' y'' in mux (f, (andl xy'', rippleCarryAdder xy''))
+            x'   = ifThenElse zx (x, replicate (length x) low)
+            x''  = ifThenElse nx (x', map inv x')
+            y'   = ifThenElse zy (y, replicate (length x) low)
+            y''  = ifThenElse ny (y', map inv y')
+\end{haskellcode}
