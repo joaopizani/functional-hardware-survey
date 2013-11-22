@@ -578,7 +578,7 @@
                 Naturals'' GHC
                 \footnote{The Glorious Glasgow Haskell Compilation System:
                     \url{http://www.haskell.org/ghc}}
-                extension
+                extension \cite{website:ghc-typenats}
                 (introduced in GHC 7.6 and being improved for GHC 7.8) would make modelling in Lava
                 \emph{safer} and more comfortable.
 
@@ -632,7 +632,9 @@
                         minimum number of values ready to be read. The number of needed values can
                         vary per input, but is constant throughout execution.
 
-                    \item[Continuous] TODO
+                    \item[Continuous] The Continuous MoC interprets signals as continuous,
+                        one-variable piecewise functions of time. It can be used to model some forms
+                        of analog circuits, for example.
                 \end{description}
 
                 Among those, perhaps the most ``notable'' one is the Synchronous MoC, because it
@@ -659,10 +661,33 @@
                 evaluates it for each event in the input signal, generating a corresponding event in
                 the output signal.
 
-                TODO: Talk about shallow and deep embedded signals (deep only supports synchronous).
+                Another characteristic of ForSyDe which makes the synchronous MoC even more
+                significatn is that only systems that are modeled \textbf{exclusively} with process
+                constructors of the synchronous model can be translated into VHDL by ForSyDe.
+
+                ForSyDe is a \emph{deeply embedded} EDSL, but it takes a significantly different
+                approach than the one taken by Lava: instead of having some set of ``atomic''
+                circuits (they correspond to the constructors of the \texttt{S} type in Lava),
+                ForSyDe uses Template Haskell to \emph{reify} Haskell source code into a syntax
+                tree, and use this syntax tree in order to simulate and/or translate the circuit
+                model into VHDL.
+
+                This approach has some advantages and disadvantages, which we will look into with
+                more details on section \ref{subsubsec:forsyde-circuits}. For now, let's first take
+                a look at how to build processes in ForSyDe using the \emph{synchronous process
+                    constructors}.
 
             \subsubsection{Synchronous Process Constructors}
             \label{subsubsec:forsyde-synchprocs}
+                TODO: Example of usage of \texttt{mapSY}, with a simple \texttt{ProcFun}. Mention
+                that limitations to ProcFun will be discussed as the case study circuits are
+                analyzed.
+
+                TODO: Example of usage of a state-machine or scanl constructor, mentioning the
+                approach taken by ForSyDe, in which conceptually ALL processes are sequential in
+                nature (have clock input), but some have the property that the current state does
+                NOT depend on previous states.
+
 
             \subsubsection{Circuits modeled}
             \label{subsubsec:forsyde-circuits}
@@ -673,6 +698,51 @@
 
                 Disadvantages: name handling, not actively maintained
 
+                For each of the 3 circuits studied, we considered 2 models under ForSyDe:
+                \begin{description}
+                    \item[High-level] A model that uses Haskell constructs inside the process
+                        functions (\texttt{ProcFun}) as close as possible to what
+                        a functional programmer would normally use. These models do not comply with
+                        ForSyDe's constraints on the syntax tree of process functions for
+                        synthetization, and therefore \textbf{can not be translated to VHDL}.
+
+                    \item[Synthesizable] These models are more fine-grained, and use
+                        \textbf{exclusively} constructs that allow them to be synthesized by
+                        ForSyDe's VHDL backend. They ``look'' much less like functional programs and
+                        more like traditional pen-and-paper diagrams of circuits.
+                \end{description}
+
+                Let's start our analysis by looking at the \emph{high-level} model for circuit 1,
+                the ALU:
+                \input{code/forsyde-circuit1-model-alusim.tex}
+
+                The first thing to notice is that the system is working over \emph{16-bit integers},
+                as by the definition of \texttt{WordType}. This is not exclusive of the high-level
+                model, however, as ForSyDe can also produce VHDL models working with integers.
+                TODO: explain the \texttt{ProcFun} type and how the newProcFun TH splice and the
+                ``d'' quasi-quoters work.
+
+                Now let's compare the high-level model of the ALU with the \emph{synthesizable} one,
+                and discuss along the way how the limitations of ForSyDe's VHDL generation backend
+                constrained our design:
+                \input{code/forsyde-circuit1-model-alusyn.tex}
+
+                TODO: Discuss how we can't use user-defined datatypes, and the restrictions on the
+                Haskell syntax that can be used as input for a \texttt{newProcFun} splice (single
+                clauses, no pattern matching, import restrictions, etc).
+
+                By analyzing the second studied circuit (the RAM block), we will gain some insight
+                into other significant characteristic of the ForSyDe library -- the usage of
+                fixed-length vectors, and the \emph{manual} management of process names:
+
+                TODO: discuss how -- on the one hand -- ForSyDe's FSVec's can help make modelling
+                more type safe but on the other hand the current implementation is very ``hackish''
+                and could ALSO make some use of recent developments in GHC.
+
+                TODO: discuss how ForSyDe's concepts of processes and (sub)components is responsible
+                for really elegant and modular generated VHDL code but, on the other hand, forces
+                the user to manage naming of the processes manually. Give some possible suggestions
+                for this problem.
 
         \subsection{Coquet}
         \label{subsec:coquet}
@@ -850,9 +920,27 @@
 
 
             \subsubsection{Circuit semantics in Coquet}
-            \label{subsub:coquet-semantics}
-                TODO: Meaning relation, etc.
+            \label{subsubsec:coquet-semantics}
+                TODO: Explain what the meaning relation for a circuit in Coquet is, give the
+                (inductive) definition of the meaning relation and comment on it.
 
+                TODO: Explain how the meaning relation is too ``low-level'', and how Coquet uses
+                \emph{data abstraction} and \emph{function abstraction} to prove the correctness of
+                circuits. The proofs of correctness are proofs that a circuit either
+                \textbf{Realizes a high-level relation} or \textbf{Implements a high-level function}
+                over the high-level input/output types.
+
+                We give the definitions of \texttt{Realizes} and \texttt{Implements}, as well as
+                walk over a small example of functional correctness proof.
+
+            \subsubsection{Circuits modeled}
+            \label{subsubsec:coquet-circuits}
+                TODO: Expose the studied circuits modeled in Coquet, highlighting advantages and
+                disadvantages of the Coquet approach along the way.
+
+                TODO: circuit 1 (ALU) -- Model, proof of some of its components.
+
+                TODO: circuit 2 (RAM) -- Model.
 
             \subsubsection{Possible improvements and future work}
             \label{subsubsec:coquet-improv}
@@ -887,6 +975,9 @@
 
     \section{Results summary}
     \label{sec:results}
+        TODO: Reiterate the analysis of the EDSLs spread throughout the analysis of each of the
+        studied circuits, but in a more summarized manner, actually \textbf{comparing} the EDSLs
+        among themselves, \textbf{by aspect} (the ones we defined in section \ref{subsec:aspects}).
 
     \section{Conclusions}
     \label{sec:conclusions}
@@ -894,17 +985,6 @@
 
     \bibliographystyle{plain}
     \bibliography{references}
-
-
-%% Expected outputs of this project
-%% ================================
-%% The main output I expect from this project is a comparative analysis of the EHDLs. An interesting
-%% side-product will be the code describing the case study circuits in the various languages. This
-%% code shall hopefully be useful as a learning source for people interested in experimenting with
-%% functional hardware design.
-%% 
-%% Last, but not least, one output of this project which I also find interesting is the set of
-%% comparison criteria itself, along with the justification of why they were chosen.
 
 
 \end{document}
