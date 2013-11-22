@@ -26,12 +26,10 @@ programCounter :: Signal Bit       -- ^ reset
                -> Signal AddrType  -- ^ value to be set
                -> Signal AddrType  -- ^ value currently in the counter
 programCounter = scanld3SY "programCounter" nextStateFun 0
-    where
-        nextStateFun =
-            $(newProcFun [d| f :: AddrType -> Bit -> Bit -> AddrType -> AddrType
-                             f cur reset set new = if reset == H then 0
-                                                   else if set == H then new
-                                                   else cur + 1 |])
+    where nextStateFun = $(newProcFun [d| f :: AddrType -> Bit -> Bit -> AddrType -> AddrType
+                                          f cur reset set new = if reset == H then 0
+                                                                else if set == H then new
+                                                                else cur + 1 |])
 
 -- Expected behaviour: counts normally from zero, then is set to one and counts from there.
 -- Finally, while in a high count, is reset and starts over from zero.
@@ -47,39 +45,35 @@ testPC3 = (simulate pcSys) resets sets vals == expected
                  , (r, L, x), (L, L, x), (L, L, x), (L, L, x), (L, L, x), (L, L, x) ]
 
 
+type JumpType = (Bit, Bit, Bit)
+
 -- | Circuit to decide whether to set or not the program counter (PC), given the
 -- Jump Condition bits from the instruction and the ZR and NG flags from the ALU
-decideSetPC :: Signal (Bit, Bit, Bit) -> Signal Bit -> Signal Bit -> Signal Bit
+decideSetPC :: Signal JumpType -> Signal Bit -> Signal Bit -> Signal Bit
 decideSetPC = zipWith3SY "decideSetPC" decideFun
-    where
-        decideFun =
-            $(newProcFun [d| f :: (Bit, Bit, Bit) -> Bit -> Bit -> Bit
-                             f (jlt, jeq, jgt) stZR stNG = if stNG == H then jlt
-                                                           else if stZR == H then jeq
-                                                           else jgt |])
+    where decideFun = $(newProcFun [d| f :: (Bit, Bit, Bit) -> Bit -> Bit -> Bit
+                                       f (jl,je,jg) stZ stN = if stN == H then jl
+                                                              else if stZ == H then je
+                                                              else jg |])
 
-{-
 testDecideSetPC :: Bool
 testDecideSetPC = (simulate decideSys) conds stZRs stNGs == expected
     where
         decideSys = newSysDef decideSetPC "decideSys" ["cond", "stZR", "stNG"] ["setPC"]
-        expected  = undefined
-        (conds, stZRs, stNGs) = unzip3 inputSequence
-        inputs = [ ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X)
-                 , ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X)
-                 , ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X)
-                 , ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X)
-                 , ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X)
-                 , ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X)
-                 , ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X)
-                 , ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X), ((X,X,X),X,X) ]
--}
+        expected  = inputs  -- TODO obviously change
+        (conds, stZRs, stNGs) = unzip3 inputs
+        inputs = [ ((L,L,L),0,0), ((L,L,L),0,1), ((L,L,L),1,0), ((L,L,L),1,1)
+                 , ((L,L,H),0,0), ((L,L,H),0,1), ((L,L,H),1,0), ((L,L,H),1,1)
+                 , ((L,H,L),0,0), ((L,H,L),0,1), ((L,H,L),1,0), ((L,H,L),1,1)
+                 , ((L,H,H),0,0), ((L,H,H),0,1), ((L,H,H),1,0), ((L,H,H),1,1)
+                 , ((H,L,H),0,0), ((H,L,H),0,1), ((H,L,H),1,0), ((H,L,H),1,1)
+                 , ((H,H,L),0,0), ((H,H,L),0,1), ((H,H,L),1,0), ((H,H,L),1,1)
+                 , ((H,H,H),0,0), ((H,H,H),0,1), ((H,H,H),1,0), ((H,H,H),1,1) ]
 
 
 type HackInstruction = FSVec D16 Bit
 
 type DestType = (Bit, Bit, Bit)
-type JumpType = (Bit, Bit, Bit)
 
 instructionDecoder :: Signal HackInstruction -> Signal (Bit, Bit, DestType, JumpType, ALUControl)
 instructionDecoder = mapSY "instructionDecoder" decoderFun
