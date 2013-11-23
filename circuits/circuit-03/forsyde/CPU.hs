@@ -60,15 +60,23 @@ testDecideSetPC :: Bool
 testDecideSetPC = (simulate decideSys) conds stZRs stNGs == expected
     where
         decideSys = newSysDef decideSetPC "decideSys" ["cond", "stZR", "stNG"] ["setPC"]
-        expected  = inputs  -- TODO obviously change
         (conds, stZRs, stNGs) = unzip3 inputs
-        inputs = [ ((L,L,L),0,0), ((L,L,L),0,1), ((L,L,L),1,0), ((L,L,L),1,1)
-                 , ((L,L,H),0,0), ((L,L,H),0,1), ((L,L,H),1,0), ((L,L,H),1,1)
-                 , ((L,H,L),0,0), ((L,H,L),0,1), ((L,H,L),1,0), ((L,H,L),1,1)
-                 , ((L,H,H),0,0), ((L,H,H),0,1), ((L,H,H),1,0), ((L,H,H),1,1)
-                 , ((H,L,H),0,0), ((H,L,H),0,1), ((H,L,H),1,0), ((H,L,H),1,1)
-                 , ((H,H,L),0,0), ((H,H,L),0,1), ((H,H,L),1,0), ((H,H,L),1,1)
-                 , ((H,H,H),0,0), ((H,H,H),0,1), ((H,H,H),1,0), ((H,H,H),1,1) ]
+        inputs = [ ((L,L,L),L,L), ((L,L,L),L,H), ((L,L,L),H,L), ((L,L,L),H,H)
+                 , ((L,L,H),L,L), ((L,L,H),L,H), ((L,L,H),H,L), ((L,L,H),H,H)
+                 , ((L,H,L),L,L), ((L,H,L),L,H), ((L,H,L),H,L), ((L,H,L),H,H)
+                 , ((L,H,H),L,L), ((L,H,H),L,H), ((L,H,H),H,L), ((L,H,H),H,H)
+                 , ((H,L,L),L,L), ((H,L,L),L,H), ((H,L,L),H,L), ((H,L,L),H,H)
+                 , ((H,L,H),L,L), ((H,L,H),L,H), ((H,L,H),H,L), ((H,L,H),H,H)
+                 , ((H,H,L),L,L), ((H,H,L),L,H), ((H,H,L),H,L), ((H,H,L),H,H)
+                 , ((H,H,H),L,L), ((H,H,H),L,H), ((H,H,H),H,L), ((H,H,H),H,H) ]
+        expected = [ L, L, L, L
+                   , H, L, L, L
+                   , L, L, H, L
+                   , H, L, H, L
+                   , L, H, L, H
+                   , H, H, L, H
+                   , L, H, H, H
+                   , H, H, H, H ]
 
 
 type HackInstruction = FSVec D16 Bit
