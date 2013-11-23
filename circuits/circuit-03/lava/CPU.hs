@@ -54,7 +54,23 @@ type JumpCondBits = (SB, SB, SB)
 -- | Circuit to decide whether to set or not the program counter (PC), given the
 -- Jump Condition bits from the instruction and the ZR and NG flags from the ALU
 decideSetPC :: (JumpCondBits, SB, SB) -> SB
-decideSetPC ((jlt, jeq, jgt), stZR, stNG) = undefined
+decideSetPC ((jl, je, jg), stZ, stN) = mux (stN, (mux (stZ, (jg, je)), jl))
+
+testDecideSetPC :: [SB]
+testDecideSetPC = simulateSeq decideSetPC inputs
+    where
+        (l, h) = (low, high)
+        inputs = [ ((l,l,l),l,l), ((l,l,l),l,h), ((l,l,l),h,l), ((l,l,l),h,h)
+                 , ((l,l,h),l,l), ((l,l,h),l,h), ((l,l,h),h,l), ((l,l,h),h,h)
+                 , ((l,h,l),l,l), ((l,h,l),l,h), ((l,h,l),h,l), ((l,h,l),h,h)
+                 , ((l,h,h),l,l), ((l,h,h),l,h), ((l,h,h),h,l), ((l,h,h),h,h)
+                 , ((h,l,l),l,l), ((h,l,l),l,h), ((h,l,l),h,l), ((h,l,l),h,h)
+                 , ((h,l,h),l,l), ((h,l,h),l,h), ((h,l,h),h,l), ((h,l,h),h,h)
+                 , ((h,h,l),l,l), ((h,h,l),l,h), ((h,h,l),h,l), ((h,h,l),h,h)
+                 , ((h,h,h),l,l), ((h,h,h),l,h), ((h,h,h),h,l), ((h,h,h),h,h) ]
+{-
+        expected = [L,L,L,L, H,L,L,L, L,L,H,L, H,L,H,L, L,H,L,H, H,H,L,H, L,H,H,H, H,H,H,H]
+-}
 
 -- | Control bits affecting CPU behaviour, derived from the instruction itself
 type CPUControlBits = (SB, SB, DestBits, JumpCondBits, ALUControlBits)
