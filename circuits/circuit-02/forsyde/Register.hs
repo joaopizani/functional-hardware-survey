@@ -6,8 +6,10 @@ import ForSyDe
 import Data.Param.FSVec hiding ((++))
 import qualified Data.Param.FSVec as V
 
+import Prelude hiding (not)
 import Data.TypeLevel.Num hiding ((==))
 import Data.Int (Int16)
+import Data.Bits ((.&.))
 
 
 type WordType = Int16
@@ -80,9 +82,86 @@ mux64SysDef :: SysDef (Signal (FSVec D6 Bit) -> Signal (FSVec D64 WordType) -> S
 mux64SysDef = newSysDef (mux64 "muxA") "mux64Sys" ["sel", "inputs"] ["out"]
 
 
-ram64 :: Signal WordType -> Signal (FSVec D6 Bit) -> Signal Bit -> Signal WordType
-ram64 = undefined
+decode6To64 :: ProcId -> Signal (FSVec D6 Bit) -> Signal (FSVec D64 Bit)
+decode6To64 l = mapSY (l ++ "decode") decode6To64'
+ where
+  decode6To64' =
+   $(newProcFun
+      [d|
+       f :: FSVec D6 Bit -> FSVec D64 Bit
+       f i =
+                not (i!d0) .&. not (i!d1) .&. not (i!d2) .&. not (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&. not (i!d2) .&. not (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&. not (i!d2) .&. not (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&. not (i!d2) .&. not (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&. not (i!d2) .&.     (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&. not (i!d2) .&.     (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&. not (i!d2) .&.     (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&. not (i!d2) .&.     (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&.     (i!d2) .&. not (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&.     (i!d2) .&. not (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&.     (i!d2) .&. not (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&.     (i!d2) .&. not (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&.     (i!d2) .&.     (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&.     (i!d2) .&.     (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&.     (i!d2) .&.     (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&. not (i!d1) .&.     (i!d2) .&.     (i!d3) .&.     (i!d4) .&.     (i!d5)
 
+             +> not (i!d0) .&.     (i!d1) .&. not (i!d2) .&. not (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&. not (i!d2) .&. not (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&. not (i!d2) .&. not (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&. not (i!d2) .&. not (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&. not (i!d2) .&.     (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&. not (i!d2) .&.     (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&. not (i!d2) .&.     (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&. not (i!d2) .&.     (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&.     (i!d2) .&. not (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&.     (i!d2) .&. not (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&.     (i!d2) .&. not (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&.     (i!d2) .&. not (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&.     (i!d2) .&.     (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&.     (i!d2) .&.     (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&.     (i!d2) .&.     (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +> not (i!d0) .&.     (i!d1) .&.     (i!d2) .&.     (i!d3) .&.     (i!d4) .&.     (i!d5)
+
+             +>     (i!d0) .&. not (i!d1) .&. not (i!d2) .&. not (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&. not (i!d2) .&. not (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&. not (i!d2) .&. not (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&. not (i!d2) .&. not (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&. not (i!d2) .&.     (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&. not (i!d2) .&.     (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&. not (i!d2) .&.     (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&. not (i!d2) .&.     (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&.     (i!d2) .&. not (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&.     (i!d2) .&. not (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&.     (i!d2) .&. not (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&.     (i!d2) .&. not (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&.     (i!d2) .&.     (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&.     (i!d2) .&.     (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&.     (i!d2) .&.     (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&. not (i!d1) .&.     (i!d2) .&.     (i!d3) .&.     (i!d4) .&.     (i!d5)
+
+             +>     (i!d0) .&.     (i!d1) .&. not (i!d2) .&. not (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&. not (i!d2) .&. not (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&. not (i!d2) .&. not (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&. not (i!d2) .&. not (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&. not (i!d2) .&.     (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&. not (i!d2) .&.     (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&. not (i!d2) .&.     (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&. not (i!d2) .&.     (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&.     (i!d2) .&. not (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&.     (i!d2) .&. not (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&.     (i!d2) .&. not (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&.     (i!d2) .&. not (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&.     (i!d2) .&.     (i!d3) .&. not (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&.     (i!d2) .&.     (i!d3) .&. not (i!d4) .&.     (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&.     (i!d2) .&.     (i!d3) .&.     (i!d4) .&. not (i!d5)
+             +>     (i!d0) .&.     (i!d1) .&.     (i!d2) .&.     (i!d3) .&.     (i!d4) .&.     (i!d5)
+             +> empty
+      |])
+
+decode6To64SysDef :: SysDef (Signal (FSVec D6 Bit) -> Signal (FSVec D64 Bit))
+decode6To64SysDef = newSysDef (decode6To64 "decoderA") "decode6To64Sys" ["ins"] ["outs"]
 
 
 {-
@@ -91,44 +170,8 @@ ram64Rows n (input, addr, load) = mux64WordN n (addr, registers)
     where
         memLine sel = regN n (input, sel <&> load)
         registers = map memLine (decode6To64 addr)
-
-
-decode6To64 :: (SB,SB,SB,SB,SB,SB) -> [SB]
-decode6To64 (s0, s1, s2, s3, s4, s5) = 
-    [ s0N <&> s1N <&> s2N <&> s3N <&> s4N <&> s5N,  s0  <&> s1N <&> s2N <&> s3N <&> s4N <&> s5N
-    , s0N <&> s1  <&> s2N <&> s3N <&> s4N <&> s5N,  s0  <&> s1  <&> s2N <&> s3N <&> s4N <&> s5N
-    , s0N <&> s1N <&> s2  <&> s3N <&> s4N <&> s5N,  s0  <&> s1N <&> s2  <&> s3N <&> s4N <&> s5N
-    , s0N <&> s1  <&> s2  <&> s3N <&> s4N <&> s5N,  s0  <&> s1  <&> s2  <&> s3N <&> s4N <&> s5N
-    , s0N <&> s1N <&> s2N <&> s3  <&> s4N <&> s5N,  s0  <&> s1N <&> s2N <&> s3  <&> s4N <&> s5N
-    , s0N <&> s1  <&> s2N <&> s3  <&> s4N <&> s5N,  s0  <&> s1  <&> s2N <&> s3  <&> s4N <&> s5N
-    , s0N <&> s1N <&> s2  <&> s3  <&> s4N <&> s5N,  s0  <&> s1N <&> s2  <&> s3  <&> s4N <&> s5N
-    , s0N <&> s1  <&> s2  <&> s3  <&> s4N <&> s5N,  s0  <&> s1  <&> s2  <&> s3  <&> s4N <&> s5N
-    , s0N <&> s1N <&> s2N <&> s3N <&> s4  <&> s5N,  s0  <&> s1N <&> s2N <&> s3N <&> s4  <&> s5N
-    , s0N <&> s1  <&> s2N <&> s3N <&> s4  <&> s5N,  s0  <&> s1  <&> s2N <&> s3N <&> s4  <&> s5N
-    , s0N <&> s1N <&> s2  <&> s3N <&> s4  <&> s5N,  s0  <&> s1N <&> s2  <&> s3N <&> s4  <&> s5N
-    , s0N <&> s1  <&> s2  <&> s3N <&> s4  <&> s5N,  s0  <&> s1  <&> s2  <&> s3N <&> s4  <&> s5N
-    , s0N <&> s1N <&> s2N <&> s3  <&> s4  <&> s5N,  s0  <&> s1N <&> s2N <&> s3  <&> s4  <&> s5N
-    , s0N <&> s1  <&> s2N <&> s3  <&> s4  <&> s5N,  s0  <&> s1  <&> s2N <&> s3  <&> s4  <&> s5N
-    , s0N <&> s1N <&> s2  <&> s3  <&> s4  <&> s5N,  s0  <&> s1N <&> s2  <&> s3  <&> s4  <&> s5N
-    , s0N <&> s1  <&> s2  <&> s3  <&> s4  <&> s5N,  s0  <&> s1  <&> s2  <&> s3  <&> s4  <&> s5N
-    , s0N <&> s1N <&> s2N <&> s3N <&> s4N <&> s5 ,  s0  <&> s1N <&> s2N <&> s3N <&> s4N <&> s5
-    , s0N <&> s1  <&> s2N <&> s3N <&> s4N <&> s5 ,  s0  <&> s1  <&> s2N <&> s3N <&> s4N <&> s5
-    , s0N <&> s1N <&> s2  <&> s3N <&> s4N <&> s5 ,  s0  <&> s1N <&> s2  <&> s3N <&> s4N <&> s5
-    , s0N <&> s1  <&> s2  <&> s3N <&> s4N <&> s5 ,  s0  <&> s1  <&> s2  <&> s3N <&> s4N <&> s5
-    , s0N <&> s1N <&> s2N <&> s3  <&> s4N <&> s5 ,  s0  <&> s1N <&> s2N <&> s3  <&> s4N <&> s5
-    , s0N <&> s1  <&> s2N <&> s3  <&> s4N <&> s5 ,  s0  <&> s1  <&> s2N <&> s3  <&> s4N <&> s5
-    , s0N <&> s1N <&> s2  <&> s3  <&> s4N <&> s5 ,  s0  <&> s1N <&> s2  <&> s3  <&> s4N <&> s5
-    , s0N <&> s1  <&> s2  <&> s3  <&> s4N <&> s5 ,  s0  <&> s1  <&> s2  <&> s3  <&> s4N <&> s5
-    , s0N <&> s1N <&> s2N <&> s3N <&> s4  <&> s5 ,  s0  <&> s1N <&> s2N <&> s3N <&> s4  <&> s5
-    , s0N <&> s1  <&> s2N <&> s3N <&> s4  <&> s5 ,  s0  <&> s1  <&> s2N <&> s3N <&> s4  <&> s5
-    , s0N <&> s1N <&> s2  <&> s3N <&> s4  <&> s5 ,  s0  <&> s1N <&> s2  <&> s3N <&> s4  <&> s5
-    , s0N <&> s1  <&> s2  <&> s3N <&> s4  <&> s5 ,  s0  <&> s1  <&> s2  <&> s3N <&> s4  <&> s5
-    , s0N <&> s1N <&> s2N <&> s3  <&> s4  <&> s5 ,  s0  <&> s1N <&> s2N <&> s3  <&> s4  <&> s5
-    , s0N <&> s1  <&> s2N <&> s3  <&> s4  <&> s5 ,  s0  <&> s1  <&> s2N <&> s3  <&> s4  <&> s5
-    , s0N <&> s1N <&> s2  <&> s3  <&> s4  <&> s5 ,  s0  <&> s1N <&> s2  <&> s3  <&> s4  <&> s5
-    , s0N <&> s1  <&> s2  <&> s3  <&> s4  <&> s5 ,  s0  <&> s1  <&> s2  <&> s3  <&> s4  <&> s5 ]
-    where
-        (s0N, s1N, s2N, s3N, s4N, s5N) = (inv s0, inv s1, inv s2, inv s3, inv s4, inv s5)
-
-
 -}
+
+ram64 :: Signal WordType -> Signal (FSVec D6 Bit) -> Signal Bit -> Signal WordType
+ram64 = undefined
+
