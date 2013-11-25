@@ -2,7 +2,8 @@
 module ALUSyn where
 
 import ForSyDe
-import ForSyDe.Bit (bitToBool, boolToBit)
+import ForSyDe.Bit (bitToBool, boolToBit, not)
+import Prelude hiding (not)
 import Data.Bits
 import Data.Int (Int16)
 
@@ -19,6 +20,29 @@ type ALUControl = (Bit, Bit, Bit, Bit, ALUOp, Bit)
 -- | Output flags: whether out is zero, whether out is negative
 type ALUFlags = (Bit, Bit)
 
+
+andProc :: Signal Bit -> Signal Bit -> Signal Bit
+andProc = zipWithSY "zipWithSY" $(newProcFun [d| f :: Bit -> Bit -> Bit
+                                                 f x y = x .&. y |])
+
+andSysDef :: SysDef (Signal Bit -> Signal Bit -> Signal Bit)
+andSysDef = newSysDef andProc "andSys" ["in1", "in2"] ["out"]
+
+
+orProc :: Signal Bit -> Signal Bit -> Signal Bit
+orProc = zipWithSY "zipWithSY" $(newProcFun [d| f :: Bit -> Bit -> Bit
+                                                f x y = x .|. y |])
+
+orSysDef :: SysDef (Signal Bit -> Signal Bit -> Signal Bit)
+orSysDef = newSysDef orProc "orSys" ["in1", "in2"] ["out"]
+
+
+invProc :: Signal Bit -> Signal Bit
+invProc = mapSY "mapSY" $(newProcFun [d| f :: Bit -> Bit
+                                         f x = not x |])
+
+invSysDef :: SysDef (Signal Bit -> Signal Bit)
+invSysDef = newSysDef invProc "invSys" ["in"] ["out"]
 
 
 zProc :: ProcId -> Signal Bit -> Signal WordType -> Signal WordType

@@ -11,6 +11,8 @@ import Data.TypeLevel.Num hiding ((==))
 import Data.Int (Int16)
 import Data.Bits ((.&.))
 
+import ALUSyn (andSysDef)
+
 
 type WordType = Int16
 
@@ -173,14 +175,6 @@ decode6To64 = mapSY "mapSYdecode" decode6To64'
 
 decode6To64SysDef :: SysDef (Signal (FSVec D6 Bit) -> Signal (FSVec D64 Bit))
 decode6To64SysDef = newSysDef decode6To64 "decode6To64Sys" ["ins"] ["outs"]
-
-
-andProc :: Signal Bit -> Signal Bit -> Signal Bit
-andProc = zipWithSY "zipWithSY" $(newProcFun [d| f :: Bit -> Bit -> Bit
-                                                 f x y = x .&. y |])
-
-andSysDef :: SysDef (Signal Bit -> Signal Bit -> Signal Bit)
-andSysDef = newSysDef andProc "andSysDef" ["in1", "in2"] ["out"]
 
 
 ram64 :: Signal WordType -> Signal (FSVec D6 Bit) -> Signal Bit -> Signal WordType
