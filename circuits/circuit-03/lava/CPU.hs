@@ -53,11 +53,11 @@ type JumpCondBits = (SB, SB, SB)
 
 -- | Circuit to decide whether to set or not the program counter (PC), given the
 -- Jump Condition bits from the instruction and the ZR and NG flags from the ALU
-decideSetPC :: (JumpCondBits, SB, SB) -> SB
-decideSetPC ((jl, je, jg), stZ, stN) = mux (stN, (mux (stZ, (jg, je)), jl))
+decideJump :: (JumpCondBits, SB, SB) -> SB
+decideJump ((jl, je, jg), stZ, stN) = mux (stN, (mux (stZ, (jg, je)), jl))
 
-testDecideSetPC :: [SB]
-testDecideSetPC = simulateSeq decideSetPC inputs
+testDecideJump :: [SB]
+testDecideJump = map (simulate decideJump) inputs
     where
         (l, h) = (low, high)
         inputs = [ ((l,l,l),l,l), ((l,l,l),l,h), ((l,l,l),h,l), ((l,l,l),h,h)
@@ -114,7 +114,7 @@ cpu wordSize (inM, instruction, reset) = (outM, writeM, addressM, pc)
     (aluOut, stZR, stNG) = alu (dReg, am, cALU)
     pc                   = programCounter wordSize (reset, setPC, aReg)
 
-    setPC = decideSetPC (cJump, stZR, stNG)
+    setPC = decideJump (cJump, stZR, stNG)
     setA  = or2 (inv aFlag, and2 (aFlag, writeA))
     setD  = and2 (aFlag, writeD)
 

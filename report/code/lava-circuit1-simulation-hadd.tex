@@ -1,6 +1,6 @@
 \begin{haskellcode}
-    verifyHalfAdder :: [(SB, SB)]
-    verifyHalfAdder = simulateSeq halfAdder input
+    testHalfAdder :: [(SB, SB)]
+    testHalfAdder = map (simulate halfAdder) input
         where
             input = [ (low,  low)
                     , (low,  high)

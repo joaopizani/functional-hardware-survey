@@ -11,8 +11,8 @@ type SB = Signal Bool
 halfAdder :: (SB, SB) -> (SB, SB)
 halfAdder inputs = (xor2 inputs, and2 inputs)
 
-verifyHalfAdder :: [(SB, SB)]
-verifyHalfAdder = simulateSeq halfAdder input
+testHalfAdder :: [(SB, SB)]
+testHalfAdder = map (simulate halfAdder) input
     where
       input = [ (low,  low)
               , (low,  high)
@@ -41,8 +41,8 @@ fullAdder (cin, (a, b)) = (s, cout)
       (s, c2)  = halfAdder (ab, cin)
       cout     = or2 (c1, c2)
 
-verifyFullAdder :: [(SB, SB)]
-verifyFullAdder = simulateSeq fullAdder input
+testFullAdder :: [(SB, SB)]
+testFullAdder = map (simulate fullAdder) input
     where
       input = [ (low,  (low,  low))
               , (low,  (low,  high))
@@ -73,7 +73,7 @@ rippleCarryAdder ab = s
     where (s, _) = row fullAdder (low, ab)
 
 testRippleCarryAdder :: [[SB]]
-testRippleCarryAdder = simulateSeq rippleCarryAdder input
+testRippleCarryAdder = map (simulate rippleCarryAdder) input
     where
       input =
         [ [ (low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low),(low,low)
@@ -96,7 +96,7 @@ increment a = s
     where (s, _) = row fullAdder (high, zip a (replicate (length a) low))
 
 testIncrement :: [[SB]]
-testIncrement = simulateSeq increment inputs
+testIncrement = map (simulate increment) inputs
     where
       inputs = [ replicate 16 low
                , replicate 16 high
@@ -137,7 +137,7 @@ alu (x, y, (zx, nx, zy, ny, f, no)) = (out', zr, ng)
       ng   = equalBool high (last out')
 
 testALU :: [([SB], SB, SB)]
-testALU = simulateSeq alu inputs
+testALU = map (simulate alu) inputs
     where
       low16  = replicate 16 low
       high16 = replicate 16 high
