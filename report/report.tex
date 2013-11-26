@@ -33,7 +33,7 @@
 \ifpdf
 \pdfinfo{
     /Author (Joao Paulo Pizani Flor)
-    /Title (A comparison of functional Embedded Domain-Specific Languages for hardware)
+    /Title (Comparing functional Embedded Domain-Specific Languages for hardware description)
     /Keywords (EDSL, HDL, Hardware Description, Functional Programming, Haskell, Coq, Lava, Coquet)
     /CreationDate (D:\pdfdate)
 }
@@ -60,33 +60,32 @@
 
     \section{Introduction}
     \label{sec:intro}
-        Hardware design has become nowadays an activity which is, to say the least, extremely
-        complex, if not error-prone. The sheer size of circuits has increased. Also, low-level
-        concerns such as power consumption, error correction, parallelization and layout
-        in general have to be incorporated earlier and earlier in the design process, breaking
-        modularity and making it harder to validate and verify the correctness of circuits.
+        Hardware design has become a very complex activity. The size of circuits has increased,
+        while low-level concerns (power consumption, error correction, parallelization, layout,
+        etc.) have to be incorporated earlier and earlier in the design process. This breaks
+        modularity and makes it harder to validate and verify the correctness of circuits.
 
-        In this context, researchers have been suggesting for a long time (since the 1980s, in
-        fact) the usage of functional programming languages to model circuits. One particular line
-        of research is to create Embedded Domain-Specific Languages for hardware description based
-        on existing functional programming languages, such as Haskell.
+        In this context, researchers have been suggesting (since the 1980s) the usage of functional
+        programming languages to model circuits. One particular line of research is to create
+        Embedded Domain-Specific Languages for hardware description based on existing functional
+        programming languages, such as Haskell.
 
-        There is a multitude of EDSLs for hardware description out there, but they vary wildly and
+        There are a multitude of EDSLs for hardware description, but they vary wildly
         on a number of aspects: host language, level of abstraction, capabilities of simulation,
         formal verification, synthesis (generation of netlists) and integration with other tools, to
         name a few. All this variety can make the task of choosing a hardware EDSL for the task at
-        hand extremely daunting and time-consuming.
+        hand daunting and time-consuming.
 
         The main goal of this experimentation project is to establish some order in this landscape,
-        and to perform a practical analysis of some representative functional hardware EDSLs. By
+        and to perform a practical analysis of some popular functional hardware EDSLs. By
         reading the materials produced in this project (circuit models, test cases, generated
         netlists, report), a hardware designer wishing to use a functional hardware EDSL for his
         next design should gain some insight about the strengths and weaknesses of each language and
         have an easier time choosing one.
 
         As an additional result of this research, we intend to identify recent, cutting-edge
-        developments in the Haskell language and its implementations that the analyzed EDSLs could
-        benefit from. Also, we intend to discuss to which extent some shortcomings of the EDSLs
+        developments in the Haskell language and its implementations from which the analyzed EDSLs
+        could benefit. Also, we intend to discuss to which extent some shortcomings of the EDSLs
         could be overcome by having them hosted in a dependently-typed language.
 
     \section{Methodology}
@@ -96,11 +95,9 @@
         performed on a number of \emph{aspects} for each EDSL, and the analysis was done by
         considering a \emph{sample set of circuits} used as case studies.
 
-        We tried to model all circuits in all EDSLs considered, and as similarly as possible in
-        all of them. To avoid using any of the analyzed EDSLs as ``base'', we provide a neutral,
-        behavioural description of the circuits.
-
-        \newpage
+        We tried to model all circuits in all EDSLs considered, and as similarly as possible in each
+        EDSL. To avoid using any of the analyzed EDSLs as ``base'' for analysis, we provide a
+        neutral, behavioural description of the circuits.
 
         \subsection{The languages}
         \label{subsec:languages}
@@ -132,7 +129,7 @@
             For each of the hardware description EDSLs we experimented with, a number of
             \emph{aspects} were evaluated. The evaluated aspects do not necessarily make sense for
             \emph{all} EDSLs, therefore our presentation follows a language-centric approach, in
-            which we expose the strenghts and weaknesses of each EDSL concerning the applicable
+            which we expose the strengths and weaknesses of each EDSL concerning the applicable
             aspects.
 
             Without further ado, the following aspects are considered in the analysis:
@@ -150,10 +147,10 @@
                     we are interested in are those which are \emph{universally quantified} over the
                     circuit's inputs. As an example of such a property, we might have:
                     \[
-                        \forall a \forall b \forall \text{sel}
-                            \left( \text{MUX}(a,b,\text{sel}) = a \right)
+                        \forall a \forall b \forall \text{\textit{sel}}
+                            \left( \text{MUX}(a,b,\text{\textit{sel}}) = a \right)
                             \vee
-                            \left( \text{MUX}(a,b,\text{sel}) = b \right)
+                            \left( \text{MUX}(a,b,\text{\textit{sel}}) = b \right)
                     \]
 
                 \item[Genericity]
@@ -213,8 +210,6 @@
         most basic logic gates and builds, step-by-step, all the hardware and software components
         necessary to implement a complete computer system.
 
-        \newpage
-
         From the hardware design part of the book, we took our three circuits to be modeled:
         \begin{itemize}
             \item A simple Arithmetic Logic Unit (ALU), from here onwards referred to
@@ -225,11 +220,11 @@
                 ``circuit 3''.
         \end{itemize}
 
-        \subsection{The ALU circuit}
+        \subsection{Circuit 1: ALU}
         \label{subsec:circuit-alu}
             The Arithmetic Logic Unit built by us is a 2-input ALU, in which each of the inputs (as
-            well as the output) is a 16-bit long word (interpreted as an integer in two's-complement
-            encoding). It is capable of computing several functions, and the choice of which
+            well as the output) is a 16-bit long word (interpreted as two's-complement signed
+            integer). It is capable of computing several functions, and the choice of which
             function to compute is made by setting the ALU's 6 \emph{control bits}. To become more
             familiar with this circuit, let's first take a look at its block diagram, shown in
             figure \ref{fig:alu-block}
@@ -267,21 +262,21 @@
                 \item[ng] Is high whenever $out < 0$.
             \end{description}
 
-            With the ALU in the context of a microprocessor, these flags can be used, for example,
-            to facilitate conditional jumps.
+            When the ALU is used in the context of a microprocessor these flags can be used, for
+            example, to facilitate conditional jumps.
 
             Even though there are $2^{6} = 64$ possible combinations for the values of the control
-            bits, only 18 of these combinations result in interesting functions -- that because
+            bits, only 18 of these combinations result in interesting functions -- that is because
             several combinations of control bits can be used to calculate the same function. We show
             these 18 functions that the ALU can calculate on table \ref{tab:alu-functions}.
             \input{tables/alu-functions}
 
-            %% Talk about the construction of the ALU in terms of its parts.
+            %% TODO: Talk about the construction of the ALU in terms of its parts.
 
 
-        \subsection{The RAM circuit}
+        \subsection{Circuit 2: RAM64}
         \label{subsec:ram-circuit}
-            Circuit 2 is a block of RAM with 64 lines and in which each line is a 16-bit word.
+            Circuit 2 is a block of RAM with 64 lines, in which each line is a 16-bit word.
             Actually, using the term ``RAM'' to refer to this component is an abuse of terminology,
             as this circuit is nothing more than a register bank.
 
@@ -295,29 +290,30 @@
                     \label{fig:ram-block}}
             \end{figure}
 
-            The circuit has one 16-bit output, named ``out'', and three inputs (``in'', ``address''
-            and ``load''). The ``in'' port is 16-bit wide and holds a value to be written into the
-            RAM. The ``address'' port has a width of $\log_{2} 64 = 6$ bits and holds the address
-            in which reading or writing is to be performed. Finally, the 1-bit ``load'' input
-            controls whether the value currently at ``in'' should be written to the selected
-            address. There is also one \emph{implicit} input for a clock signal in this component.
-            Implicit, in this case, means that the clock signal is not present in any of the models
-            that we developed for this circuit, but must be present at any physical implementation.
+            The circuit has one 16-bit output, named \texttt{out}, and three inputs (\texttt{in},
+            \texttt{address} and \texttt{load}). The \texttt{in} port is 16-bit wide and holds a
+            value to be written into the RAM. The \texttt{address} port has a width of $\log_{2} 64
+            = 6$ bits and holds the address in which reading or writing is to be performed. Finally,
+            the \texttt{load} bit controls whether the value currently at \texttt{in} should be
+            written to the selected address. There is also one \emph{implicit} input for a clock
+            signal in this component.  Implicit, in this case, means that the clock signal is not
+            present in any of the models that we developed for this circuit, but must be present in
+            any physical implementation.
 
             The temporal behaviour of this memory block is as follows: At any point in time, the
-            output ``out'' holds the value stored at the memory location specified by ``address''.
-            If the ``load'' pin is high, then the value at ``in'' is loaded into the memory word
-            specificied by ``address''. The loaded value will then be emitted on the output at the
-            \textbf{next} clock cycle.
+            output \texttt{out} holds the value stored at the memory location specified by
+            \texttt{address}.  If the \texttt{load} bit is high, then the value at \texttt{in} is
+            loaded into the memory word specificied by \texttt{address}. The loaded value will then
+            be emitted on the output at the \textbf{next} clock cycle.
 
-        \subsection{The Hack CPU circuit}
+        \subsection{Circuit 3: The Hack CPU}
         \label{subsec:hack-cpu-circuit}
             Circuit 3, the largest and most complex circuit among the ones we have chosen to
             implement, is the Central Processing Unit for the \emph{Hack} computer, the machine
             described in the book ``The Elements of Computing Systems''\cite{nand2tetris-book}.
 
             The Hack computer is based on the \emph{Harvard architecture}, that means that it has
-            different storage component and signal pathways for instructions and data. Therefore,
+            different storage components and signal pathways for instructions and data. Therefore,
             the Hack CPU expects to be connected to \emph{two} memory blocks, the instruction memory
             and the data memory. Having this in mind facilitates the understanding of the CPU's
             block diagram, shown in figure \ref{fig:cpu-block}
@@ -335,7 +331,7 @@
             literals into the data memory, as well as setting a special ``cache'' register inside
             the CPU. The C instruction is the one responsible for effectively performing
             computations using the ALU, testing outputs and jumping. More details about programming
-            in the Hack assembly language can be found in \cite{nand2tetris-book}.
+            in the Hack assembly language can be found in \cite{nand2tetris-chapter-assembly}.
 
             The meaning of each of the CPU's input and output ports becomes much clearer when we
             look at the context in which the CPU is inserted, namely, the memory modules to which it
@@ -359,25 +355,26 @@
             and circuits described in Lava are \emph{deeply embedded}.
 
             The Lava EDSL has several ``dialects'', among which are Xilinx-Lava, York-Lava,
-            Kansas-Lava and Chalmers-Lava. Xilinx-Lava was developed by Satnam Singh and puts a
-            greater emphasis on the \emph{layout} of the described circuits, focusing on their
-            implementation in Xilinx's FPGAs. York-Lava was developed as part of the Reduceron
-            project, and is a variation of Chalmers-Lava, omitting some features and adding some
-            others, like a ``Prelude'' of commonly used circuits ((de)multiplexers, (de)coders,
-            etc.), RAM memory blocks, among others. Chalmers-Lava is considered the ``standard''
-            dialect, also being the one which was first developed, therefore it was chosen as the
-            one to be studied in this project.
+            Kansas-Lava and Chalmers-Lava. Xilinx-Lava\cite{xilinx-lava} was developed by Satnam
+            Singh and puts a greater emphasis on the \emph{layout} of the described circuits,
+            focusing on their implementation in Xilinx's FPGAs. York-Lava was developed as part of
+            the Reduceron\cite{reduceron} project, and is a variation of Chalmers-Lava, omitting
+            some features and adding some others, like a ``Prelude'' of commonly used circuits
+            ((de)multiplexers, (de)coders, RAM memory blocks, etc.). Chalmers-Lava is considered the
+            ``standard'' dialect, also being the one which was first developed, therefore it was
+            chosen as the one to be studied in this project.
 
             Before diving into the inner workings of the Chalmers Lava library, we first need to
             make clear that there are two very distinct versions of this library. The original paper
             that defines the Lava language\cite{lava1998} contains the first version, while the
-            current version is the one defined in \cite{observable-sharing-1999}. This current
-            version of Chalmers Lava is the one in which our case study is implemented.
+            current version is the one defined in a later paper\cite{observable-sharing-1999} by
+            Koen Claessen and David Sands. This current version of Chalmers Lava is the one in which
+            our case study is implemented.
 
             As already said, Lava uses a \emph{deep embedding}, and the datatype used to represent a
             circuit is \texttt{Signal}, defined in figure \ref{fig:lava-signal}. As can be noticed
             from the definition, the \emph{actual} circuit type (\texttt{S}) is ``wrapped'' around
-            the ``Ref'' type constructor. This has to do with the approach that Lava takes to
+            the \texttt{Ref} type constructor. This has to do with the approach that Lava takes to
             solving the problem of observable sharing, which is to rely on comparing
             \emph{references to object} given by the Haskell implementation, to detect cycles in
             syntax graphs representing circuits. This approach is the cause of some of Lava's
@@ -404,10 +401,10 @@
                     \label{fig:lava-boolean-combinators}}
             \end{figure}
 
-            With Lava, one can also model circuits operating on \texttt{Int}s (and there are, in
-            fact, several interesting integer circuit combinators already included in the Lava
-            library). However, our goal in this project was to model \emph{boolean} circuits, and,
-            besides that, integer circuits offer a reduced set of features.
+            With Lava, one can also model circuits operating on \texttt{Int}s (and there are several
+            interesting integer circuit combinators already included in the Lava library). However,
+            our goal in this project was to model \emph{boolean} circuits and, besides that, integer
+            circuits offer a reduced set of features.
 
 
             \subsubsection{Circuits modeled}
@@ -417,9 +414,9 @@
 
                 In order to be able to describe circuit 1, the ALU (described in more detail on
                 section \ref{subsec:circuit-alu}), we first needed to model the necessary
-                subcircuits. The ``core'' of the ALU is composed of a 16-bit ripple-carry adder and
+                parts. The ``core'' of the ALU is composed of a 16-bit ripple-carry adder and
                 a 16-bit \texttt{AND} gate. To model the ripple-carry adder we used full adders as
-                subcomponents, which in turn used half adders. To get used to the wat in which
+                parts, which in turn used half adders. To get used to the wat in which
                 circuits are described in Lava, let us first take a look at the definition of the
                 hierarchy of adders:
                 \input{code/lava-circuit1-model-adders.tex}
@@ -428,27 +425,27 @@
                 aspects that we are analyzing. These observations are:
                 \begin{itemize}
                     \item All circuits in Lava must be modeled as \emph{uncurried} functions, that
-                        is, if multiple inputs are needed, they need to be packed into a tuple, the
+                        is, if multiple inputs are needed, they need to be packed into one tuple, the
                         same ``packing'' happens also in the case of multiple outputs.
 
                     \item The \emph{basic} type of input/output for all circuits modeled is
                         \texttt{Signal Bool}. This is not coincidental: Lava's VHDL generation
                         backend can only work with circuits whose input/output types are
                         \texttt{Signal Bool} or any nested combination of tuples and lists thereof.
-                        This limitation makes Lava have a low \textbf{extensibility}, not allowing
+                        This limitation makes Lava have low \textbf{extensibility}, not allowing
                         -- for example -- user-defined types.
 
                     \item In Lava, (families of) circuits with variable-sized inputs/outputs are
-                        modeled by using lists (as can be seen in the definition of
+                        modeled as lists (as can be seen in the definition of
                         \texttt{rippleCarryAdder}). This approach has a good \textbf{genericity},
                         but is \textbf{not type-safe enough}. For example, we could have a circuit
-                        \texttt{C1}, which uses the assumption that its inputs are 32-bit wide.
-                        There is no way to enforce, at \emph{Haskell compilation time}, that the
-                        inputs with correct size are provided.  Possible problems could only be
-                        detected at simulation or VHDL generation.
+                        assuming that its inputs are 32-bit wide.  There is no way to enforce, at
+                        \emph{Haskell compilation time}, that inputs with correct size are
+                        provided.  Possible problems could only be detected at simulation or VHDL
+                        generation.
                 \end{itemize}
 
-                Now, after having defined all the necessary subcomponents, lets take a look at the
+                Now, after having defined all the necessary parts, lets take a look at the
                 ALU circuit itself:
                 \input{code/lava-circuit1-model-alu.tex}
 
@@ -459,15 +456,16 @@
                 a \emph{type synonym} for a 6-tuple of bits.
 
                 Besides modelling the three circuits in Lava, we also simulated them. The definition
-                of the ALU circuit in \cite{nand2tetris-book} has a pretty extensive truth table to
-                test the circuit model, which was used to simulate the ALU. However, let's take a
-                look at a simpler simulation case, that of a half-adder:
+                of the ALU circuit in the book "The Elements of Computing
+                Systems"\cite{nand2tetris-book} has a pretty extensive truth table to test the
+                circuit model, which was used to simulate the ALU. However, let's take a look at a
+                simpler simulation case, that of a half-adder:
                 \input{code/lava-circuit1-simulation-hadd.tex}
 
-                Our \texttt{halfAdder} circuit is combinational, therefore we could have used the
-                function \texttt{simulate} if we wanted to test its behaviour when given one single
-                combination of inputs. However, in this case we give the circuit under test a
-                \emph{sequence} of inputs and check the corresponding sequence of outputs.
+                Simulation of combinational circuits is performed by the Lava function
+                \texttt{simulate}; it takes as arguments the circuit to simulate and an input
+                combination. In the example of simulation for the \texttt{halfAdder}, we \emph{map}
+                the simulation over a list of input combinations, covering all possible cases.
 
                 The attentive reader might be asking why is this simulation not an automated test,
                 i.e, why are we \textbf{not} comparing the results of the simulation with an
@@ -482,7 +480,7 @@
         Signal (Symbol r1) == Signal (Symbol r2) = r1 == r2
                 \end{haskellcode}
 
-                With the setback of not having \emph{automated} testing, we can say that Lava does
+                With the drawback of not having \emph{automated} testing, we can say that Lava does
                 provide good \textbf{simulation} capabilities, with an interface that is easy to
                 understand for functional programmers.
 
@@ -510,8 +508,10 @@
                 the circuit.
 
                 Moving on to circuit 2 (the RAM block), we will take a look at how Lava handles
-                sequential circuits. The sequential ``primitive'' circuit in Lava is \texttt{delay}.
-                It takes two boolean signals as input and outputs a single boolean signal. Its
+                sequential circuits. The ``fundamental''\footnote{here, \emph{fundamental} means
+                    that all sequential circuits have -- directly or indirectly -- \texttt{delay} as
+                    one of its building blocks} sequential circuit in Lava is \texttt{delay}.  It
+                takes two boolean signals as input and outputs a single boolean signal. Its
                 semantics is that the output signal will correspond tho the input signal
                 \emph{delayed} by one clock cycle, with the other parameter being the first value of
                 the output.  Using this fundamental circuit, we modeled the first building block of
@@ -526,8 +526,12 @@
 
                 The \texttt{regN} definition is \emph{generic}, and parameterized by the size of the
                 input and output (\texttt{n}). This means that \emph{for each value of n, there is a
-                circuit \texttt{regN n}}; of course we can only simulate and synthesize specific
-                instances of this family of circuits, as the example below:
+                    circuit \texttt{regN n}}. In Lava, however, we can only simulate and generate
+                VHDL for specific instances of this family of circuits. The restriction with regards
+                to VHDL generation is not conceptual, that because VHDL has good support for
+                \emph{generic components}, and one could imagine Lava generating generic VHDL from
+                generic circuit models. But, leaving that discussion aside, let's take a look at the
+                simulation case for \texttt{regN}:
                 \input{code/lava-circuit2-simulation-regN.tex}
 
                 The \texttt{simulateSeq} function, which we already used to test the ALU (a
@@ -555,12 +559,12 @@
                 (described in more detail on section \ref{subsec:hack-cpu-circuit}). The CPU circuit
                 is mostly combinational, as it contains \emph{no form of pipelining} and
                 exactly one instruction is executed per clock cycle. However, there is one
-                sequential subcomponent of the CPU: the \emph{program counter}:
+                sequential component of the CPU: the \emph{program counter}:
                 \input{code/lava-circuit3-model-pc.tex}
 
                 The program counter counts cyclically between $ 0 $ and $ 2^{n-1} $, and can have
                 its value reset or set to a particular value at any moment. Having defined the
-                program counter, there are still some helper subcomponents to define before writing
+                program counter, there are still some helper parts to define before writing
                 the model for the CPU itself: most importantly, we need an \emph{instruction
                     decoder}, responsible for interpreting each \texttt{Hack} instruction and
                 outputting several \emph{control bits} that are used to direct the data flow inside
@@ -595,28 +599,31 @@
             \begin{description}
                 \item[System] In ForSyDe, a system or circuit is a network of processes
                     interconnected by \emph{signals}.
+
                 \item[Signal] A signal is, intuitively, a stream of information that flows between
-                    processes. More concretely, it carries events of some type, and each event has
-                    an associated tag. The meaning of the tag is defined by the \emph{model of
-                    computation}\ref{subsubsec:forsyde-mocs} used.
+                    processes. It carries events of some type, and each event has an associated
+                    \emph{tag}. The meaning of the tag is defined by the \emph{model of
+                        computation} used.
+
                 \item[Process] A process is nothing more than a pure function on signals. A process
                     \emph{is able} to hold internal state. But, given the same input (possibly
                     infinite) signals, it produces the same output signals.
-                \item[Process constructor] Every ciruit in ForSyDe, even simple combinational ones,
-                    is built with a \emph{process constructor}. A process constructor can be seen as
+
+                \item[Process constructor] Every ciruit in ForSyDe (even simplest combinational ones)
+                    is built using a \emph{process constructor}. A process constructor can be seen as
                     a skeleton of behaviour, and it clearly separates computation from
                     synchronization aspects. A process constructor takes a combinational function
                     (called \emph{process function}) as parameter -- expressing the computation
                     aspect of the process, and possibly some extra values. There are combinational
                     and sequential process constructors, and some representative examples from each
                     class will be described in more detail in a specific subsection
-                    \ref{subsubsec:forsyde-synchprocs}.
+                    (\ref{subsubsec:forsyde-synchprocs}).
             \end{description}
 
             \subsubsection{Models of Computation}
             \label{subsubsec:forsyde-mocs}
                 The definition of signal given above is purposefully ``vague'' mainly because the
-                precise definition of signals is given by the \emph{model of computation} being
+                precise definition of signals depends on the \emph{model of computation} being
                 used. ForSyDe has (currently) process constructors for the following models of
                 computation:
                 \begin{description}
@@ -629,15 +636,15 @@
 
                     \item[Untimed] In the untimed MoC, the processes fire individually and there is
                         no notion of global clock. A process only evaluates when its inputs have a
-                        minimum number of values ready to be read. The number of needed values can
-                        vary per input, but is constant throughout execution.
+                        minimum number of values \emph{ready} to be read. The number of needed
+                        values can vary per input, but is constant throughout execution.
 
                     \item[Continuous] The Continuous MoC interprets signals as continuous,
                         one-variable piecewise functions of time. It can be used to model some forms
                         of analog circuits, for example.
                 \end{description}
 
-                Among those, perhaps the most ``notable'' one is the Synchronous MoC, because it
+                Among all MoCs, perhaps the most ``notable'' one is the Synchronous MoC, because it
                 reflects the usual interpretation of signals as wires and the vast majority of
                 digital designs nowadays having a global clock. Also, all of our studied circuits
                 were modelled in ForSyDe using the Synchronous MoC. Therefore, it is interesting to
@@ -662,7 +669,7 @@
                 the output signal.
 
                 Another characteristic of ForSyDe which makes the synchronous MoC even more
-                significatn is that only systems that are modeled \textbf{exclusively} with process
+                significant is that only systems that are modeled \textbf{exclusively} with process
                 constructors of the synchronous model can be translated into VHDL by ForSyDe.
 
                 ForSyDe is a \emph{deeply embedded} EDSL, but it takes a significantly different
@@ -698,7 +705,8 @@
 
                 Disadvantages: name handling, not actively maintained
 
-                For each of the 3 circuits studied, we considered 2 models under ForSyDe:
+                When modelling the circuits we decided to study under ForSyDe, we considered 2 kinds
+                of models:
                 \begin{description}
                     \item[High-level] A model that uses Haskell constructs inside the process
                         functions (\texttt{ProcFun}) as close as possible to what
@@ -719,6 +727,7 @@
                 The first thing to notice is that the system is working over \emph{16-bit integers},
                 as by the definition of \texttt{WordType}. This is not exclusive of the high-level
                 model, however, as ForSyDe can also produce VHDL models working with integers.
+
                 TODO: explain the \texttt{ProcFun} type and how the newProcFun TH splice and the
                 ``d'' quasi-quoters work.
 
@@ -748,9 +757,9 @@
         \label{subsec:coquet}
             The third analyzed EDSL for hardware description, Coquet\cite{coquet2011},
             is strikingly different from both others. Most of these differences can be explained in
-            one way or another by its choice of host ``language'' -- Coq.\footnote{``Coq'' is not
+            one way or another by its choice of host ``language'' -- Coq\footnote{``Coq'' is not
                 the name of a language, but a theorem-proving system that uses different languages
-                for defining terms, interactive commands, and user-defined tactics}
+                for defining terms, interactive commands, and user-defined tactics}.
 
             Coq is an interactive theorem prover based on \emph{intuitionistic type theory}. In the
             context of Coq, the concepts of ``term'' and ``type'' are far more intertwined than,
@@ -766,7 +775,7 @@
             By having the length of the vector being part of the type, we can \emph{enforce} several
             useful properties of functions operating on vectors. In fact, the type-system of Coq is
             so expressive that it can encode any proposition of \emph{intuitionistic propositional
-                logic}, a formal logic in which almost all of mathematics can be proven.
+                logic}.
 
             Given such expressive power, one can imagine that it might be useful to express circuits
             in Coq, and use it to prove interesting properties about these circuits. This is exactly
@@ -780,7 +789,7 @@
                 kinds of ``errors'' much earlier in the design process, because the
                 \emph{well-formedness} is guaranteed by construction, i.e, every circuit built using
                 the constructors provided by Coquet are well-formed by definition. Let's take a look
-                at the \emph{Circuit} data type definition:
+                at the \emph{Circuit} data type declaration:
                 \begin{figure}[h]
                     \begin{center}
                         \begin{verbatim}
@@ -800,7 +809,7 @@
                 The \texttt{ℂ} type is parameterized by two types. These types are the \emph{input} and
                 \emph{output} types of the circuit, respectively. They \textbf{do not} represent
                 what is ``carried'' on the wires, but the \emph{structure} of the circuit's input
-                and output ports: How many of them there are, how they grouped and how they are
+                and output ports: How many of them there are, how are they grouped and how are they
                 named.
 
                 There are 2 \emph{atomic} constructors from which an element of \texttt{ℂ} can be
@@ -973,18 +982,14 @@
 
 
 
-    \section{Results summary}
-    \label{sec:results}
+    \section{Conclusions}
+    \label{sec:conclusions}
         TODO: Reiterate the analysis of the EDSLs spread throughout the analysis of each of the
         studied circuits, but in a more summarized manner, actually \textbf{comparing} the EDSLs
         among themselves, \textbf{by aspect} (the ones we defined in section \ref{subsec:aspects}).
 
-    \section{Conclusions}
-    \label{sec:conclusions}
-
 
     \bibliographystyle{plain}
     \bibliography{references}
-
 
 \end{document}
