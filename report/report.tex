@@ -21,7 +21,11 @@
 \usepackage{minted}
 \usepackage{fancyvrb}
 \usemintedstyle{default}
-\newminted{haskell}{gobble=4,mathescape,fontfamily=tt,xleftmargin=\parindent}
+
+\newminted{haskell}{gobble=8,mathescape,fontfamily=tt}
+\newmintedfile{haskell}{mathescape,fontfamily=tt}
+
+\newminted{coq}{gobble=8,mathescape,fontfamily=tt}
 
 
 
@@ -394,7 +398,7 @@
 
             \begin{figure}[h!]
                 \begin{center}
-                    \input{code/lava-signal.tex}
+                    \haskellfile{code/lava-signal.hs}
                 \end{center}
                 \caption{Lava's \texttt{Signal} datatype, used to represent circuits.
                     \label{fig:lava-signal}}
@@ -407,7 +411,7 @@
 
             \begin{figure}[h!]
                 \begin{center}
-                    \input{code/lava-boolean-combinators.tex}
+                    \haskellfile{code/lava-boolean-combinators.hs}
                 \end{center}
                 \caption{Some of Lava's boolean circuit combinators.
                     \label{fig:lava-boolean-combinators}}
@@ -430,7 +434,7 @@
                 hierarchy of adders in figure \ref{fig:lava-circuit1-model-adders}:
                 \begin{figure}[h!]
                     \begin{center}
-                        \input{code/lava-circuit1-model-adders.tex}
+                        \haskellfile{code/lava-circuit1-model-adders.hs}
                     \end{center}
                     \caption{Hierarchy of adders used in circuit 1.
                         \label{fig:lava-circuit1-model-adders}}
@@ -464,7 +468,7 @@
                 ALU circuit itself in figure \ref{fig:lava-circuit1-model-alu}:
                 \begin{figure}[h!]
                     \begin{center}
-                        \input{code/lava-circuit1-model-alu.tex}
+                        \haskellfile{code/lava-circuit1-model-alu.hs}
                     \end{center}
                     \caption{Top-level model for circuit 1, the ALU.
                         \label{fig:lava-circuit1-model-alu}}
@@ -481,7 +485,7 @@
                 Systems"\cite{nand2tetris-book} has a pretty extensive truth table to test the
                 circuit model, which was used to simulate the ALU. However, let's take a look at a
                 simpler simulation case, that of a half-adder:
-                \input{code/lava-circuit1-simulation-hadd.tex}
+                \haskellfile{code/lava-circuit1-simulation-hadd.hs}
 
                 Simulation of combinational circuits is performed by the Lava function
                 \texttt{simulate}; it takes as arguments the circuit to simulate and an input
@@ -497,8 +501,8 @@
                 are considered different by Lava. Here is the offending \texttt{Eq} instance from
                 the Lava library (module \texttt{Lava.Signal}):
                 \begin{haskellcode}
-    instance Eq (Signal a) where
-        Signal (Symbol r1) == Signal (Symbol r2) = r1 == r2
+        instance Eq (Signal a) where
+            Signal (Symbol r1) == Signal (Symbol r2) = r1 == r2
                 \end{haskellcode}
 
                 With the drawback of not having \emph{automated} testing, we can say that Lava does
@@ -509,7 +513,7 @@
                 studied, let's take a look at how Lava handles \emph{formal verification} with two
                 examples: checking that a full adder is commutative and that the output of an
                 incrementer circuit is always different from its input:
-                \input{code/lava-circuit1-verify-fulladder.tex}
+                \haskellfile{code/lava-circuit1-verify-fulladder.hs}
 
                 A property over a circuit in Lava is modeled as a circuit containing \emph{one
                     boolean output}, which -- for the property to be true -- needs to be \emph{true}
@@ -519,7 +523,7 @@
                 formula: the property being verified is \emph{valid} if and only if the negated
                 formula is unsatisfiable. The verification for the incrementer introduces another
                 detail of this kind of verification:
-                \input{code/lava-circuit1-verify-incrementer.tex}
+                \haskellfile{code/lava-circuit1-verify-incrementer.hs}
 
                 We can see by the type of the verification function that it is a \emph{property
                     generator}, i.e, for each integer \texttt{n}, it gives a property. An
@@ -537,13 +541,13 @@
                 \emph{delayed} by one clock cycle, with the other parameter being the first value of
                 the output.  Using this fundamental circuit, we modeled the first building block of
                 our hierarchy of memory elements: a 1-bit register with input and load signals:
-                \input{code/lava-circuit2-model-reg.tex}
+                \haskellfile{code/lava-circuit2-model-reg.hs}
 
                 In this model, we use a \texttt{mux} to control whether the next state of the output
                 will be simply the previous state, or the input value will be ``loaded'' into the
                 register. Now, a 1-bit register can easily be ``lifted'' into a generic n-bit
                 circuit:
-                \input{code/lava-circuit2-model-regN.tex}
+                \haskellfile{code/lava-circuit2-model-regN.hs}
 
                 The \texttt{regN} definition is \emph{generic}, and parameterized by the size of the
                 input and output (\texttt{n}). This means that \emph{for each value of n, there is a
@@ -553,7 +557,7 @@
                 \emph{generic components}, and one could imagine Lava generating generic VHDL from
                 generic circuit models. But, leaving that discussion aside, let's take a look at the
                 simulation case for \texttt{regN}:
-                \input{code/lava-circuit2-simulation-regN.tex}
+                \haskellfile{code/lava-circuit2-simulation-regN.hs}
 
                 The \texttt{simulateSeq} function, which we already used to test the ALU (a
                 combinational circuit), is actually intended for the simulation of sequential
@@ -566,7 +570,7 @@
                 some other helper components (such as an \emph{address decoder} and a 64-to-1
                 \emph{multiplexer}). With all the components at our disposal, we then modeled the
                 RAM block itself:
-                \input{code/lava-circuit2-model-ram64.tex}
+                \haskellfile{code/lava-circuit2-model-ram64.hs}
 
                 All the registers in the memory bank are connected to the ``global'' input word for
                 the bank, but the load signal for any particular register is active \emph{iff} the
@@ -581,7 +585,7 @@
                 is mostly combinational, as it contains \emph{no form of pipelining} and
                 exactly one instruction is executed per clock cycle. However, there is one
                 sequential component of the CPU: the \emph{program counter}:
-                \input{code/lava-circuit3-model-pc.tex}
+                \haskellfile{code/lava-circuit3-model-pc.hs}
 
                 The program counter counts cyclically between $ 0 $ and $ 2^{n-1} $, and can have
                 its value reset or set to a particular value at any moment. Having defined the
@@ -592,7 +596,7 @@
                 the CPU during each instruction execution cycle:
                 \begin{figure}[h!]
                     \begin{center}
-                        \input{code/lava-circuit3-model-instruction-decoder.tex}
+                        \haskellfile{code/lava-circuit3-model-instruction-decoder.hs}
                     \end{center}
                     \caption{The instruction decoder of the Hack CPU.
                         \label{fig:lava-circuit3-model-decoder}}
@@ -749,7 +753,7 @@
 
                 Let's start our analysis by looking at the \emph{high-level} model for circuit 1,
                 the ALU:
-                \input{code/forsyde-circuit1-model-alusim.tex}
+                \haskellfile{code/forsyde-circuit1-model-alusim.hs}
 
                 The first thing to notice is that the system is working over \emph{16-bit integers},
                 as by the definition of \texttt{WordType}. This is not exclusive of the high-level
@@ -761,7 +765,7 @@
                 Now let's compare the high-level model of the ALU with the \emph{synthesizable} one,
                 and discuss along the way how the limitations of ForSyDe's VHDL generation backend
                 constrained our design:
-                \input{code/forsyde-circuit1-model-alusyn.tex}
+                \haskellfile{code/forsyde-circuit1-model-alusyn.hs}
 
                 TODO: Discuss how we can't use user-defined datatypes, and the restrictions on the
                 Haskell syntax that can be used as input for a \texttt{newProcFun} splice (single
@@ -793,11 +797,11 @@
             say, in Haskell. Types in Coq can contain references to terms and vice-versa. A very
             typical example of these so-called \emph{dependent types} is the type(-family) of
             vectors with a certain length:
-            \begin{verbatim}
-    Inductive vec A : nat -> Type :=
-        | nil  : vec A 0
-        | cons : forall (h : A) (n : nat),  vec A n -> vec A (S n).
-            \end{verbatim}
+            \begin{coqcode}
+        Inductive vec A : nat -> Type :=
+            | nil  : vec A 0
+            | cons : forall (h : A) (n : nat),  vec A n -> vec A (S n).
+        \end{coqcode}
 
             By having the length of the vector being part of the type, we can \emph{enforce} several
             useful properties of functions operating on vectors. In fact, the type-system of Coq is
@@ -819,15 +823,15 @@
                 at the \emph{Circuit} data type declaration:
                 \begin{figure}[h!]
                     \begin{center}
-                        \begin{verbatim}
-    Context {tech : Techno}
-    Inductive ℂ : Type -> Type -> Type :=
-    | Atom : ∀ {n m : Type} {Hfn : Fin n} {Hfm : Fin m}, techno n m -> ℂ n m
-    | Plug : ∀ {n m : Type} {Hfn : Fin n} {Hfm : Fin m} (f : m -> n), ℂ n m
-    | Ser : ∀ {n m p : Type}, ℂ n m -> ℂ m p -> ℂ n p
-    | Par : ∀ {n m p q : Type}, ℂ n p -> ℂ m q -> ℂ (n + m) (p + q)
-    | Loop : ∀ {n m p : Type}, ℂ (n + p) (n + p) -> ℂ n m
-                        \end{verbatim}
+                        \begin{coqcode}
+        Context {tech : Techno}
+        Inductive Circuit : Type -> Type -> Type :=
+        | Atom : forall {n m : Type} {Hfn : Fin n} {Hfm : Fin m}, techno n m -> Circuit n m
+        | Plug : forall {n m : Type} {Hfn : Fin n} {Hfm : Fin m} (f : m -> n), Circuit n m
+        | Ser : forall {n m p : Type}, Circuit n m -> Circuit m p -> Circuit n p
+        | Par : forall {n m p q : Type}, Circuit n p -> Circuit m q -> Circuit (n + m) (p + q)
+        | Loop : forall {n m p : Type}, Circuit (n + p) (n + p) -> Circuit n m
+    \end{coqcode}
                     \end{center}
                     \caption{The Circuit (ℂ) datatype in Coquet
                         \label{fig:coquet-circuit-type}}
@@ -863,16 +867,16 @@
                 As an ``usage example'' of Coquet, we show two simple circuits (\texttt{NOT} and
                 \texttt{HALFADD}), along with proofs that they implement the expected functions over
                 booleans. Let's start with \texttt{NOT}:
-                \begin{verbatim}
-    Definition NOT x nx : ℂ [:x] [:nx]  :=  Fork2 _ |> (NOR x x nx).
+                \begin{coqcode}
+        Definition NOT x nx : Circuit [:x] [:nx]  :=  Fork2 _ |> (NOR x x nx).
 
-    Instance NOT_Implement {x nx} : Implement (NOT x nx) _ _ negb.
-    Proof.
-        intros ins outs H.
-        unfold NOT in H.
-        tac.
-    Qed.
-                \end{verbatim}
+        Instance NOT_Implement {x nx} : Implement (NOT x nx) _ _ negb.
+        Proof.
+            intros ins outs H.
+            unfold NOT in H.
+            tac.
+        Qed.
+    \end{coqcode}
 
                 The input type of \texttt{NOT} is a \emph{tagged unit} with tag \texttt{x},
                 similarly, the output type has tag \texttt{nx}. There is some \emph{notation}
@@ -886,17 +890,17 @@
                 details on exactly what is meant by ``implements'', as well as the workings of plugs
                 and tags, are exposed further ahead. Now let's take a look at a half-adder
                 described in Coquet:
-                \begin{verbatim}
-    Definition HADD a b s c : ℂ ([:a] + [:b]) ([:s] + [:c]) :=
-        Fork2 ([:a] + [:b]) |> (XOR a b s & AND a b c).
+                \begin{coqcode}
+        Definition HADD a b s c : Circuit ([:a] + [:b]) ([:s] + [:c]) :=
+            Fork2 ([:a] + [:b]) |> (XOR a b s & AND a b c).
 
-    Instance HADD_Implement {a b s c} :
-        Implement (HADD a b s c) _ _
-        (fun (x : bool * bool) => match x with (a,b) => (xorb a b, andb a b) end).
-        Proof.
-            unfold HADD;  intros ins outs H;  tac.
-        Qed.
-                \end{verbatim}
+        Instance HADD_Implement {a b s c} :
+            Implement (HADD a b s c) _ _
+            (fun (x : bool * bool) => match x with (a,b) => (xorb a b, andb a b) end).
+            Proof.
+                unfold HADD;  intros ins outs H;  tac.
+            Qed.
+        \end{coqcode}
 
                 First of, the sum types that are given as parameters to \texttt{ℂ} indicate that we
                 have two input ports and two output ports. By using \texttt{Fork2} on a binary sum
@@ -922,13 +926,13 @@
                     units}. Using tags serves a form of ``documentation'', giving someone reading
                 the circuit model an idea of what role does each input/output port play. The
                 \emph{type family} of tagged unit types is defined as follows:
-                \begin{verbatim}
-    Inductive tag (t : string) : Type := _tag : tag t
+                \begin{coqcode}
+        Inductive tag (t : string) : Type := _tag : tag t
 
-    Notation "[: x ]" := (tag x).
-    Notation "[! x ]" := (_tag x).
-    Notation "[!!]"   := (_tag _).
-                \end{verbatim}
+        Notation "[: x ]" := (tag x).
+        Notation "[! x ]" := (_tag x).
+        Notation "[!!]"   := (_tag _).
+    \end{coqcode}
 
                 For each string \texttt{t}, there is a type \texttt{tag t}, and this type has
                 exactly one inhabitant. There are also, as part of Coquet, some definitions to make
@@ -936,23 +940,23 @@
                 \texttt{sumn} which, given a type \texttt{t} and a natural \texttt{n}, returns a
                 sum type with \texttt{n} elements and in which each element has type \texttt{t}.
                 This might be useful if we are defining a n-bit adder:
-                \begin{verbatim}
-    Definition RIPPLE cin a b cout s n :
-        ℂ  ([:cin] + sumn [:a] n + sumn [:b] n)  (sumn [:s] n + [:cout]) := ...
-                \end{verbatim}
+                \begin{coqcode}
+        Definition RIPPLE cin a b cout s n :
+            Circuit  ([:cin] + sumn [:a] n + sumn [:b] n)  (sumn [:s] n + [:cout]) := ...
+        \end{coqcode}
 
                 While the provided examples use sums of tagged units as the input/output types, they
                 can be more general: as seen in the definition of the circuit type (Fig.
                 \ref{fig:coquet-circuit-type}), the only requirement is that they belong to the
                 \texttt{Fin} type class, which is defined as follows:
 
-                \begin{verbatim}
-    Class Fin A := {
-        eq_fin : eqT A;
-        enum   : list A;
-        axiom  : forall (x : A), count (equal x) enum = 1
-    }.
-                \end{verbatim}
+                \begin{coqcode}
+        Class Fin A := {
+            eq_fin : eqT A;
+            enum   : list A;
+            axiom  : forall (x : A), count (equal x) enum = 1
+        }.
+    \end{coqcode}
 
 
             \subsubsection{Circuit semantics in Coquet}
@@ -994,15 +998,15 @@
                 Another interesting point is that Coquet defines a \texttt{stream} type family, and
                 then proceeds to define several interesting function over \texttt{stream}, as well
                 as an instance for the meaning relation. The type family is defined as follows:
-                \begin{verbatim}
-    Definition stream A := nat -> A.
-                \end{verbatim}
+                \begin{coqcode}
+        Definition stream A := nat -> A.
+    \end{coqcode}
                 If instead of using \texttt{nat} in the above definition, we generalized it a bit
                 more (abstracting a new type parameter), we arrive at the concept of an ``event
                 stream'':
-                \begin{verbatim}
-    Definition events tag A : tag -> A.
-                \end{verbatim}
+                \begin{coqcode}
+        Definition events tag A : tag -> A.
+    \end{coqcode}
                 This is exactly how ForSyDe defines its ``signals'', so we could model circuits in
                 models of computation other than the synchronous model (which is the one allowed by
                 the current \texttt{stream} definition).
