@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="532.86133"
-   height="228"
+   width="530.86133"
+   height="196.13884"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="cpu-block.pdf">
+   sodipodi:docname="cpu-block.svg">
   <defs
      id="defs4">
     <marker
@@ -123,21 +123,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="243.35139"
-     inkscape:cy="34.4362"
+     inkscape:zoom="1.4"
+     inkscape:cx="325.35754"
+     inkscape:cy="6.0787281"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1256"
      inkscape:window-height="705"
-     inkscape:window-x="0"
+     inkscape:window-x="47"
      inkscape:window-y="24"
      inkscape:window-maximized="0"
-     fit-margin-top="3"
-     fit-margin-left="3"
-     fit-margin-right="3"
-     fit-margin-bottom="3">
+     fit-margin-top="2"
+     fit-margin-left="2"
+     fit-margin-right="2"
+     fit-margin-bottom="2">
     <inkscape:grid
        type="xygrid"
        id="grid3774"
@@ -145,8 +145,8 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       originx="-59.052735px"
-       originy="-118.08205px" />
+       originx="-60.052735px"
+       originy="-134.01263px" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -156,7 +156,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -164,32 +164,30 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-59.052734,-706.28012)">
+     transform="translate(-60.052734,-722.2107)">
     <g
-       id="g5298"
-       transform="translate(119.71142,-102.08205)">
+       id="g3882">
       <path
-         transform="translate(0,790.15746)"
          inkscape:connector-curvature="0"
          id="path3778"
-         d="m 230,62.204712 0,139.999998 -70,40 0,-219.999998 z"
+         d="m 349.78084,759.7814 0,120.99744 -70.13884,34.5707 0,-190.13884 z"
          style="fill:#b2b2b2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
       <text
          transform="matrix(0,-1,1,0,0,0)"
          sodipodi:linespacing="125%"
          id="text5294"
-         y="210.28857"
-         x="-964.44421"
+         y="330"
+         x="-862.36218"
          style="font-size:42px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          xml:space="preserve"><tspan
-           y="210.28857"
-           x="-964.44421"
+           y="330"
+           x="-862.36218"
            id="tspan5296"
            sodipodi:role="line">CPU</tspan></text>
     </g>
     <g
        id="g5903"
-       transform="translate(119.71142,-102.08205)">
+       transform="translate(119.71142,-94.651441)">
       <g
          transform="translate(5.555839,-24.907184)"
          id="g5751">
@@ -279,7 +277,7 @@
     </g>
     <g
        id="g5924"
-       transform="translate(119.71142,-102.08205)">
+       transform="translate(119.71142,-94.375745)">
       <g
          id="g5751-7"
          transform="translate(140.51273,-4.9133331)">
@@ -369,7 +367,7 @@
     </g>
     <g
        id="g5945"
-       transform="translate(119.71142,-102.08205)">
+       transform="translate(119.71142,-106.6562)">
       <g
          id="g5751-30"
          transform="translate(140.51273,124.54389)">
@@ -427,7 +425,8 @@
            sodipodi:role="line">memory</tspan></text>
     </g>
     <g
-       id="g6102">
+       id="g6102"
+       transform="translate(0,-8.2724125)">
       <g
          transform="matrix(0.4243723,0,0,0.4243723,318.61749,546.45518)"
          id="text5956-7"
@@ -456,7 +455,8 @@
            sodipodi:role="line">memory</tspan></text>
     </g>
     <g
-       id="g6079">
+       id="g6079"
+       transform="translate(0,13.678637)">
       <g
          transform="matrix(-0.4243723,0,0,-0.4243723,317.58851,1073.7418)"
          id="text5956-7-9"

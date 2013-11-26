@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="356.33496"
-   height="250.79889"
+   width="354.33496"
+   height="220.67383"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="alu-block.pdf">
+   sodipodi:docname="alu-block.svg">
   <defs
      id="defs4">
     <marker
@@ -180,8 +180,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="153.0303"
-     inkscape:cy="176.04474"
+     inkscape:cx="96.759774"
+     inkscape:cy="64.994732"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -190,10 +190,10 @@
      inkscape:window-x="29"
      inkscape:window-y="24"
      inkscape:window-maximized="0"
-     fit-margin-top="3"
-     fit-margin-left="3"
-     fit-margin-right="3"
-     fit-margin-bottom="3">
+     fit-margin-top="2"
+     fit-margin-left="2"
+     fit-margin-right="2"
+     fit-margin-bottom="2">
     <inkscape:grid
        type="xygrid"
        id="grid2985"
@@ -204,8 +204,8 @@
        units="pt"
        spacingx="0.5pt"
        spacingy="0.5pt"
-       originx="-6.2849123pt"
-       originy="-4.5623287pt" />
+       originx="-7.0849123pt"
+       originy="-16.070313pt" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -215,7 +215,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -223,35 +223,34 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-7.8561404,-795.86034)">
+     transform="translate(-8.8561404,-811.60042)">
     <path
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Send)"
-       d="m 190.48616,1001.2879 0,24.9999"
+       d="m 190.48616,987.90292 0,24.99988"
        id="path3757-0-4"
        inkscape:connector-curvature="0" />
     <g
-       id="g5282"
-       transform="translate(-17.658508,10.259939)">
+       id="g3902">
       <path
          inkscape:connector-curvature="0"
          id="path3755"
-         d="m 75,833.61214 193.75,0 25,25 0,106.25 -25,25 -193.75,0 25,-25 0,-106.25 z"
+         d="m 57.251502,857.35352 193.909408,0 25.02057,20.68594 0,87.91524 -25.02057,20.68596 -193.909408,0 25.020569,-20.68596 0,-87.91524 z"
          style="fill:#b2b2b2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
       <text
          sodipodi:linespacing="125%"
          id="text4965"
-         y="929.04199"
-         x="153.125"
+         y="939.30194"
+         x="135.46649"
          style="font-size:48px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          xml:space="preserve"><tspan
-           y="929.04199"
-           x="153.125"
+           y="939.30194"
+           x="135.46649"
            id="tspan4967"
            sodipodi:role="line">ALU</tspan></text>
     </g>
     <g
        id="g5106"
-       transform="translate(-17.658508,10.259939)">
+       transform="translate(-13.182159,25.000018)">
       <path
          inkscape:connector-curvature="0"
          id="path3757"
@@ -271,7 +270,7 @@
     </g>
     <g
        id="g5117"
-       transform="translate(-17.658508,10.259939)">
+       transform="translate(-13.182159,25.000018)">
       <path
          inkscape:connector-curvature="0"
          id="path3757-3"
@@ -291,7 +290,7 @@
     </g>
     <g
        id="g5122"
-       transform="translate(-17.658508,10.259939)">
+       transform="translate(-13.182159,25.000018)">
       <path
          inkscape:connector-curvature="0"
          id="path3757-0"
@@ -311,7 +310,7 @@
     </g>
     <g
        id="g5127"
-       transform="translate(-17.658508,10.259939)">
+       transform="translate(-13.182159,25.000018)">
       <path
          inkscape:connector-curvature="0"
          id="path3757-6"
@@ -331,7 +330,7 @@
     </g>
     <g
        id="g5132"
-       transform="translate(-17.658508,10.259939)">
+       transform="translate(-13.182159,25.000018)">
       <path
          inkscape:connector-curvature="0"
          id="path3757-1"
@@ -351,7 +350,7 @@
     </g>
     <g
        id="g5137"
-       transform="translate(-17.658508,10.259939)">
+       transform="translate(-13.182159,25.000018)">
       <path
          inkscape:connector-curvature="0"
          id="path3757-9"
@@ -371,7 +370,7 @@
     </g>
     <g
        id="g5147"
-       transform="translate(-17.658508,10.259939)">
+       transform="translate(-17.658508,-3.1250426)">
       <path
          inkscape:connector-curvature="0"
          id="path3757-0-7"
@@ -391,7 +390,7 @@
     </g>
     <g
        id="g5152"
-       transform="translate(-17.658508,10.259939)">
+       transform="translate(-17.658508,-3.1250426)">
       <text
          sodipodi:linespacing="125%"
          id="text4988-6"

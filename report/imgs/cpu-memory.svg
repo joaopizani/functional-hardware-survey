@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="653.62732"
-   height="416.14203"
+   width="595.71283"
+   height="376.1868"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="cpu-memory.pdf">
+   sodipodi:docname="cpu-memory.svg">
   <defs
      id="defs4">
     <marker
@@ -82,8 +82,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="329.29581"
-     inkscape:cy="185.07098"
+     inkscape:cx="355.92812"
+     inkscape:cy="173.13755"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -92,10 +92,10 @@
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="0"
-     fit-margin-top="6"
-     fit-margin-left="6"
-     fit-margin-bottom="6"
-     fit-margin-right="6" />
+     fit-margin-top="2"
+     fit-margin-left="2"
+     fit-margin-bottom="2"
+     fit-margin-right="2" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -104,7 +104,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -112,7 +112,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(67.133358,-664.83551)">
+     transform="translate(31.284271,-689.36215)">
     <g
        id="g4209"
        transform="translate(16.162441,8.0812204)">
@@ -287,10 +287,9 @@
          y="910.15112">pc</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Mstart)"
-       d="m 236.88077,255.8797 -66.67007,0 0,126.16754"
+       d="m 236.88077,926.9089 -66.67007,0 0,126.1675"
        id="path5914"
-       inkscape:connector-curvature="0"
-       transform="translate(0,680.31491)" />
+       inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -307,19 +306,12 @@
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        x="155.33176"
-       y="1074.8076"
+       y="1063.379"
        id="text6486"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan6488"
          x="155.33176"
-         y="1074.8076">reset</tspan></text>
-    <rect
-       style="fill:none;stroke:#7a7a7a;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4, 2;stroke-dashoffset:0"
-       id="rect6490"
-       width="639.62732"
-       height="382.90826"
-       x="-60.133358"
-       y="671.83551" />
+         y="1063.379">reset</tspan></text>
   </g>
 </svg>

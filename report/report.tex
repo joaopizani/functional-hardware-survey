@@ -21,7 +21,7 @@
 \usepackage{minted}
 \usepackage{fancyvrb}
 \usemintedstyle{default}
-\newminted{haskell}{gobble=4,linenos,mathescape,fontfamily=tt,xleftmargin=\parindent}
+\newminted{haskell}{gobble=4,mathescape,fontfamily=tt,xleftmargin=\parindent}
 
 
 
@@ -228,9 +228,9 @@
             function to compute is made by setting the ALU's 6 \emph{control bits}. To become more
             familiar with this circuit, let's first take a look at its block diagram, shown in
             figure \ref{fig:alu-block}
-            \begin{figure}[h]
+            \begin{figure}[h!]
                 \begin{center}
-                    \includegraphics[width=0.6\textwidth]{imgs/alu-block.pdf}
+                    \includegraphics[width=0.55\textwidth]{imgs/alu-block.pdf}
                 \end{center}
                 \caption{Block diagram of circuit 1, showing its input and output ports.
                     \label{fig:alu-block}}
@@ -282,9 +282,9 @@
 
             All the input and output ports of the circuit are pictured in its block diagram, shown
             in figure \ref{fig:ram-block}.
-            \begin{figure}[h]
+            \begin{figure}[h!]
                 \begin{center}
-                    \includegraphics[width=0.4\textwidth]{imgs/ram-block.pdf}
+                    \includegraphics[width=0.5\textwidth]{imgs/ram-block.pdf}
                 \end{center}
                 \caption{Block diagram of circuit 2, a RAM of 64 lines
                     \label{fig:ram-block}}
@@ -317,7 +317,7 @@
             the Hack CPU expects to be connected to \emph{two} memory blocks, the instruction memory
             and the data memory. Having this in mind facilitates the understanding of the CPU's
             block diagram, shown in figure \ref{fig:cpu-block}
-            \begin{figure}[h]
+            \begin{figure}[h!]
                 \begin{center}
                     \includegraphics[width=0.9\textwidth]{imgs/cpu-block.pdf}
                 \end{center}
@@ -337,12 +337,24 @@
             look at the context in which the CPU is inserted, namely, the memory modules to which it
             is connected. So, let's analyze the CPU's ports by taking a look at figure
             \ref{fig:cpu-memory}.
-            \begin{figure}[h]
+            \begin{figure}[h!]
                 \begin{center}
-                    \includegraphics[width=1.0\textwidth]{imgs/cpu-memory.pdf}
+                    \includegraphics[width=0.9\textwidth]{imgs/cpu-memory.pdf}
                 \end{center}
                 \caption{The Hack CPU connected to the data and instruction memory blocks
                     \label{fig:cpu-memory}}
+            \end{figure}
+
+            Finally, the CPU is a circuit which is built mostly from the parts we already defined in
+            circuits 1 and 2. We use the ALU, some registers, multiplexers, an instruction decoder
+            and a counter (the \emph{program counter}). The diagram on figure \ref{fig:cpu-parts}
+            shows these ``parts'' of the CPU circuit and how they are connected to each other.
+            \begin{figure}[h!]
+                \begin{center}
+                    \includegraphics[width=1.0\textwidth]{imgs/cpu-parts.pdf}
+                \end{center}
+                \caption{Parts used in building the CPU circuit and how they are connected.
+                    \label{fig:cpu-parts}}
             \end{figure}
 
     \section{Analysis of the EDSLs}
@@ -380,7 +392,7 @@
             syntax graphs representing circuits. This approach is the cause of some of Lava's
             advantages as well as disadvantages, which will be discussed further ahead.
 
-            \begin{figure}[h]
+            \begin{figure}[h!]
                 \begin{center}
                     \input{code/lava-signal.tex}
                 \end{center}
@@ -393,7 +405,7 @@
             take circuits as inputs and provide circuits as outputs. For example, on figure
             \ref{fig:lava-boolean-combinators} we show some boolean circuit combinators:
 
-            \begin{figure}[h]
+            \begin{figure}[h!]
                 \begin{center}
                     \input{code/lava-boolean-combinators.tex}
                 \end{center}
@@ -409,17 +421,20 @@
 
             \subsubsection{Circuits modeled}
             \label{subsubsec:lava-circuits}
-                TODO: expose and discuss the circuits modeled in Lava, in light of the aspects being
-                analyzed.
-
                 In order to be able to describe circuit 1, the ALU (described in more detail on
                 section \ref{subsec:circuit-alu}), we first needed to model the necessary
                 parts. The ``core'' of the ALU is composed of a 16-bit ripple-carry adder and
                 a 16-bit \texttt{AND} gate. To model the ripple-carry adder we used full adders as
                 parts, which in turn used half adders. To get used to the wat in which
                 circuits are described in Lava, let us first take a look at the definition of the
-                hierarchy of adders:
-                \input{code/lava-circuit1-model-adders.tex}
+                hierarchy of adders in figure \ref{fig:lava-circuit1-model-adders}:
+                \begin{figure}[h!]
+                    \begin{center}
+                        \input{code/lava-circuit1-model-adders.tex}
+                    \end{center}
+                    \caption{Hierarchy of adders used in circuit 1.
+                        \label{fig:lava-circuit1-model-adders}}
+                \end{figure}
 
                 Based on this small model we can already make some observations concerning the
                 aspects that we are analyzing. These observations are:
@@ -446,8 +461,14 @@
                 \end{itemize}
 
                 Now, after having defined all the necessary parts, lets take a look at the
-                ALU circuit itself:
-                \input{code/lava-circuit1-model-alu.tex}
+                ALU circuit itself in figure \ref{fig:lava-circuit1-model-alu}:
+                \begin{figure}[h!]
+                    \begin{center}
+                        \input{code/lava-circuit1-model-alu.tex}
+                    \end{center}
+                    \caption{Top-level model for circuit 1, the ALU.
+                        \label{fig:lava-circuit1-model-alu}}
+                \end{figure}
 
                 In the definition of the ALU itself, we would like to have a user-defined datatype
                 to represent the kinds of functions that can be computed by the ALU (functions
@@ -569,7 +590,13 @@
                     decoder}, responsible for interpreting each \texttt{Hack} instruction and
                 outputting several \emph{control bits} that are used to direct the data flow inside
                 the CPU during each instruction execution cycle:
-                \input{code/lava-circuit3-model-instruction-decoder.tex}
+                \begin{figure}[h!]
+                    \begin{center}
+                        \input{code/lava-circuit3-model-instruction-decoder.tex}
+                    \end{center}
+                    \caption{The instruction decoder of the Hack CPU.
+                        \label{fig:lava-circuit3-model-decoder}}
+                \end{figure}
 
                 Here we notice again some limitations of Lava with regards to datatypes: We are
                 limited to lists and tuples of \texttt{Signal Bool} (to keep the circuit
@@ -654,7 +681,7 @@
                 port and one integer output, and in which the value of the output is equal to the
                 input plus 4. The interface and internal architecture of this system
                 (\emph{addFour}) is depicted in figure \ref{fig:forsyde-addFour}.
-                \begin{figure}[h]
+                \begin{figure}[h!]
                     \begin{center}
                         \includegraphics[width=1.0\textwidth]{imgs/forsyde-addFour.pdf}
                     \end{center}
@@ -790,7 +817,7 @@
                 \emph{well-formedness} is guaranteed by construction, i.e, every circuit built using
                 the constructors provided by Coquet are well-formed by definition. Let's take a look
                 at the \emph{Circuit} data type declaration:
-                \begin{figure}[h]
+                \begin{figure}[h!]
                     \begin{center}
                         \begin{verbatim}
     Context {tech : Techno}
