@@ -127,14 +127,14 @@ alu :: ( [SB], [SB]        -- numerical inputs
       -> ([SB], SB, SB)
 alu (x, y, (zx, nx, zy, ny, f, no)) = (out', zr, ng)
     where
-      out'        = ifThenElse no (out, map inv out)
-      zr          = foldl (curry or2) low out'
-      ng          = equalBool high (last out')
-      out         = let xy'' = zip x'' y'' in mux (f, (andLifted xy'', rippleCarryAdder xy''))
-      x'          = ifThenElse zx (x, replicate (length x) low)
-      x''         = ifThenElse nx (x', map inv x')
-      y'          = ifThenElse zy (y, replicate (length x) low)
-      y''         = ifThenElse ny (y', map inv y')
+      x'   = mux (zx, (x, replicate (length x) low))
+      x''  = mux (nx, (x', map inv x'))
+      y'   = mux (zy, (y, replicate (length x) low))
+      y''  = mux (ny, (y', map inv y'))
+      out  = let xy'' = zip x'' y'' in mux (f, (andLifted xy'', rippleCarryAdder xy''))
+      out' = mux (no, (out, map inv out))
+      zr   = foldl (curry and2) low out'
+      ng   = equalBool high (last out')
 
 testALU :: [([SB], SB, SB)]
 testALU = simulateSeq alu inputs
@@ -161,24 +161,24 @@ testALU = simulateSeq alu inputs
                , (low16, high16, (low, high, low, high, low, high))
                ]
 {-
-      outputs = [ (low16,                            high, low)
-                , (replicate 15 low ++ [high],       low,  low)
-                , (replicate 16 high,                low, high)
-                , (replicate 16 low,                 high, low)
-                , (replicate 16 high,                low, high)
-                , (replicate 16 high,                low, high)
-                , (replicate 16 low,                 high, low)
-                , (replicate 16 low,                 high, low)
-                , (replicate 15 low ++ [high],       low, low)
-                , (replicate 15 low ++ [high],       low, low)
-                , (replicate 16 low,                 high, low)
-                , (replicate 16 high,                low, high)
-                , (replicate 15 high ++ [low],       low, high)
-                , (replicate 16 high,                low, high)
-                , (replicate 15 low ++ [high],       low, low)
-                , (replicate 16 high,                low, high)
-                , (replicate 16 low,                 high, low)
-                , (replicate 16 high,                low, high)
+      outputs = [ (low16,                     high, low)
+                , (high : replicate 15 low,   low,  low)
+                , (replicate 16 high,         low, high)
+                , (replicate 16 low,          high, low)
+                , (replicate 16 high,         low, high)
+                , (replicate 16 high,         low, high)
+                , (replicate 16 low,          high, low)
+                , (replicate 16 low,          high, low)
+                , (high : replicate 15 low,   low, low)
+                , (high : replicate 15 low,   low, low)
+                , (replicate 16 low,          high, low)
+                , (replicate 16 high,         low, high)
+                , (low : replicate 15 high,   low, high)
+                , (replicate 16 high,         low, high)
+                , (high : replicate 15 low,   low, low)
+                , (replicate 16 high,         low, high)
+                , (replicate 16 low,          high, low)
+                , (replicate 16 high,         low, high)
                 ]
 -}
 
