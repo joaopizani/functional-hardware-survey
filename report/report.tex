@@ -17,14 +17,17 @@
 \usepackage{autofe}
 
 %% Code
-\usepackage{inconsolata}
 \usepackage{minted}
 \usepackage{fancyvrb}
+\usepackage{inconsolata}  %% tt font
 \usemintedstyle{default}
 
-\newminted{haskell}{gobble=8,mathescape,fontfamily=tt}
+\newmint{haskell}{mathescape,fontfamily=tt}
 \newmintedfile{haskell}{mathescape,fontfamily=tt}
+\newminted{haskell}{gobble=8,mathescape,fontfamily=tt}
 
+\newmint{coq}{mathescape,fontfamily=tt}
+\newmintedfile{coq}{mathescape,fontfamily=tt}
 \newminted{coq}{gobble=8,mathescape,fontfamily=tt}
 
 
@@ -675,6 +678,7 @@
                         of analog circuits, for example.
                 \end{description}
 
+                \label{ref:forsyde-moc-synch}
                 Among all MoCs, perhaps the most ``notable'' one is the Synchronous MoC, because it
                 reflects the usual interpretation of signals as wires and the vast majority of
                 digital designs nowadays having a global clock. Also, all of our studied circuits
@@ -710,10 +714,14 @@
                 tree, and use this syntax tree in order to simulate and/or translate the circuit
                 model into VHDL.
 
-                This approach has some advantages and disadvantages, which we will look into with
-                more details on section \ref{subsubsec:forsyde-circuits}. For now, let's first take
-                a look at how to build processes in ForSyDe using the \emph{synchronous process
-                    constructors}.
+                On section \ref{subsec:forsyde-synchprocs} We take a closer look at synchronous
+                process constructors, as well as the mechanism by which ForSyDe translates (small
+                fragments of) Haskell source code into the ``building blocks'' of synchronous
+                systems in VHDL.
+
+                On section \ref{subsec:forsyde-circuits} we proceed to expose the circuits we
+                modeled in ForSyDe, using the models to make a comparative analysis of ForSyDe with
+                the other EDSLs.
 
             \subsubsection{Synchronous Process Constructors}
             \label{subsubsec:forsyde-synchprocs}
@@ -721,23 +729,121 @@
                 that limitations to ProcFun will be discussed as the case study circuits are
                 analyzed.
 
-                TODO: Example of usage of a state-machine or scanl constructor, mentioning the
-                approach taken by ForSyDe, in which conceptually ALL processes are sequential in
-                nature (have clock input), but some have the property that the current state does
-                NOT depend on previous states.
+                In the ForSyDe Haskell package, the module \texttt{ForSyDe.Process.SynchProc}
+                provides the list of process constructors that a can be used to build systems in
+                ForSyDe's Synchronous Model of Computation (\ref{ref:forsyde-moc-synch}). The
+                functions provided in that module can be divided in 2 big groups:
+                \begin{description}
+                    \item[Combinational] Combinations process constructors build processes in which
+                        the value on a certain output at time $t$ depends \emph{only} on the input
+                        values at time $t$. A simple example of a combinational process constructor
+                        is:
+                        \begin{haskellcode}
+        mapSY :: (ProcType a, ProcType b) => ProcId
+              -> ProcFun (a -> b) -> Signal a -> Signal b
+                        \end{haskellcode}
+
+                    \item[Sequential] On the other hand, sequential process constructors build
+                        processes which can \emph{maintain state}, i.e, the value on a certain output
+                        at a moment in time can depend on the value of previous inputs and outputs
+                        of the circuit. A simple example of a sequential process constructor is:
+                        \begin{haskellcode}
+        sourceSY :: (ProcType a, ProcType b) => ProcId
+                 -> ProcFun (a -> a) -> a -> Signal a
+                        \end{haskellcode}
+
+                \end{description}
+
+                The \texttt{mapSY} constructor can be seen as the equivalent of the usual
+                \texttt{map} function, but in the context of \texttt{Signal}s: For each element of
+                the input signal (at each clock cycle), it applies the function to it and then
+                produces as its output the result of the function application.
+
+                Instead of being passed a ``normal'' Haskell function (with type $a → b$),
+                \texttt{mapSY} is passed a \texttt{ProcFun} (Process Function). ForSyDe has
+                instances of \texttt{ProcFun} which allow for it to be processed with different
+                \emph{interpretations}, such as simulation, generation of VHDL or generation of
+                graph diagrams. Let's take a look at how one could use the \texttt{mapSY}
+                constructor to model a simple incrementer process:
+                \begin{haskellcode}
+        incrFunc :: ProcFun (Int16 -> Int16)
+        incrFunc = \$(newProcFun [d| f :: Int16 -> Int16
+                                     f x = x + 1 |])
+
+        incrementer :: Signal Int16 -> Signal Int16
+        incrementer = mapSY "incrementerProc" incrFunc
+                \end{haskellcode}
+
+                As already mentioned, ForSyDe makes heavy use of Template Haskell, and this example
+                already clarifies how. First of all, the ``innermost'' expression
+                (\verb;f x = x + 1;) is \emph{reified} by the ``\texttt{[d|}'' quasi-quoter into a
+                list of declarations. This list of declarations is then transformed by
+                \texttt{newProcFun} into an object of type \texttt{ExpQ} (Template Haskell's
+                reified \emph{expression}). Finally, this reified expression is then
+                \emph{spliced into place} and results in an object of type \texttt{ProcFun}.
+
+                A \texttt{ProcFun} represents, intuitively, the syntax tree of the function, and
+                by traversing this \texttt{ProcFun} ForSyDe can perform simulation and VHDL
+                generation. There is, however, one big restriction on \texttt{ProcFun}s: As already
+                seen in the type signature of \texttt{mapSY} above, the input and output types for
+                the \texttt{ProcFun} have to be members of the \texttt{ProcType} class. Instances of
+                \texttt{ProcType} are provided only for:
+
+                \begin{description}
+                    \item[Primitive types] \texttt{Int}, \texttt{Int8}, \texttt{Int16},
+                        \texttt{Int32}, \texttt{Bool}, \texttt{ForSyDe.Bit}.
+                    \item[Enumerated types] User-defined enumerations, with derived instances for
+                        \texttt{Data} and \texttt{Lift}.
+                    \item[Containers] Tuples and fixed-length vectors (\texttt{Data.Param.FSVec}),
+                        holding a type of the above two categories and unrestrictedly nested.
+                \end{description}
+
+                For VHDL to be generated from the system definition, ForSyDe imposes a series
+                of extra restrictions on the form that all \texttt{ProcFun}s can take. Upon calling
+                the \texttt{writeVHDL} function, the \texttt{ProcFun} objects are traversed, and a
+                \emph{runtime} error occurs if any of them does not comply with the restrictions.
+                These restrictions are:
+
+                \begin{description}
+                    \item[``Point-full'' notation] Declarations with points-free notation are not
+                        accepted as synthesizable
+                    \item[Single-clause] To be synthesizable, a \texttt{ProcFun} cannot have
+                        multiple clauses, and it cannot have \texttt{let} or \texttt{where} blocks.
+                        This essentially forbids recursion inside \texttt{ProcFun}s. Pattern
+                        matching is still possible by using the \texttt{case} construct.
+                \end{description}
+
+                Further details on these restrictions and how they constrain circuit design are
+                shown further ahead, when analyzing the studied circuits.
+
+                Now that the concept of a \emph{process function} is clear, let's take a look at how
+                to use a sequential process constructor. In this example, we are using the
+                \texttt{sourceSY} constructor to build a counter that counts in ascending order
+                starting from 0:
+
+                \begin{haskellcode}
+        counter :: Signal Int16
+        counter = sourceSY "counterProc" incrFunc 0
+                \end{haskellcode}
+
+                Notice that we \emph{reuse} the \texttt{incrFunc} process function, as it does
+                exactly what we need. The \texttt{sourceSY} constructor takes as parameters a process
+                function $f$ and an initial value $x$, and has as output signal the sequence
+                $ [x, f(x), f(f(x)), f(f(f(x))), \ldots] $. This behaviour is equivalent to what the
+                function \texttt{iterate} from the Haskell Prelude does.
 
 
             \subsubsection{Circuits modeled}
             \label{subsubsec:forsyde-circuits}
-                TODO: expose and discuss the circuits we modeled as case study, highlighting the
-                advantages and disadvantages of ForSyDe found while modelling them.
+                Our comparative analysis of ForSyDe's strengths and weaknesses was done, as usual,
+                by modelling the 3 circuits used as case-studies. ForSyDe has a peculiar ``dual''
+                nature, as it supports both shallow \emph{and} deep embedded models, and models
+                written with netlist generation in mind can look \emph{very} different than models
+                which do not comply with the restrictions that allow synthesis.
 
-                Advantages: more modular VHDL generated (hierarchical). Higher-level descriptions.
+                Because of this dual nature of ForSyDe, when modelling the case-study circuits
+                we considered 2 kinds of models:
 
-                Disadvantages: name handling, not actively maintained
-
-                When modelling the circuits we decided to study under ForSyDe, we considered 2 kinds
-                of models:
                 \begin{description}
                     \item[High-level] A model that uses Haskell constructs inside the process
                         functions (\texttt{ProcFun}) as close as possible to what
@@ -759,30 +865,149 @@
                 as by the definition of \texttt{WordType}. This is not exclusive of the high-level
                 model, however, as ForSyDe can also produce VHDL models working with integers.
 
-                TODO: explain the \texttt{ProcFun} type and how the newProcFun TH splice and the
-                ``d'' quasi-quoters work.
+                We defined an enumeration type (\texttt{ALUOp}) that encodes possible ALU
+                operations, and derived instances of the \texttt{Data} and \texttt{Lift} classes for
+                it, as is required for \texttt{ALUOp} to be \texttt{ProcType}. In the body of the
+                \texttt{aluFunc} process function, we perform pattern matching on the $f$ value to
+                discover which operation to perform. Also, the body of \texttt{aluFunc} has a
+                \texttt{where} block where all the ``parts'' that constitute the logic of the ALU
+                are defined. Contrast this definition with the \emph{synthesizable} model of the
+                ALU:
 
-                Now let's compare the high-level model of the ALU with the \emph{synthesizable} one,
-                and discuss along the way how the limitations of ForSyDe's VHDL generation backend
-                constrained our design:
                 \haskellfile{code/forsyde-circuit1-model-alusyn.hs}
 
-                TODO: Discuss how we can't use user-defined datatypes, and the restrictions on the
-                Haskell syntax that can be used as input for a \texttt{newProcFun} splice (single
-                clauses, no pattern matching, import restrictions, etc).
+                This model suffers from two consequences of the restrictions imposed by ForSyDe to
+                enable synthesis:
 
-                By analyzing the second studied circuit (the RAM block), we will gain some insight
-                into other significant characteristic of the ForSyDe library -- the usage of
-                fixed-length vectors, and the \emph{manual} management of process names:
+                \begin{itemize}
+                    \item It is too \textbf{fine grained}. As synthesizable \texttt{ProcFun}s cannot
+                        have local definitions, \emph{every single} step in the datapath inside the
+                        ALU has to be a process of its own.
+
+                    \item The parallel and serial combination of processes require several steps of
+                        ``zipping/unzipping'' which have nothing to do with the actual computation.
+                        They only adapt the interfaces of the processes to ``fit'' together, and
+                        transform between \textbf{tuples of signals and signals of tuples}. We will
+                        see the same problem when handling vectors of signals.
+                \end{itemize}
+
+                An extra weakness of ForSyDe that becomes more problematic in fine-grained models is
+                the need for manual \emph{name management}. Each process in ForSyDe must have a
+                user-provided unique identifier: on the one hand it results in readable and modular
+                VHDL netlists, but on the other hand it forces the hardware designer to work at a
+                lower level than desired, making the design more error-prone.
+
+                The issue of name management, along with the usage of fixed-length vectors, will
+                become clearer as we analyze our second circuit: a RAM block of 64 lines.
+
+                First of all, we model a n-bit register, which is not so different from the n-bit
+                register we modeled in Lava:
+
+                \haskellfile{code/forsyde-circuit2-reg.hs}
+
+                The next needed part for the RAM is a 64-to-1 multiplexer, to choose which of the
+                RAM lines to select as output, depending on the address. We modeled a whole
+                hierarchy of multiplexers upto the one we needed (64-to-1): starting with a 2-to-1
+                multiplexer, than building a 4-to-1 using 2-to-1 as components, 16-to-1 using 4-to-1
+                and finally 64-to-1 using 16-to-1 and 4-to-1. We will only show the first two
+                degress in the hierarchy:
+
+                \haskellfile{code/forsyde-circuit2-muxes.hs}
+
+                The hierarchy of multiplexers is a perfect example to illustrate the aforementioned
+                issue of zipping/unzipping: as an input to \texttt{mux4} we get a signal of binary
+                vectors (each with length 2). But we want to use \texttt{mux2} as a component,
+                therefore we need to \textbf{unzip} the signal of vectors into a vector of signals,
+                and then \textbf{index} the vector to get each individual signal. In the case of
+                \texttt{mux16} (not shown here), this situation becomes even worse as, besides
+                unzipping, we need to \textbf{re-zip} the constituent signals into ``groups'' of the
+                right size to be used with the subcomponents.
+
+                As we already mentioned, the requirement of user-given unique names for processes in
+                ForSyDe results in a much more readable VHDL output for the models. Another factor
+                that helps in this direction is the ForSyDe concept of \emph{component
+                    instantiation}.
+
+                When finished modelling a circuit in ForSyDe, we ``wrap it up''
+                in a \emph{system definition} (a value of type \texttt{SysDef}) by calling the
+                function \texttt{newSysDef}. When we call \texttt{writeVHDL} on this system
+                definition, a VHDL top-level \texttt{entity} is generated. If we then want to use
+                this ``finished'' model as a subcomponent in another circuit, we can use the
+                \emph{instantiate} function to create a named process out of the component's
+                \texttt{SysDef}. When the VHDL code for the bigger circuit is generated, the ForSyDe
+                instantiation is mapped to a VHDL \texttt{component} declaration (with accompanying
+                \texttt{port map} statements), which makes for pretty modular VHDL code.
+
+                Let's now finally look at the top-level ForSyDe model for circuit 2, the RAM block:
+
+                \haskellfile{code/forsyde-circuit2-ram.hs}
+
+                This model is also similar to the one wrote in Lava, and that is the
+                reason for why we don't have separate \emph{high-level} and \emph{synthesizable}
+                models for circuit 2. The ``natural'' model, i.e, the one that came to mind
+                immediately reading the description of the circuit, happens to also be
+                synthesizable. In this model, we use the parts already defined before (register,
+                64-to-1 multiplexer), as well as some simple gates (\texttt{and}, \texttt{or}) and
+                an \emph{address decoder} (\texttt{decoder'}). We omit here the code for the address
+                decoder, as it consists simply of an enumeration of all \emph{minterms} (all
+                possible boolean products involving the 6 input bits and their negation).
+
+                Lastly, let's analyze and discuss the ForSyDe model for circuit 3, the Hack CPU. We
+                built the CPU using mostly already defined circuits (ALU, registers, multiplexers)
+                as building blocks, which made the model also look very similar to the one written
+                in Lava. This modular approach is not coincidental: in the book ``The Elements of
+                Computing Systems''\cite{nand2tetris-book}, great care is taken to make each circuit
+                in the hierarchy add only a small step in complexity when compared to its already
+                defined subcomponents.
+
+                In the case of the CPU, we needed to model three main additional components: a
+                program counter, an instruction decoder, and a component that decides when to
+                perform a jump. Let's first start by looking at the program counter:
+
+                \haskellfile{code/forsyde-circuit3-pc.hs}
+
+                The address type \texttt{AddrType} is defined as \texttt{Int16} because the
+                specification of circuit 3 requires so. The program counter is a simple counter with
+                \texttt{reset} and \texttt{set} inputs. Presenting a \texttt{high} value at the
+                \texttt{reset} input will cause the program counter to output 0 at the next clock
+                cycle, which will make the CPU fetch the instruction from memory address 0,
+                effectively rebooting the computer. Presenting a \texttt{high} value at the
+                \texttt{set} input will cause the program counter to have as its next output the
+                value currently present at input \texttt{addr}. This is the way in which
+                \emph{jumps} are performed in the Hack architecture.
+
+                Having defined the model for the program counter, we proceeded to test its
+                behaviour, according to the table of test cases present in chapter
+                5\cite{nand2tetris-chapter-cpu} of the book defining the circuits:
+
+                \haskellfile{code/forsyde-circuit3-pc-sim.hs}
+
+                An important aspect of simulation with ForSyDe is that we can actually
+                \emph{compare} the outputs of simulation for equality with an \emph{expected}
+                sequence of inputs, which could \emph{not} be done in Lava.
+
+                With the program counter defined and tested, we now analyze the instruction decoder:
+
+                \haskellfile{code/forsyde-circuit3-decoder.hs}
+
+                The job of the instruction decoder is very simple: it takes an instruction as input
+                and outputs several signals to \emph{control} different parts of the CPU. It
+                performs \emph{no computation} and merely \emph{rearranges} the wires. But even
+                though it is such a simple circuit, the ForSyDe model is still ``ugly'' (full of
+                indexing operators and tuple constructors). Because of ForSyDe's single-clause
+                restriction on synthesizable \texttt{ProcFun}s, we cannot give meaningful names to
+                the several ``slices'' of the instruction that we are cutting.
+
 
                 TODO: discuss how -- on the one hand -- ForSyDe's FSVec's can help make modelling
                 more type safe but on the other hand the current implementation is very ``hackish''
                 and could ALSO make some use of recent developments in GHC.
 
-                TODO: discuss how ForSyDe's concepts of processes and (sub)components is responsible
-                for really elegant and modular generated VHDL code but, on the other hand, forces
-                the user to manage naming of the processes manually. Give some possible suggestions
-                for this problem.
+
+                TODO: closing remark for ForSyDe: not actively maintained, relies on very old GHC
+                version and doesn't build with newer ones. But the design methodology in itself is
+                very interesting and could surely benefit from modern developments in Haskell
+                implementations.
 
         \subsection{Coquet}
         \label{subsec:coquet}
@@ -801,7 +1026,7 @@
         Inductive vec A : nat -> Type :=
             | nil  : vec A 0
             | cons : forall (h : A) (n : nat),  vec A n -> vec A (S n).
-        \end{coqcode}
+            \end{coqcode}
 
             By having the length of the vector being part of the type, we can \emph{enforce} several
             useful properties of functions operating on vectors. In fact, the type-system of Coq is
@@ -831,7 +1056,7 @@
         | Ser : forall {n m p : Type}, Circuit n m -> Circuit m p -> Circuit n p
         | Par : forall {n m p q : Type}, Circuit n p -> Circuit m q -> Circuit (n + m) (p + q)
         | Loop : forall {n m p : Type}, Circuit (n + p) (n + p) -> Circuit n m
-    \end{coqcode}
+                        \end{coqcode}
                     \end{center}
                     \caption{The Circuit (ℂ) datatype in Coquet
                         \label{fig:coquet-circuit-type}}
@@ -876,7 +1101,7 @@
             unfold NOT in H.
             tac.
         Qed.
-    \end{coqcode}
+                \end{coqcode}
 
                 The input type of \texttt{NOT} is a \emph{tagged unit} with tag \texttt{x},
                 similarly, the output type has tag \texttt{nx}. There is some \emph{notation}
@@ -900,7 +1125,7 @@
             Proof.
                 unfold HADD;  intros ins outs H;  tac.
             Qed.
-        \end{coqcode}
+                \end{coqcode}
 
                 First of, the sum types that are given as parameters to \texttt{ℂ} indicate that we
                 have two input ports and two output ports. By using \texttt{Fork2} on a binary sum
@@ -932,7 +1157,7 @@
         Notation "[: x ]" := (tag x).
         Notation "[! x ]" := (_tag x).
         Notation "[!!]"   := (_tag _).
-    \end{coqcode}
+                \end{coqcode}
 
                 For each string \texttt{t}, there is a type \texttt{tag t}, and this type has
                 exactly one inhabitant. There are also, as part of Coquet, some definitions to make
@@ -943,7 +1168,7 @@
                 \begin{coqcode}
         Definition RIPPLE cin a b cout s n :
             Circuit  ([:cin] + sumn [:a] n + sumn [:b] n)  (sumn [:s] n + [:cout]) := ...
-        \end{coqcode}
+                \end{coqcode}
 
                 While the provided examples use sums of tagged units as the input/output types, they
                 can be more general: as seen in the definition of the circuit type (Fig.
@@ -956,7 +1181,7 @@
             enum   : list A;
             axiom  : forall (x : A), count (equal x) enum = 1
         }.
-    \end{coqcode}
+                \end{coqcode}
 
 
             \subsubsection{Circuit semantics in Coquet}
@@ -1000,13 +1225,13 @@
                 as an instance for the meaning relation. The type family is defined as follows:
                 \begin{coqcode}
         Definition stream A := nat -> A.
-    \end{coqcode}
+                \end{coqcode}
                 If instead of using \texttt{nat} in the above definition, we generalized it a bit
                 more (abstracting a new type parameter), we arrive at the concept of an ``event
                 stream'':
                 \begin{coqcode}
         Definition events tag A : tag -> A.
-    \end{coqcode}
+                \end{coqcode}
                 This is exactly how ForSyDe defines its ``signals'', so we could model circuits in
                 models of computation other than the synchronous model (which is the one allowed by
                 the current \texttt{stream} definition).

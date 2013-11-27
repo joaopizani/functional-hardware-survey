@@ -136,11 +136,3 @@ hackCPU inM instruction reset = zip4SY "zipOuts" aluOut writeM aReg nextInst
         setD = (and' "setD") aFlag writeD
         setA = orSetA' (invSetA' aFlag) ((and' "setA") aFlag writeA)
 
-{-
-
--- | A Hack instruction is a vector of 16 bits
-cpu wordSize (inM, instruction, reset) = (outM, writeM, addressM, pc)
-  where
-    (i00,i01,i02,i03,i04,i05,i06,i07,i08,i09,i10,i11,i12,i13,i14,i15) = instruction
-    insList = [i00,i01,i02,i03,i04,i05,i06,i07,i08,i09,i10,i11,i12,i13,i14,i15]
--}

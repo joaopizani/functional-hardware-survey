@@ -17,12 +17,7 @@ compProc = zipWith3SY "compProc"
                                        f o x y = if o == H then x + y else x .&. y |])
 
 tzProc :: Signal WordType -> Signal Bit
-tzProc = mapSY "tzProc" $(newProcFun [d| f :: WordType -> Bit
-                                         f w = if w == 0 then H else L |])
-
 tnProc :: Signal WordType -> Signal Bit
-tnProc = mapSY "tnProc" $(newProcFun [d| f :: WordType -> Bit
-                                         f w = if w < 0 then H else L |])
 
 aluProc :: Signal ALUControl -> Signal WordType -> Signal WordType
         -> Signal (WordType, ALUFlags)
@@ -32,7 +27,3 @@ aluProc c x y = zipSY "aluProc" out (zipSY "flagsProc" (tzProc out) (tnProc out)
         out  = nProc "no" no comp
         comp = compProc f (nProc "nx" nx $ zProc "zx" zx $ x)
                           (nProc "ny" ny $ zProc "zy" zy $ y)
-
-aluSysDef :: SysDef (  Signal ALUControl -> Signal WordType -> Signal WordType
-                    -> Signal (WordType, ALUFlags) )
-aluSysDef = newSysDef aluProc "alu" ["ctrl", "x", "y"] ["outs"]
