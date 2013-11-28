@@ -10,6 +10,7 @@
 \usepackage{hyperref}
 \usepackage{color}
 \usepackage{booktabs}  % nice tables
+\usepackage{float}
 
 %% Unicode support
 \usepackage[utf8x]{inputenc}
@@ -29,7 +30,6 @@
 \newmint{coq}{mathescape,fontfamily=tt}
 \newmintedfile{coq}{mathescape,fontfamily=tt}
 \newminted{coq}{gobble=8,mathescape,fontfamily=tt}
-
 
 
 
@@ -239,9 +239,7 @@
             figure \ref{fig:alu-block}
 
             \begin{figure}[h!]
-                \begin{center}
-                    \includegraphics[width=0.55\textwidth]{imgs/alu-block.pdf}
-                \end{center}
+                \centerline{\includegraphics[width=0.5\textwidth]{imgs/alu-block.pdf}}
                 \caption{Block diagram of circuit 1, showing its input and output ports.
                     \label{fig:alu-block}}
             \end{figure}
@@ -296,9 +294,7 @@
             in figure \ref{fig:ram-block}.
 
             \begin{figure}[h!]
-                \begin{center}
-                    \includegraphics[width=0.5\textwidth]{imgs/ram-block.pdf}
-                \end{center}
+                \centerline{\includegraphics[width=0.3\textwidth]{imgs/ram-block.pdf}}
                 \caption{Block diagram of circuit 2, a RAM of 64 lines
                     \label{fig:ram-block}}
             \end{figure}
@@ -331,10 +327,8 @@
             and the data memory. Having this in mind facilitates the understanding of the CPU's
             block diagram, shown in figure \ref{fig:cpu-block}
 
-            \begin{figure}[h!]
-                \begin{center}
-                    \includegraphics[width=0.9\textwidth]{imgs/cpu-block.pdf}
-                \end{center}
+            \begin{figure}[H]
+                \centerline{\includegraphics[width=0.85\textwidth]{imgs/cpu-block.pdf}}
                 \caption{Block diagram of circuit 3, the Hack CPU
                     \label{fig:cpu-block}}
             \end{figure}
@@ -353,22 +347,18 @@
             \ref{fig:cpu-memory}.
 
             \begin{figure}[h!]
-                \begin{center}
-                    \includegraphics[width=0.9\textwidth]{imgs/cpu-memory.pdf}
-                \end{center}
+                \centerline{\includegraphics[width=0.85\textwidth]{imgs/cpu-memory.pdf}}
                 \caption{The Hack CPU connected to the data and instruction memory blocks
                     \label{fig:cpu-memory}}
             \end{figure}
 
             Finally, the CPU is a circuit which is built mostly from the parts we already defined in
             circuits 1 and 2. We use the ALU, some registers, multiplexers, an instruction decoder
-            and a counter (the \emph{program counter}). The diagram on figure \ref{fig:cpu-parts}
-            shows these ``parts'' of the CPU circuit and how they are connected to each other.
+            and a counter (the \emph{program counter}). Figure \ref{fig:cpu-parts} shows the CPU
+            organization.
 
             \begin{figure}[h!]
-                \begin{center}
-                    \includegraphics[width=1.0\textwidth]{imgs/cpu-parts.pdf}
-                \end{center}
+                \centerline{\includegraphics[width=1.0\textwidth]{imgs/cpu-parts.pdf}}
                 \caption{Parts used in building the CPU circuit and how they are connected.
                     \label{fig:cpu-parts}}
             \end{figure}
@@ -400,34 +390,31 @@
             our case study is implemented.
 
             As already said, Lava uses a \emph{deep embedding}, and the datatype used to represent a
-            circuit is \texttt{Signal}, defined in figure \ref{fig:lava-signal}. As can be noticed
-            from the definition, the \emph{actual} circuit type (\texttt{S}) is ``wrapped'' around
-            the \texttt{Ref} type constructor. This has to do with the approach that Lava takes to
-            solving the problem of observable sharing, which is to rely on comparing
-            \emph{references to object} given by the Haskell implementation, to detect cycles in
-            syntax graphs representing circuits. This approach is the cause of some of Lava's
-            advantages as well as disadvantages, which will be discussed further ahead.
+            circuit is \texttt{Signal}, defined in listing \ref{lst:lava-signal}.
 
-            \begin{figure}[h!]
-                \begin{center}
-                    \haskellfile{code/lava/lava-signal.hs}
-                \end{center}
+            \begin{listing}[h!]
+                \haskellfile{code/lava/lava-signal.hs}
                 \caption{Lava's \texttt{Signal} datatype, used to represent circuits.
-                    \label{fig:lava-signal}}
-            \end{figure}
+                    \label{lst:lava-signal}}
+            \end{listing}
+
+            As can be noticed from the definition, the \emph{actual} circuit type (\texttt{S}) is
+            ``wrapped'' around the \texttt{Ref} type constructor. This has to do with the approach
+            that Lava takes to solving the problem of observable sharing, which is to rely on
+            comparing \emph{references to object} given by the Haskell implementation, to detect
+            cycles in syntax graphs representing circuits. This approach is the cause of some of
+            Lava's advantages as well as disadvantages, which will be discussed further ahead.
 
             Having defined a circuit operating on values of a type \texttt{a} to have type
             \texttt{Signal a}, then there are several circuit combinators provided by Lava, which
             take circuits as inputs and provide circuits as outputs. For example, on figure
-            \ref{fig:lava-boolean-combinators} we show some boolean circuit combinators:
+            \ref{lst:lava-boolean-combinators} we show some boolean circuit combinators:
 
-            \begin{figure}[h!]
-                \begin{center}
-                    \haskellfile{code/lava/lava-boolean-combinators.hs}
-                \end{center}
+            \begin{listing}[h!]
+                \haskellfile{code/lava/lava-boolean-combinators.hs}
                 \caption{Some of Lava's boolean circuit combinators.
-                    \label{fig:lava-boolean-combinators}}
-            \end{figure}
+                    \label{lst:lava-boolean-combinators}}
+            \end{listing}
 
             With Lava, one can also model circuits operating on \texttt{Int}s (and there are several
             interesting integer circuit combinators already included in the Lava library). However,
@@ -443,15 +430,13 @@
                 a 16-bit \texttt{AND} gate. To model the ripple-carry adder we used full adders as
                 parts, which in turn used half adders. To get used to the wat in which
                 circuits are described in Lava, let us first take a look at the definition of the
-                hierarchy of adders in figure \ref{fig:lava-circuit1-model-adders}:
+                hierarchy of adders in listing \ref{lst:lava-circuit1-model-adders}:
 
-                \begin{figure}[h!]
-                    \begin{center}
-                        \haskellfile{code/lava/lava-circuit1-model-adders.hs}
-                    \end{center}
+                \begin{listing}[h!]
+                    \haskellfile{code/lava/lava-circuit1-model-adders.hs}
                     \caption{Hierarchy of adders used in circuit 1.
-                        \label{fig:lava-circuit1-model-adders}}
-                \end{figure}
+                        \label{lst:lava-circuit1-model-adders}}
+                \end{listing}
 
                 Based on this small model we can already make some observations concerning the
                 aspects that we are analyzing. These observations are:
@@ -479,15 +464,13 @@
                 \end{itemize}
 
                 Now, after having defined all the necessary parts, lets take a look at the
-                ALU circuit itself in figure \ref{fig:lava-circuit1-model-alu}:
+                ALU circuit itself in listing \ref{lst:lava-circuit1-model-alu}:
 
-                \begin{figure}[h!]
-                    \begin{center}
-                        \haskellfile{code/lava/lava-circuit1-model-alu.hs}
-                    \end{center}
+                \begin{listing}[h!]
+                    \haskellfile{code/lava/lava-circuit1-model-alu.hs}
                     \caption{Top-level model for circuit 1, the ALU.
-                        \label{fig:lava-circuit1-model-alu}}
-                \end{figure}
+                        \label{lst:lava-circuit1-model-alu}}
+                \end{listing}
 
                 In the definition of the ALU itself, we would like to have a user-defined datatype
                 to represent the kinds of functions that can be computed by the ALU (functions
@@ -499,8 +482,14 @@
                 of the ALU circuit in the book "The Elements of Computing
                 Systems"\cite{nand2tetris-book} has a pretty extensive truth table to test the
                 circuit model, which was used to simulate the ALU. However, let's take a look at a
-                simpler simulation case, that of a half-adder:
-                \haskellfile{code/lava/lava-circuit1-simulation-hadd.hs}
+                simpler simulation case, that of a half-adder, in figure
+                \ref{lst:lava-circuit1-simulation-hadd}:
+
+                \begin{listing}[h!]
+                    \haskellfile{code/lava/lava-circuit1-simulation-hadd.hs}
+                    \caption{Simulation of a half adder in Lava.
+                        \label{lst:lava-circuit1-simulation-hadd}}
+                \end{listing}
 
                 Simulation of combinational circuits is performed by the Lava function
                 \texttt{simulate}; it takes as arguments the circuit to simulate and an input
@@ -605,9 +594,14 @@
                 (described in more detail on section \ref{subsec:hack-cpu-circuit}). The CPU circuit
                 is mostly combinational, as it contains \emph{no form of pipelining} and
                 exactly one instruction is executed per clock cycle. However, there is one
-                sequential component of the CPU: the \emph{program counter}:
+                sequential component of the CPU: the \emph{program counter}, shown in figure
+                \ref{lst:lava-circuit3-model-pc}:
 
-                \haskellfile{code/lava/lava-circuit3-model-pc.hs}
+                \begin{listing}[h!]
+                    \haskellfile{code/lava/lava-circuit3-model-pc.hs}
+                    \caption{Lava model for the program counter inside the Hack CPU.
+                        \label{lst:lava-circuit3-model-pc}}
+                \end{listing}
 
                 The program counter counts cyclically between $ 0 $ and $ 2^{n-1} $, and can have
                 its value reset or set to a particular value at any moment. Having defined the
@@ -617,13 +611,11 @@
                 outputting several \emph{control bits} that are used to direct the data flow inside
                 the CPU during each instruction execution cycle:
 
-                \begin{figure}[h!]
-                    \begin{center}
-                        \haskellfile{code/lava/lava-circuit3-model-instruction-decoder.hs}
-                    \end{center}
+                \begin{listing}[h!]
+                    \haskellfile{code/lava/lava-circuit3-model-instruction-decoder.hs}
                     \caption{The instruction decoder of the Hack CPU.
-                        \label{fig:lava-circuit3-model-decoder}}
-                \end{figure}
+                        \label{lst:lava-circuit3-model-decoder}}
+                \end{listing}
 
                 Here we notice again some limitations of Lava with regards to datatypes: We are
                 limited to lists and tuples of \texttt{Signal Bool} (to keep the circuit
@@ -710,14 +702,12 @@
                 First, lets take a look at the behaviour of a system which has an one integer input
                 port and one integer output, and in which the value of the output is equal to the
                 input plus 4. The interface and internal architecture of this system
-                (\emph{addFour}) is depicted in figure \ref{fig:forsyde-addFour}.
+                (\emph{addFour}) is depicted in listing \ref{lst:forsyde-addFour}.
 
                 \begin{figure}[h!]
-                    \begin{center}
-                        \includegraphics[width=1.0\textwidth]{imgs/forsyde-addFour.pdf}
-                    \end{center}
+                    \includegraphics[width=1.0\textwidth]{imgs/forsyde-addFour.pdf}
                     \caption{The addFour circuit, example of usage of the Synchronous MoC
-                        \label{fig:forsyde-addFour}}
+                        \label{lst:forsyde-addFour}}
                 \end{figure}
 
                 In this system, each of the constituent processes is built using the \texttt{mapSY}
@@ -876,9 +866,13 @@
                 \end{description}
 
                 Let's start our analysis by looking at the \emph{high-level} model for circuit 1,
-                the ALU:
+                the ALU, on listing \ref{lst:forsyde-circuit1-model-alusim}:
 
-                \haskellfile{code/forsyde/forsyde-circuit1-model-alusim.hs}
+                \begin{listing}[h!]
+                    \haskellfile{code/forsyde/forsyde-circuit1-model-alusim.hs}
+                    \caption{High-level ForSyDe model for the ALU.
+                        \label{lst:forsyde-circuit1-model-alusim}}
+                \end{listing}
 
                 The first thing to notice is that the system is working over \emph{16-bit integers},
                 as by the definition of \texttt{WordType}. This is not exclusive of the high-level
@@ -891,9 +885,13 @@
                 discover which operation to perform. Also, the body of \texttt{aluFunc} has a
                 \texttt{where} block where all the ``parts'' that constitute the logic of the ALU
                 are defined. Contrast this definition with the \emph{synthesizable} model of the
-                ALU:
+                ALU at listing \ref{lst:forsyde-circuit1-model-alusyn}:
 
-                \haskellfile{code/forsyde/forsyde-circuit1-model-alusyn.hs}
+                \begin{listing}[h!]
+                    \haskellfile{code/forsyde/forsyde-circuit1-model-alusyn.hs}
+                    \caption{Synthesizable ForSyDe model of the ALU.
+                        \label{lst:forsyde-circuit1-model-alusyn}}
+                \end{listing}
 
                 This model suffers from two consequences of the restrictions imposed by ForSyDe to
                 enable synthesis:
@@ -928,10 +926,14 @@
                 RAM lines to select as output, depending on the address. We modeled a whole
                 hierarchy of multiplexers upto the one we needed (64-to-1): starting with a 2-to-1
                 multiplexer, than building a 4-to-1 using 2-to-1 as components, 16-to-1 using 4-to-1
-                and finally 64-to-1 using 16-to-1 and 4-to-1. We will only show the first two
-                degress in the hierarchy:
+                and finally 64-to-1 using 16-to-1 and 4-to-1. We only show the first two degress
+                of the hierarchy in listing \ref{lst:forsyde-circuit2-muxes}.
 
-                \haskellfile{code/forsyde/forsyde-circuit2-muxes.hs}
+                \begin{listing}[h!]
+                    \haskellfile{code/forsyde/forsyde-circuit2-muxes.hs}
+                    \caption{Excerpt from the hierarchy of multiplexers modeled in ForSyDe.
+                        \label{lst:forsyde-circuit2-muxes}}
+                \end{listing}
 
                 The hierarchy of multiplexers is a perfect example to illustrate the aforementioned
                 issue of zipping/unzipping: as an input to \texttt{mux4} we get a signal of binary
@@ -957,9 +959,14 @@
                 instantiation is mapped to a VHDL \texttt{component} declaration (with accompanying
                 \texttt{port map} statements), which makes for pretty modular VHDL code.
 
-                Let's now finally look at the top-level ForSyDe model for circuit 2, the RAM block:
+                Let's now finally look at the top-level ForSyDe model for circuit 2, the RAM block.
+                The code is presented at listing \ref{lst:forsyde-circuit2-ram}.
 
-                \haskellfile{code/forsyde/forsyde-circuit2-ram.hs}
+                \begin{listing}[h!]
+                    \haskellfile{code/forsyde/forsyde-circuit2-ram.hs}
+                    \caption{Top-level ForSyDe model of circuit 2, the RAM block.
+                        \label{lst:forsyde-circuit2-ram}}
+                \end{listing}
 
                 This model is also similar to the one wrote in Lava, and that is the
                 reason for why we don't have separate \emph{high-level} and \emph{synthesizable}
@@ -1005,9 +1012,14 @@
                 \emph{compare} the outputs of simulation for equality with an \emph{expected}
                 sequence of inputs, which could \emph{not} be done in Lava.
 
-                With the program counter defined and tested, we now analyze the instruction decoder:
+                With the program counter defined and tested, we proceeded to model the instruction
+                decoder, whose code is presented on listing \ref{lst:forsyde-circuit3-decoder}.
 
-                \haskellfile{code/forsyde/forsyde-circuit3-decoder.hs}
+                \begin{listing}[h!]
+                    \haskellfile{code/forsyde/forsyde-circuit3-decoder.hs}
+                    \caption{ForSyDe model for the Hack CPU instruction decoder.
+                        \label{lst:forsyde-circuit3-decoder}}
+                \end{listing}
 
                 The job of the instruction decoder is very simple: it takes an instruction as input
                 and outputs several signals to \emph{control} different parts of the CPU. It
@@ -1021,7 +1033,7 @@
                 Now we go over the last needed subcomponent of the CPU we needed to model: a logical
                 block which decides when to set the program counter and cause a jump to occur. The
                 output of this circuit is connected to the \texttt{set} input of the program
-                counter, as can be seen in figure \ref{fig:cpu-parts}. The code for the ForSyDe
+                counter, as can be seen in listing \ref{lst:cpu-parts}. The code for the ForSyDe
                 version of the \texttt{decideJump} block is shown below:
 
                 \haskellfile{code/forsyde/forsyde-circuit3-jump.hs}
@@ -1037,9 +1049,14 @@
                 \texttt{decideJump} model was also tested for the input combinations described in
                 the book\cite{nand2tetris-book}, but we omit the test code here for brevity.
 
-                Having all the necessary parts we can then write the top-level model for the CPU:
+                Having all the necessary parts we could then model the Hack CPU itself, whose code
+                is presented on listing \ref{lst:forsyde-circuit3-cpu}.
 
-                \haskellfile{code/forsyde/forsyde-circuit3-cpu.hs}
+                \begin{listing}[h!]
+                    \haskellfile{code/forsyde/forsyde-circuit3-cpu.hs}
+                    \caption{Top-level ForSyDe model for circuit 3, the Hack CPU.
+                        \label{lst:forsyde-circuit3-cpu}}
+                \end{listing}
 
                 This model also looks similar to the CPU model written in Lava, but the generated
                 VHDL is very different, and that is a big advantage of ForSyDe. While Lava
@@ -1102,13 +1119,11 @@
                 the constructors provided by Coquet are well-formed by definition. Let's take a look
                 at the \emph{Circuit} data type declaration:
 
-                \begin{figure}[h!]
-                    \begin{center}
-                        \coqfile{code/coquet/coquet-definition-circuit.v}
-                    \end{center}
+                \begin{listing}[h!]
+                    \coqfile{code/coquet/coquet-definition-circuit.v}
                     \caption{The Circuit datatype in Coquet
-                        \label{fig:coquet-circuit-type}}
-                \end{figure}
+                        \label{lst:coquet-circuit-type}}
+                \end{listing}
 
                 The \texttt{Circuit} type is parameterized by two types. These types are the
                 \emph{input} and \emph{output} types of the circuit, respectively. They \textbf{do
@@ -1204,7 +1219,7 @@
 
                 While the provided examples use sums of tagged units as the input/output types, they
                 can be more general: as seen in the definition of the circuit type (Fig.
-                \ref{fig:coquet-circuit-type}), the only requirement is that they belong to the
+                \ref{lst:coquet-circuit-type}), the only requirement is that they belong to the
                 \texttt{Fin} type class, which is defined as follows:
 
                 \begin{coqcode}
@@ -1235,10 +1250,14 @@
                 functions that, for each input/output port, provide the a value present at that port
                 -- they are in this way \emph{isomorphic} to cartesian products, and this isomorphism
                 is indeed used to facilitate proofs of correctness in Coquet, as will be seen later.
+                The definition of the meaning relation in Coquet is presented on
+                figure~\ref{lst:coquet-definition-semantics}.
 
-                The definition of the meaning relation is as follows:
-
-                \coqfile{code/coquet/coquet-definition-semantics.v}
+                \begin{listing}[h!]
+                    \coqfile{code/coquet/coquet-definition-semantics.v}
+                    \caption{Coquet definition of circuit semantics.
+                        \label{lst:coquet-definition-semantics}}
+                \end{listing}
 
                 We can notice that the definition of \texttt{Semantics} has constructors that
                 correspond to the constructors of \texttt{Circuit}. So, for example, given the
@@ -1290,10 +1309,15 @@
                 difference between the \emph{relational} and the \emph{functional} models is that
                 the functional model can only account for \emph{deterministic} specifications (an
                 input combination maps to only one output), while with the relational model we can
-                also write non-deterministic specifications. The definitions for the classes
-                \texttt{Realise} and \texttt{Implement} are as follows:
+                also write non-deterministic specifications. The definitions for the Coquet classes
+                \texttt{Realise} and \texttt{Implement} are shown in
+                figure~\ref{lst:coquet-definition-realise-implement}.
 
-                \coqfile{code/coquet/coquet-definition-realise-implement.v}
+                \begin{listing}[h!]
+                    \coqfile{code/coquet/coquet-definition-realise-implement.v}
+                    \caption{Definition of the \texttt{Realise} and \texttt{Implement} type classes.
+                        \label{lst:coquet-definition-realise-implement}}
+                \end{listing}
 
                 Is we want to prove that a certain circuit \texttt{c} \emph{implements} a certain
                 function \emph{f} (the high-level specification), then our goal in Coq will be:
