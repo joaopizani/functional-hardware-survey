@@ -1235,23 +1235,110 @@
                 For a circuit type \texttt{ℂ n m} and considering \texttt{T} as the type of what is
                 carried in the wires, we can define the type \emph{ins} (stands for ``inputs'') as
                 $n \rightarrow T$ and \emph{outs} as $m \rightarrow T$. These are functions that,
-        for each input/output port, provide the a value present at that port -- they are in this way
-        \emph{isomorphic} to cartesian products, and this isomorphism is indeed used to facilitate
-        proofs of correctness in Coquet.
+                for each input/output port, provide the a value present at that port -- they are in
+                this way \emph{isomorphic} to cartesian products, and this isomorphism is indeed
+                used to facilitate proofs of correctness in Coquet.
 
+                The definition of the meaning relation is as follows:
 
+                \begin{coqcode}
+        Inductive Semantics : forall {n} {m},
+        circuit n m -> (n -> Data) -> (m -> Data) -> Prop :=
 
-                TODO: Explain what the meaning relation for a circuit in Coquet is, give the
-                (inductive) definition of the meaning relation and comment on it.
+        | KAtom : forall n m {Hfn : Fin n} {Hfm : Fin m}
+                      (t : techno n m) ins outs,
+                          spec t ins outs -> Semantics (Atom t) ins outs
 
-                TODO: Explain how the meaning relation is too ``low-level'', and how Coquet uses
-                \emph{data abstraction} and \emph{function abstraction} to prove the correctness of
-                circuits. The proofs of correctness are proofs that a circuit either
-                \textbf{Realizes a high-level relation} or \textbf{Implements a high-level function}
-                over the high-level input/output types.
+        | KSer : forall n m p (x : circuit n m) (y : circuit m p) ins middles outs,
+                            Semantics x ins middles
+                         -> Semantics y middles outs
+                         -> Semantics (Ser x y) ins outs
 
-                We give the definitions of \texttt{Realizes} and \texttt{Implements}, as well as
-                walk over a small example of functional correctness proof.
+        | KPar : forall n m p q (x : circuit n p) (y : circuit m q) ins outs,
+                        Semantics x (select_left ins) (select_left outs)
+                     -> Semantics y (select_right ins) (select_right outs)
+                     -> Semantics (Par x y) ins outs
+
+        | KPlug : forall n m {Hfn : Fin n} {Hfm : Fin m} (f : m -> n) ins,
+                      Semantics (Plug f) ins (Data.lift f ins)
+
+        | KLoop : forall n m l (x : circuit (n + l) (m + l)) ins outs retro,
+                         Semantics x (Data.app ins retro) (Data.app outs retro)
+                      -> Semantics (Loop x) ins outs
+                \end{coqcode}
+
+                We can notice that the definition of \texttt{Semantics} has constructors that
+                correspond to the constructors of \texttt{Circuit}. So, for example, given the
+                semantics of two circuits \texttt{x} and \texttt{y}, we can obtain the semantics of
+                their \emph{serial composition} (\texttt{Ser x y}) by using the \texttt{KSer}
+                constructor. This inductive definition of semantics can also be used in proofs. If
+                we need to prove a statement of the form:
+                \coq;Semantics (Ser x y) ins outs;
+
+                Then we can \texttt{apply} the \texttt{KSer} constructor to split the goal into the
+                following subgoals:
+
+                \begin{coqcode}
+        Semantics x ins middles
+        Semantics y middles outs
+                \end{coqcode}
+
+                While the meaning relation defines exactly the behaviour of a circuit, it is too
+                low-level. We want to be able to express our \emph{specification} for circuit
+                behaviour in a \emph{higher level} of abstraction -- after all, the whole point of
+                proving correctness is making sure that the circuit we are modelling is
+                \emph{equivalent} (in a sense) to a specification that we \emph{assume as correct}.
+
+                Coquet offers some tools to help the user in this direction. First of all, it offers
+                the designer two kinds of abstraction to facilitate writing high-level
+                specifications:
+
+                \begin{description}
+                    \item[Data abstraction] The meaning relation (\texttt{Semantics}) for a circuit
+                        is a relation between two \emph{functions} (\emph{ins} and \emph{outs}),
+                        which is cumbersome to reason about. Therefore, Coquet allows the user to
+                        express the specification for a circuit in terms of higher-level types,
+                        provided that isomorphisms between these higher-level types and the function
+                        types are provided. Several isomorphisms for common cases of input/output
+                        types are already provided in the Coquet library, such as the isomorphism
+                        between $ \text{sumn} \text{\textbf{1}} n \rightarrow B$ and $ B^{n} $
+                        (where \textbf{1} stands for the unit type and \texttt{B} for boolean).
+
+                    \item[Behavioural abstraction] A circuit can be said to satisfy a weak
+                        specification 
+                        \texttt{R} if we can prove the logical entailment of \texttt{R} by the
+                        meaning relation. The specification \texttt{R} already benefits from
+                        \emph{data abstraction}, and ranges over the high-level types.
+                \end{description}
+
+                There are two ways to express compliance with a specification: we can say either
+                that a circuit \texttt{\textbf{Realises}} a certain relation (up to isomorphisms) or
+                that it \texttt{\textbf{Implements}} a certain function (up to isomorphisms). The
+                difference between the \emph{relational} and the \emph{functional} models is that
+                the functional model can only account for \emph{deterministic} specifications (an
+                input combination maps to only one output), while with the relational model we can
+                also write non-deterministic specifications. The definitions for the classes
+                \texttt{Realise} and \texttt{Implement} are as follows:
+
+                \begin{coqcode}
+        Context {n m N M : Type} (Rn : Iso (n -> T) N) (Rm : Iso (m -> T) M).
+        Class Realise (c : Circuit n m) (R : N -> M -> Prop) :=
+            realise :
+                forall ins outs, Semantics c ins outs -> R (iso ins) (iso outs)
+        Class Implement (c : Circuit n m) (f : N -> M) :=
+            implement :
+                forall ins outs, Semantics c ins outs -> iso outs = f (iso ins)
+                    \end{coqcode}
+
+                Is we want to prove that a certain circuit \texttt{c} \emph{implements} a certain
+                function \emph{f} (the high-level specification), then our goal in Coq will be:
+                \coq;Implement c f; To prove this kind of statement, one can ``break down'' the
+                meaning relation hypothesis, resulting in one \texttt{Semantics} hypothesis per
+                circuit subcomponent.  Then the already-proven specifications of the subcomponents
+                could be used to rewrite the \texttt{Semantics} hypotheses into equations. This
+                makes for very modular proofs, and this will become clearer with the example proofs
+                in section \ref{subsubsec:coquet-circuits}.
+
 
             \subsubsection{Circuits modeled}
             \label{subsubsec:coquet-circuits}
