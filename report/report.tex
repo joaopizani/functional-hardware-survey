@@ -410,7 +410,7 @@
 
             \begin{figure}[h!]
                 \begin{center}
-                    \haskellfile{code/lava-signal.hs}
+                    \haskellfile{code/lava/lava-signal.hs}
                 \end{center}
                 \caption{Lava's \texttt{Signal} datatype, used to represent circuits.
                     \label{fig:lava-signal}}
@@ -423,7 +423,7 @@
 
             \begin{figure}[h!]
                 \begin{center}
-                    \haskellfile{code/lava-boolean-combinators.hs}
+                    \haskellfile{code/lava/lava-boolean-combinators.hs}
                 \end{center}
                 \caption{Some of Lava's boolean circuit combinators.
                     \label{fig:lava-boolean-combinators}}
@@ -447,7 +447,7 @@
 
                 \begin{figure}[h!]
                     \begin{center}
-                        \haskellfile{code/lava-circuit1-model-adders.hs}
+                        \haskellfile{code/lava/lava-circuit1-model-adders.hs}
                     \end{center}
                     \caption{Hierarchy of adders used in circuit 1.
                         \label{fig:lava-circuit1-model-adders}}
@@ -483,7 +483,7 @@
 
                 \begin{figure}[h!]
                     \begin{center}
-                        \haskellfile{code/lava-circuit1-model-alu.hs}
+                        \haskellfile{code/lava/lava-circuit1-model-alu.hs}
                     \end{center}
                     \caption{Top-level model for circuit 1, the ALU.
                         \label{fig:lava-circuit1-model-alu}}
@@ -500,7 +500,7 @@
                 Systems"\cite{nand2tetris-book} has a pretty extensive truth table to test the
                 circuit model, which was used to simulate the ALU. However, let's take a look at a
                 simpler simulation case, that of a half-adder:
-                \haskellfile{code/lava-circuit1-simulation-hadd.hs}
+                \haskellfile{code/lava/lava-circuit1-simulation-hadd.hs}
 
                 Simulation of combinational circuits is performed by the Lava function
                 \texttt{simulate}; it takes as arguments the circuit to simulate and an input
@@ -530,7 +530,7 @@
                 examples: checking that a full adder is commutative and that the output of an
                 incrementer circuit is always different from its input:
 
-                \haskellfile{code/lava-circuit1-verify-fulladder.hs}
+                \haskellfile{code/lava/lava-circuit1-verify-fulladder.hs}
 
                 A property over a circuit in Lava is modeled as a circuit containing \emph{one
                     boolean output}, which -- for the property to be true -- needs to be \emph{true}
@@ -541,7 +541,7 @@
                 formula is unsatisfiable. The verification for the incrementer introduces another
                 detail of this kind of verification:
 
-                \haskellfile{code/lava-circuit1-verify-incrementer.hs}
+                \haskellfile{code/lava/lava-circuit1-verify-incrementer.hs}
 
                 We can see by the type of the verification function that it is a \emph{property
                     generator}, i.e, for each integer \texttt{n}, it gives a property. An
@@ -560,14 +560,14 @@
                 the output.  Using this fundamental circuit, we modeled the first building block of
                 our hierarchy of memory elements: a 1-bit register with input and load signals:
 
-                \haskellfile{code/lava-circuit2-model-reg.hs}
+                \haskellfile{code/lava/lava-circuit2-model-reg.hs}
 
                 In this model, we use a \texttt{mux} to control whether the next state of the output
                 will be simply the previous state, or the input value will be ``loaded'' into the
                 register. Now, a 1-bit register can easily be ``lifted'' into a generic n-bit
                 circuit:
 
-                \haskellfile{code/lava-circuit2-model-regN.hs}
+                \haskellfile{code/lava/lava-circuit2-model-regN.hs}
 
                 The \texttt{regN} definition is \emph{generic}, and parameterized by the size of the
                 input and output (\texttt{n}). This means that \emph{for each value of n, there is a
@@ -578,7 +578,7 @@
                 VHDL from generic circuit models. But, leaving that discussion aside, let's take a
                 look at the simulation case for \texttt{regN}:
 
-                \haskellfile{code/lava-circuit2-simulation-regN.hs}
+                \haskellfile{code/lava/lava-circuit2-simulation-regN.hs}
 
                 The \texttt{simulateSeq} function is intended for the simulation of sequential
                 circuits: the list of inputs its given is the sequence of values present at the
@@ -591,7 +591,7 @@
                 \emph{multiplexer}). With all the components at our disposal, we then modeled the
                 RAM block itself:
 
-                \haskellfile{code/lava-circuit2-model-ram64.hs}
+                \haskellfile{code/lava/lava-circuit2-model-ram64.hs}
 
                 All the registers in the memory bank are connected to the ``global'' input word for
                 the bank, but the load signal for any particular register is active \emph{iff} the
@@ -607,7 +607,7 @@
                 exactly one instruction is executed per clock cycle. However, there is one
                 sequential component of the CPU: the \emph{program counter}:
 
-                \haskellfile{code/lava-circuit3-model-pc.hs}
+                \haskellfile{code/lava/lava-circuit3-model-pc.hs}
 
                 The program counter counts cyclically between $ 0 $ and $ 2^{n-1} $, and can have
                 its value reset or set to a particular value at any moment. Having defined the
@@ -619,7 +619,7 @@
 
                 \begin{figure}[h!]
                     \begin{center}
-                        \haskellfile{code/lava-circuit3-model-instruction-decoder.hs}
+                        \haskellfile{code/lava/lava-circuit3-model-instruction-decoder.hs}
                     \end{center}
                     \caption{The instruction decoder of the Hack CPU.
                         \label{fig:lava-circuit3-model-decoder}}
@@ -790,7 +790,7 @@
                 graph diagrams. Let's take a look at how one could use the \texttt{mapSY}
                 constructor to model a simple incrementer process:
 
-                \haskellfile{code/forsyde-synchprocs-incrementer.hs}
+                \haskellfile{code/forsyde/forsyde-synchprocs-incrementer.hs}
 
                 As already mentioned, ForSyDe makes heavy use of Template Haskell, and this example
                 already clarifies how. First of all, the ``innermost'' expression
@@ -878,7 +878,7 @@
                 Let's start our analysis by looking at the \emph{high-level} model for circuit 1,
                 the ALU:
 
-                \haskellfile{code/forsyde-circuit1-model-alusim.hs}
+                \haskellfile{code/forsyde/forsyde-circuit1-model-alusim.hs}
 
                 The first thing to notice is that the system is working over \emph{16-bit integers},
                 as by the definition of \texttt{WordType}. This is not exclusive of the high-level
@@ -893,7 +893,7 @@
                 are defined. Contrast this definition with the \emph{synthesizable} model of the
                 ALU:
 
-                \haskellfile{code/forsyde-circuit1-model-alusyn.hs}
+                \haskellfile{code/forsyde/forsyde-circuit1-model-alusyn.hs}
 
                 This model suffers from two consequences of the restrictions imposed by ForSyDe to
                 enable synthesis:
@@ -922,7 +922,7 @@
                 First of all, we model a n-bit register, which is not so different from the n-bit
                 register we modeled in Lava:
 
-                \haskellfile{code/forsyde-circuit2-reg.hs}
+                \haskellfile{code/forsyde/forsyde-circuit2-reg.hs}
 
                 The next needed part for the RAM is a 64-to-1 multiplexer, to choose which of the
                 RAM lines to select as output, depending on the address. We modeled a whole
@@ -931,7 +931,7 @@
                 and finally 64-to-1 using 16-to-1 and 4-to-1. We will only show the first two
                 degress in the hierarchy:
 
-                \haskellfile{code/forsyde-circuit2-muxes.hs}
+                \haskellfile{code/forsyde/forsyde-circuit2-muxes.hs}
 
                 The hierarchy of multiplexers is a perfect example to illustrate the aforementioned
                 issue of zipping/unzipping: as an input to \texttt{mux4} we get a signal of binary
@@ -959,7 +959,7 @@
 
                 Let's now finally look at the top-level ForSyDe model for circuit 2, the RAM block:
 
-                \haskellfile{code/forsyde-circuit2-ram.hs}
+                \haskellfile{code/forsyde/forsyde-circuit2-ram.hs}
 
                 This model is also similar to the one wrote in Lava, and that is the
                 reason for why we don't have separate \emph{high-level} and \emph{synthesizable}
@@ -983,7 +983,7 @@
                 program counter, an instruction decoder, and a component that decides when to
                 perform a jump. Let's first start by looking at the program counter:
 
-                \haskellfile{code/forsyde-circuit3-pc.hs}
+                \haskellfile{code/forsyde/forsyde-circuit3-pc.hs}
 
                 The address type \texttt{AddrType} is defined as \texttt{Int16} because the
                 specification of circuit 3 requires so. The program counter is a simple counter with
@@ -999,7 +999,7 @@
                 behaviour, according to the table of test cases present in chapter
                 5\cite{nand2tetris-chapter-cpu} of the book defining the circuits:
 
-                \haskellfile{code/forsyde-circuit3-pc-sim.hs}
+                \haskellfile{code/forsyde/forsyde-circuit3-pc-sim.hs}
 
                 An important aspect of simulation with ForSyDe is that we can actually
                 \emph{compare} the outputs of simulation for equality with an \emph{expected}
@@ -1007,7 +1007,7 @@
 
                 With the program counter defined and tested, we now analyze the instruction decoder:
 
-                \haskellfile{code/forsyde-circuit3-decoder.hs}
+                \haskellfile{code/forsyde/forsyde-circuit3-decoder.hs}
 
                 The job of the instruction decoder is very simple: it takes an instruction as input
                 and outputs several signals to \emph{control} different parts of the CPU. It
@@ -1024,7 +1024,7 @@
                 counter, as can be seen in figure \ref{fig:cpu-parts}. The code for the ForSyDe
                 version of the \texttt{decideJump} block is shown below:
 
-                \haskellfile{code/forsyde-circuit3-jump.hs}
+                \haskellfile{code/forsyde/forsyde-circuit3-jump.hs}
 
                 The decision on whether or not to perform a jump is taken based on two parameters:
                 the first is a set of \texttt{jump selection bits} (named in the model as
@@ -1039,7 +1039,7 @@
 
                 Having all the necessary parts we can then write the top-level model for the CPU:
 
-                \haskellfile{code/forsyde-circuit3-cpu.hs}
+                \haskellfile{code/forsyde/forsyde-circuit3-cpu.hs}
 
                 This model also looks similar to the CPU model written in Lava, but the generated
                 VHDL is very different, and that is a big advantage of ForSyDe. While Lava
@@ -1104,7 +1104,7 @@
 
                 \begin{figure}[h!]
                     \begin{center}
-                        \coqfile{code/coquet-definition-circuit.v}
+                        \coqfile{code/coquet/coquet-definition-circuit.v}
                     \end{center}
                     \caption{The Circuit datatype in Coquet
                         \label{fig:coquet-circuit-type}}
@@ -1141,7 +1141,7 @@
                 \texttt{HALFADD}), along with proofs that they implement the expected functions over
                 booleans. Let's start with \texttt{NOT}:
 
-                \coqfile{code/coquet-spec-not.v}
+                \coqfile{code/coquet/coquet-spec-not.v}
 
                 The input type of \texttt{NOT} is a \emph{tagged unit} with tag \texttt{x},
                 similarly, the output type has tag \texttt{nx}. There is some \emph{notation}
@@ -1156,7 +1156,7 @@
                 and tags, are exposed further ahead. Now let's take a look at a half-adder
                 described in Coquet:
 
-                \coqfile{code/coquet-spec-halfadder.v}
+                \coqfile{code/coquet/coquet-spec-halfadder.v}
 
                 First of, the sum types that are given as parameters to \texttt{Circuit} indicate
                 that we have two input ports and two output ports. By using \texttt{Fork2} on a
@@ -1238,7 +1238,7 @@
 
                 The definition of the meaning relation is as follows:
 
-                \coqfile{code/coquet-definition-semantics.v}
+                \coqfile{code/coquet/coquet-definition-semantics.v}
 
                 We can notice that the definition of \texttt{Semantics} has constructors that
                 correspond to the constructors of \texttt{Circuit}. So, for example, given the
@@ -1293,7 +1293,7 @@
                 also write non-deterministic specifications. The definitions for the classes
                 \texttt{Realise} and \texttt{Implement} are as follows:
 
-                \coqfile{code/coquet-definition-realise-implement.v}
+                \coqfile{code/coquet/coquet-definition-realise-implement.v}
 
                 Is we want to prove that a certain circuit \texttt{c} \emph{implements} a certain
                 function \emph{f} (the high-level specification), then our goal in Coq will be:
