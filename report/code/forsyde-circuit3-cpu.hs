@@ -6,7 +6,7 @@ hackCPU :: Signal WordType  -- ^ inM: M value input (M = contents of RAM[A]
                  , AddrType  -- ^ addressM: address of M in data memory
                  , AddrType  -- ^ pc: address of the next instruction
                  )
-hackCPU inM instruction reset = zip4SY "zipOuts" aluOut writeM aReg nextInst
+hackCPU inM instr reset = zip4SY "zipOuts" aluOut writeM aReg nextInst
     where
         -- parts declaration
         mux2' l     = instantiate (l ++ ":mux") mux2SysDef
@@ -22,11 +22,11 @@ hackCPU inM instruction reset = zip4SY "zipOuts" aluOut writeM aReg nextInst
         -- using the parts
         aReg = aReg' aMux setA
         dReg = dReg' aluOut setD
-        aMux = (mux2' "aMux") aFlag instruction aluOut
+        aMux = (mux2' "aMux") aFlag instr aluOut
         am   = (mux2' "am") cAM inM aReg
         nextInst = pc' reset setPC aReg
 
-        (aFlag, cAM, cDest, cJump, cALU) = unzip5SY "unzipDecoder" (decoder' instruction)
+        (aFlag, cAM, cDest, cJump, cALU) = unzip5SY "unzipDec" (decoder' instr)
         (writeA, writeD, writeM) = unzip3SY "unzipDest" cDest
 
         (aluOut, aluFlags) = unzipSY "unzipALU" (alu' cALU dReg am)

@@ -1,5 +1,6 @@
 type HackInstruction = FSVec D16 Bit
 type DestType = (Bit, Bit, Bit)
+type JumpType = (Bit, Bit, Bit)
 
 instructionDecoder :: Signal HackInstruction
                    -> Signal (Bit, Bit, DestType, JumpType, ALUControl)
@@ -14,7 +15,3 @@ instructionDecoder = mapSY "mapSYdecoder" decoderFun
                                , (i!d13, i!d14, i!d15)
                                , (i!d4,  i!d5,  i!d6, i!d7, i!d8, i!d9)
                                ) |])
-
-decoderSysDef :: SysDef ( Signal HackInstruction
-                       -> Signal (Bit, Bit, DestType, JumpType, ALUControl))
-decoderSysDef = newSysDef instructionDecoder "decoder" ["instruction"] ["ctrl"]

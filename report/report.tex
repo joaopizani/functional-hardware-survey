@@ -995,19 +995,54 @@
                 performs \emph{no computation} and merely \emph{rearranges} the wires. But even
                 though it is such a simple circuit, the ForSyDe model is still ``ugly'' (full of
                 indexing operators and tuple constructors). Because of ForSyDe's single-clause
-                restriction on synthesizable \texttt{ProcFun}s, we cannot give meaningful names to
-                the several ``slices'' of the instruction that we are cutting.
+                restriction on synthesizable \texttt{ProcFun}s, we cannot introduce a \texttt{where}
+                block and give meaningful names to
+                the several ``slices'' of the instruction that we are selecting.
 
+                Now we go over the last needed subcomponent of the CPU we needed to model: a logical
+                block which decides when to set the program counter and cause a jump to occur. The
+                output of this circuit is connected to the \texttt{set} input of the program
+                counter, as can be seen in figure \ref{fig:cpu-parts}. The code for the ForSyDe
+                version of the \texttt{decideJump} block is shown below:
 
-                TODO: discuss how -- on the one hand -- ForSyDe's FSVec's can help make modelling
-                more type safe but on the other hand the current implementation is very ``hackish''
-                and could ALSO make some use of recent developments in GHC.
+                \haskellfile{code/forsyde-circuit3-jump.hs}
 
+                The decision on whether or not to perform a jump is taken based on two parameters:
+                the first is a set of \texttt{jump selection bits} (named in the model as
+                \texttt{JumpType}, and comes from the instruction. These bits indicate in
+                \emph{which conditions} a jump is to be performed. If they are all low, then no jump
+                is performed, and if they are all high, an \emph{unconditional jump} will happen.
+                The second input for the \texttt{decideJump} circuit is the set of flags coming from
+                the ALU. When some conditional jump is described in the \texttt{JumpType} bits, it
+                will only actually happen if the correspondent ALU flags are active. The
+                \texttt{decideJump} model was also tested for the input combinations described in
+                the book\cite{nand2tetris-book}, but we omit the test code here for brevity.
 
-                TODO: closing remark for ForSyDe: not actively maintained, relies on very old GHC
-                version and doesn't build with newer ones. But the design methodology in itself is
-                very interesting and could surely benefit from modern developments in Haskell
-                implementations.
+                Having all the necessary parts we can then write the top-level model for the CPU:
+
+                \haskellfile{code/forsyde-circuit3-cpu.hs}
+
+                This model also looks similar to the CPU model written in Lava, but the generated
+                VHDL is very different, and that is a big advantage of ForSyDe. While Lava
+                \emph{flattens} all the definitions and generates \textbf{one big} VHDL entity for
+                the whole model, ForSyDe is able to use the \emph{component instantiations} to
+                produce a \emph{hierarchical} VHDL design, where program counter, register, ALU,
+                decoder, etc., all have their \emph{own entity declarations in separate files}.
+
+                As a closing remark on ForSyDe we can emphasize a general weakness of the library,
+                which is not seen \emph{particularly} in any circuit model, but contributes to
+                some of the problems discussed: ForSyDe is relatively old and not actively
+                maintained. The last version available on Hackage\cite{forsyde-3.1.1-hackage} dates
+                from 2010, and on the library's Hackage page there are still promises of a ``next
+                version''.
+
+                This is a problem specially because ForSyDe uses some technologies which are heavily
+                dependent on GHC, and some aspects of the library could benefit from recent GHC
+                developments. The \texttt{parameterized-data} package (containing the module
+                \texttt{Data.Param.FSVec} of fixed-length vectors) could benefit from additions to
+                the GHC type system (in particular the \texttt{TypeNats}\cite{website:ghc-typenats}
+                extension) which facilitate the kind of dependent types emulated in that package.
+
 
         \subsection{Coquet}
         \label{subsec:coquet}
@@ -1186,6 +1221,26 @@
 
             \subsubsection{Circuit semantics in Coquet}
             \label{subsubsec:coquet-semantics}
+                In Coquet, the \emph{structure} and \emph{semantics} of a circuit are strictly
+                separated. The structure of a circuit is modeled by a value of type
+                \texttt{Circuit}, and it describes solely which are the parts that the circuit is
+                make of and how they are interconnected\footnote{The \texttt{Circuit} datatype is
+                    also parameterized by the type of fundamental gate used in the design.}.
+
+                On the other hand, circuit \emph{semantics} (what operation does the circuit
+                \emph{perform}) is described in Coquet by a \emph{meaning relation}. The meaning
+                relation for a circuit relates its inputs to outputs, and is defined by induction on
+                circuit structure.
+
+                For a circuit type \texttt{ℂ n m} and considering \texttt{T} as the type of what is
+                carried in the wires, we can define the type \emph{ins} (stands for ``inputs'') as
+                $n \rightarrow T$ and \emph{outs} as $m \rightarrow T$. These are functions that,
+        for each input/output port, provide the a value present at that port -- they are in this way
+        \emph{isomorphic} to cartesian products, and this isomorphism is indeed used to facilitate
+        proofs of correctness in Coquet.
+
+
+
                 TODO: Explain what the meaning relation for a circuit in Coquet is, give the
                 (inductive) definition of the meaning relation and comment on it.
 
