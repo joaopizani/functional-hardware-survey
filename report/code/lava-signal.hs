@@ -1,5 +1,4 @@
 newtype Signal a = Signal Symbol
-
 newtype Symbol = Symbol (Ref (S Symbol))
 
 data S s
@@ -9,5 +8,4 @@ data S s
     | Or        [s]
     | Xor       [s]
     | VarBool   String
-    | DelayBool s s
-    -- other constructors
+    | DelayBool s s  -- other constructors...

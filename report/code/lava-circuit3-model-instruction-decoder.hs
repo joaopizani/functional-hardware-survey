@@ -1,7 +1,5 @@
-type DestBits = (SB, SB, SB)
-
-type JumpCondBits = (SB, SB, SB)
-
+type DestBits       = (SB, SB, SB)
+type JumpCondBits   = (SB, SB, SB)
 type CPUControlBits = (SB, SB, DestBits, JumpCondBits, ALUControlBits)
 
 instructionDecoder :: HackInstruction -> CPUControlBits

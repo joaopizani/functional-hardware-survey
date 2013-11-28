@@ -13,8 +13,8 @@ nProc name = zipWithSY name $(newProcFun [d| f :: Bit -> WordType -> WordType
 
 compProc :: Signal ALUOp -> Signal WordType -> Signal WordType -> Signal WordType
 compProc = zipWith3SY "compProc"
-                      $(newProcFun [d| f :: ALUOp -> WordType -> WordType -> WordType
-                                       f o x y = if o == H then x + y else x .&. y |])
+               $(newProcFun [d| f :: ALUOp -> WordType -> WordType -> WordType
+                                f o x y = if o == H then x + y else x .&. y |])
 
 tzProc :: Signal WordType -> Signal Bit
 tnProc :: Signal WordType -> Signal Bit
