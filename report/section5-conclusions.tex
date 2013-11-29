@@ -1,5 +1,66 @@
 \section{Conclusions}
 \label{sec:conclusions}
-    TODO: Reiterate the analysis of the EDSLs spread throughout the analysis of each of the studied
-    circuits, but in a more summarized manner, actually \textbf{comparing} the EDSLs among
-    themselves, \textbf{by aspect} (the ones we defined in section \ref{subsec:aspects}).
+
+    The models and test cases that we developed, along with the verification we performed, gave us
+    a better understanding of how the hardware EDSLs Lava, ForSyDe and Coquet compare to each other
+    \emph{from the point of view of a hardware designer}. This practical experience, combined with
+    knowledge of the ``inner workings'' of each EDSL and their host language, allowed for an
+    informed discussion of each language's strong points and weaknesses. The most significant
+    findings of this practical evaluation, categorized by evaluated aspect, are summarized here.
+
+    \paragraph{Depth of embedding}
+        None of the three evaluated EDSLs lie at the \emph{extremes} of embedding depth. Lava can be
+        said to be \emph{deeply embedded}, however, its \texttt{Signal} datatype collaborates with
+        the host language runtime so that \emph{cyclic structures} in circuits can be modeled as
+        \emph{recursion in the host language}. ForSyDe has \emph{both} deep and shallow modeling
+        capabilities, even though we only studied the deep model. In fact, ForSyDe's hackage
+        page\cite{website:forsyde-hackage} promises a future version in which deep and shallow
+        modeling constructs will be in different packages. Coquet has the ``deepest'' modeling of
+        all studied EDSLs, and \emph{avoids} the issue of \emph{observable sharing} by not allowing
+        variable binding constructs, and having circuits connect to each other only through
+        combinators.
+
+    \paragraph{Simulation}
+        Simulation can be performed in all studied EDSLs. In Lava, \emph{automated} test cases (in
+        which the simulation output is compared with an \emph{expected} combination) are not
+        possible due to the way in which the observable sharing issue is handled. Coquet has
+        simulation built into the library as one of several \emph{example interpretations} for
+        circuits, and it works just as well as in the other EDSLs, with the only shortcoming that
+        the simulation of \emph{sequential} circuits is currently \emph{not possible}.
+
+    \paragraph{Verification}
+        ForSyDe offers no capabilities for formal verification whatsoever, while Lava and Coquet
+        each do, but in different ways. Lava can perform the verification of so-called \emph{safety
+        properties} for circuits of a fixed size -- it does this by transforming the circuit model
+        into a CNF (\emph{conjunctive normal form}) logical formula which is fed into a
+        satisfiability solver. Coquet takes a different approach and offers some tools to help the
+        user perform \emph{interactive theorem proving} for circuit correctness. One can say that
+        Coquet does \emph{more than verification}, as it's capable of proving \emph{general}
+        properties of parametric circuits, for all possible values of the parameters.
+
+    \paragraph{Genericity}
+        In Lava the modeling of generic circuits is made very easy, and any parameter to a circuit
+        definition which is not pf type \texttt{Signal T} is considered a \emph{parameter} instead
+        of a circuit input, and specific instances of these generic circuits can then be simulated
+        or synthesized. In Coquet a similar approach is taking, allowing the user to prove \emph{by
+        induction on the parameter} the correctness of the whole family of circuits being defined.
+        ForSyDe is the EDSL with the least opportunity for generalization: the only thing we can do
+        is to have fixed-length bit vectors or fixed-size integers as inputs, and these are fixed at
+        \emph{Haskell compilation time}.
+
+    \paragraph{Tool integration}
+        Lava can generate VHDL netlists of circuit models that satisfy some requirements and can
+        also generate CNF formulas for a SAT solver. ForSyDe can output its circuits in VHDL and
+        also generate \emph{graph files}, which can be formatted and used for circuit visualization.
+        Coquet is disadvantaged when it comes to tool integration: it currently has no support for
+        exporting circuits in some industry-standard format, even though it \emph{could in theory}
+        be done by traversing the models.
+
+    \paragraph{Extensibility}
+        ForSyDe and Coquet offer both good capabilities for extensibility: in both EDSLs the
+        designer can make circuits operate over user-defined types. The big advantage of ForSyDe is
+        its usage of Template Haskell and GHC's \emph{deriving} mechanism to generate VHDL
+        corresponding to the user-defined types. Lava offers little to no extensibility, and only
+        circuits operating on booleans or integers can be modeled in the current version of Chalmers
+        Lava.
+

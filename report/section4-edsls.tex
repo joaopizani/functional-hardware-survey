@@ -65,7 +65,7 @@
             \ref{subsec:circuit-alu}), we first needed to model the necessary parts. The ``core'' of
             the ALU is composed of a 16-bit ripple-carry adder and a 16-bit \texttt{AND} gate. To
             model the ripple-carry adder we used full adders as parts, which in turn used half
-            adders. To get used to the wat in which circuits are described in Lava, let us first
+            adders. To get used to the way in which circuits are described in Lava, let us first
             take a look at the definition of the hierarchy of adders in listing
             \ref{lst:lava-circuit1-model-adders}:
 
@@ -114,7 +114,7 @@
             already discussed, we have to define \texttt{ALUControlBits} as simply a \emph{type
                 synonym} for a 6-tuple of bits.
 
-            Besides modelling the three circuits in Lava, we also simulated them. The definition of
+            Besides modeling the three circuits in Lava, we also simulated them. The definition of
             the ALU circuit in the book "The Elements of Computing Systems"\cite{nand2tetris-book}
             has a pretty extensive truth table to test the circuit model, which was used to simulate
             the ALU. However, let's take a look at a simpler simulation case, that of a half-adder,
@@ -255,14 +255,14 @@
             Using \emph{fixed-length vectors}, perhaps based on the recent ``Type-level Naturals''
             GHC \footnote{The Glorious Glasgow Haskell Compilation System:
                 \url{http://www.haskell.org/ghc}} extension \cite{website:ghc-typenats} (introduced
-            in GHC 7.6 and being improved for GHC 7.8) would make modelling in Lava \emph{safer} and
+            in GHC 7.6 and being improved for GHC 7.8) would make modeling in Lava \emph{safer} and
             more comfortable.
 
 
     \subsection{ForSyDe}
     \label{subsec:forsyde}
         The Haskell ForSyDe library is an implementation of the ``Formal System Design'' approach to
-        hardware modelling\cite{forsyde1999}. The ForSyDe approach per se has several significant
+        hardware modeling\cite{forsyde1999}. The ForSyDe approach per se has several significant
         differences when compared to Lava, and even when the two EDSLs agree on \emph{what to do},
         sometimes they differ on how to achieve those goals.
 
@@ -282,7 +282,7 @@
                 \emph{is able} to hold internal state. But, given the same input (possibly infinite)
                 signals, it produces the same output signals.
 
-            \item[Process constructor] Every ciruit in ForSyDe (even simplest combinational ones) is
+            \item[Process constructor] Every circuit in ForSyDe (even simplest combinational ones) is
                 built using a \emph{process constructor}. A process constructor can be seen as a
                 skeleton of behaviour, and it clearly separates computation from synchronization
                 aspects. A process constructor takes a combinational function (called \emph{process
@@ -318,7 +318,7 @@
             \label{ref:forsyde-moc-synch}
             Among all MoCs, perhaps the most ``notable'' one is the Synchronous MoC, because it
             reflects the usual interpretation of signals as wires and the vast majority of digital
-            designs nowadays having a global clock. Also, all of our studied circuits were modelled
+            designs nowadays having a global clock. Also, all of our studied circuits were modeled
             in ForSyDe using the Synchronous MoC. Therefore, it is interesting to take a deeper look
             at it.
 
@@ -467,19 +467,19 @@
         \subsubsection{Circuits modeled}
         \label{subsubsec:forsyde-circuits}
             Our comparative analysis of ForSyDe's strengths and weaknesses was done, as usual, by
-            modelling the 3 circuits used as case-studies. ForSyDe has a peculiar ``dual'' nature,
+            modeling the 3 circuits used as case-studies. ForSyDe has a peculiar ``dual'' nature,
             as it supports both shallow \emph{and} deep embedded models, and models written with
             netlist generation in mind can look \emph{very} different than models which do not
             comply with the restrictions that allow synthesis.
 
-            Because of this dual nature of ForSyDe, when modelling the case-study circuits we
+            Because of this dual nature of ForSyDe, when modeling the case-study circuits we
             considered 2 kinds of models:
 
             \begin{description}
                 \item[High-level] A model that uses Haskell constructs inside the process functions
                     (\texttt{ProcFun}) as close as possible to what a functional programmer would
                     normally use. These models do not comply with ForSyDe's constraints on the
-                    syntax tree of process functions for synthetization, and therefore \textbf{can
+                    syntax tree of process functions for synthesis, and therefore \textbf{can
                         not be translated to VHDL}.
 
                 \item[Synthesizable] These models are more fine-grained, and use
@@ -549,7 +549,7 @@
             lines to select as output, depending on the address. We modeled a whole hierarchy of
             multiplexers upto the one we needed (64-to-1): starting with a 2-to-1 multiplexer, than
             building a 4-to-1 using 2-to-1 as components, 16-to-1 using 4-to-1 and finally 64-to-1
-            using 16-to-1 and 4-to-1. We only show the first two degress of the hierarchy in listing
+            using 16-to-1 and 4-to-1. We only show the first two degrees of the hierarchy in listing
             \ref{lst:forsyde-circuit2-muxes}.
 
             \begin{listing}[h!]
@@ -571,7 +571,7 @@
             ForSyDe results in a much more readable VHDL output for the models. Another factor that
             helps in this direction is the ForSyDe concept of \emph{component instantiation}.
 
-            When finished modelling a circuit in ForSyDe, we ``wrap it up'' in a \emph{system
+            When finished modeling a circuit in ForSyDe, we ``wrap it up'' in a \emph{system
                 definition} (a value of type \texttt{SysDef}) by calling the function
             \texttt{newSysDef}. When we call \texttt{writeVHDL} on this system definition, a VHDL
             top-level \texttt{entity} is generated. If we then want to use this ``finished'' model
@@ -715,9 +715,9 @@
         length:
 
         \begin{coqcode}
-    Inductive vec A : nat -> Type :=
-        | nil  : vec A 0
-        | cons : forall (h : A) (n : nat),  vec A n -> vec A (S n).
+        Inductive vec A : nat -> Type :=
+            | nil  : vec A 0
+            | cons : forall (h : A) (n : nat),  vec A n -> vec A (S n).
         \end{coqcode}
 
         By having the length of the vector being part of the type, we can \emph{enforce} several
@@ -729,10 +729,10 @@
         goal of Coquet. How this goal is achieved and the modelling of our studied circuits in
         Coquet is discussed in the following subsections.
 
-        \subsubsection{Modelling circuits}
+        \subsubsection{Modeling circuits}
         \label{subsubsec:coquet-modelling}
             Coquet is a deep-embedded DSL, thus it represents circuits as a datatype. By using
-            dependent types, a designer modelling a circuit in Coquet is able to prevent certain
+            dependent types, a designer modeling a circuit in Coquet is able to prevent certain
             kinds of ``errors'' much earlier in the design process, because the
             \emph{well-formedness} is guaranteed by construction, i.e, every circuit built using the
             constructors provided by Coquet are well-formed by definition. Let's take a look at the
@@ -786,7 +786,7 @@
             Below the definition of the circuit itself we state and prove the fact that our circuit
             implements the desired function (boolean negation, \texttt{negb}). More details on
             exactly what is meant by ``implements'', as well as the workings of plugs and tags, are
-            exposed further ahead. A walkthrough of proofs in Coquet, where we explain the
+            exposed further ahead. A walk through of proofs in Coquet, where we explain the
             ``\texttt{tac}'' tactic, is given in section~\ref{subsubsec:coquet-circuits}. Now let's
             take a look at a half-adder described in Coquet:
 
@@ -817,10 +817,10 @@
             unit types is defined as follows:
 
             \begin{coqcode}
-    Inductive tag (t : string) : Type := _tag : tag t
-    Notation "[: x ]" := (tag x).
-    Notation "[! x ]" := (_tag x).
-    Notation "[!!]"   := (_tag _).
+        Inductive tag (t : string) : Type := _tag : tag t
+        Notation "[: x ]" := (tag x).
+        Notation "[! x ]" := (_tag x).
+        Notation "[!!]"   := (_tag _).
             \end{coqcode}
 
             For each string \texttt{t}, there is a type \texttt{tag t}, and this type has exactly
@@ -831,8 +831,8 @@
             a n-bit adder:
 
             \begin{coqcode}
-    Definition RIPPLE cin a b cout s n :
-        Circuit  ([:cin] + sumn [:a] n + sumn [:b] n)  (sumn [:s] n + [:cout]) := ...
+        Definition RIPPLE cin a b cout s n :
+            Circuit  ([:cin] + sumn [:a] n + sumn [:b] n)  (sumn [:s] n + [:cout]) := ...
             \end{coqcode}
 
             While the provided examples use sums of tagged units as the input/output types, they can
@@ -841,11 +841,11 @@
             \texttt{Fin} type class, which is defined as follows:
 
             \begin{coqcode}
-    Class Fin A := {
-        eq_fin : eqT A;
-        enum   : list A;
-        axiom  : forall (x : A), count (equal x) enum = 1
-    }.
+        Class Fin A := {
+            eq_fin : eqT A;
+            enum   : list A;
+            axiom  : forall (x : A), count (equal x) enum = 1
+        }.
             \end{coqcode}
 
 
@@ -853,7 +853,7 @@
         \label{subsubsec:coquet-semantics}
             In Coquet, the \emph{structure} and \emph{semantics} of a circuit are strictly
             separated. The structure of a circuit is modeled by a value of type \texttt{Circuit},
-            and it describes solely which are the parts that the circuit is make of and how they are
+            and it describes solely which are the parts that the circuit is made of and how they are
             interconnected\footnote{The \texttt{Circuit} datatype is also parameterized by the type
                 of fundamental gate used in the design.}.
 
@@ -888,14 +888,14 @@
             following subgoals:
 
             \begin{coqcode}
-    Semantics x ins middles
-    Semantics y middles outs
+        Semantics x ins middles
+        Semantics y middles outs
             \end{coqcode}
 
             While the meaning relation defines exactly the behaviour of a circuit, it is too
             low-level. We want to be able to express our \emph{specification} for circuit behaviour
             in a \emph{higher level} of abstraction -- after all, the whole point of proving
-            correctness is making sure that the circuit we are modelling is \emph{equivalent} (in a
+            correctness is making sure that the circuit we are modeling is \emph{equivalent} (in a
             sense) to a specification that we \emph{assume as correct}.
 
             Coquet offers some tools to help the user in this direction. First of all, it offers the
@@ -1047,7 +1047,7 @@
                     \emph{case analysis} was performed.
                 \item We prove the compliance of \texttt{RIPPLE} to a \emph{high-level
                         specification}: instead of proving that the circuit implements some boolean
-                    fucntion (as previously), we prove that \texttt{RIPPLE} implements integer
+                    function (as previously), we prove that \texttt{RIPPLE} implements integer
                     addition on n-bit integers.
             \end{itemize}
 
@@ -1059,7 +1059,7 @@
             Besides the higher level of the specification, we can also notice that here we are
             explicitly providing the isomorphisms between high (specification) and low
             (implementation) types. To get an idea of how the proof for \texttt{RIPPLE} would
-            procees, we show here the base case ($n = 0$):
+            process, we show here the base case ($n = 0$):
 
             \coqfile{code/coquet/coquet-proof-ripple-base.v} 
 
@@ -1068,7 +1068,7 @@
             arithmetics are now also needed, because of the way in which the specification is
             expressed.
 
-            Now, to finish our walkthrough of Coquet's circuit models and proofs, we will look at a
+            Now, to finish our walk-through of Coquet's circuit models and proofs, we will look at a
             \emph{sequential} circuit: A 1-bit register. The specification of behaviour for
             sequential circuits in Coquet is significantly more involved and, in fact, the original
             Coquet paper\cite{coquet2011} leaves a ``more thorough investigation of state-holding
@@ -1098,22 +1098,56 @@
 
         \subsubsection{Closing remarks and possible improvements}
         \label{subsubsec:coquet-improv}
-            TODO: Closing remarks. Simulation with drawback of not simulating sequential. Great
-            verification, actually surpassing the very definition of verification, great genericity
-            and great extensibility. Integration with other tools is hard.
+            Coquet employs very well several features of dependently-typed programming in general,
+            and of the Coq system in particular, in order to facilitate circuit modeling and
+            verification. The following advantages of Coquet make it particularly distinct from
+            the other studied EDSLs:
 
-            The approach to circuit modelling is \emph{very} generic, and leaves room for extension
-            in several aspects, even though the library is already provided with some reasnoable
-            deafults.
+            \begin{itemize}
+                \item The use if \textbf{dependent types} makes certain classes of design mistakes
+                    (such as short-circuits or ``floating'' wires) \emph{impossible by design}.
 
-            For example, the definition of the \emph{meaning relation} for circuits (by induction on
-            circuit structure) is parameterized by the \emph{type \texttt{T} of was is carried in
-                the wires}. Even though the library already provides examples for booleans and
-            streams of booleans, it could also be interesting to add cases for dealing with some
-            three-valued logics, or a case for IEEE1164's std\_logic type, used often in VHDL.
+                \item By using \textbf{type classes} as a way to structure its definitions, Coquet
+                    facilitates the automatization of proofs. For example, when trying to prove the
+                    correctness of a circuit, we can use the correctness proofs of all its
+                    subcomponents, and they are automatically located by Coq's \emph{instance
+                        resolution} mechanism.
+
+                \item Coquet avoids the problem of \textbf{observable sharing} by not using bound
+                    variables, and building circuits only with combinators. The usage of combinators
+                    is facilitated by some particular Coq features, like \emph{notations} and
+                    \emph{proof search}.
+
+                \item Coquet is able to prove properties over \textbf{parametric circuits} for
+                    \emph{all values of the parameters} (by induction), while Lava, for example, can
+                    only verify those properties for specific instances.
+
+                \item The \textbf{parametrization} of the \texttt{Circuit} type by the \emph{type of
+                        the fundamental gate} and the parametrization of the \texttt{Semantics}
+                    relation by the \emph{semantics of the fundamental gate} make Coquet's approach
+                    extremely generic. All of Coquet's defined tactics, classes and instances could
+                    be used in radically different contexts such as three-valued logics, analog
+                    domains or probabilistic domains.
+            \end{itemize}
+
+            Although Coquet is superior to the other studied EDSLs in the aforementioned aspects,
+            some other aspects of circuit modeling and verification with Coquet could benefit from
+            concepts present in ForSyDe or Lava
+
+            First of all, \emph{simulation} of combinational circuits in Coquet is easy, but
+            currently it is \emph{impossible} to simulate any form of sequential circuit. More
+            precisely, any circuit containing the \texttt{Loop} constructor cannot be simulated --
+            this restriction also bans the simulation of combinational loops, but simulating
+            combinational loops does not make much sense anyways.
+
+            Coquet's definition of the \emph{meaning relation} for circuits depends on the \emph{type
+                \texttt{T} of what is carried in the wires}. The Coquet library already provides
+            instances for booleans and streams of booleans ($ℕ \rightarrow 𝕋$), but it could also be
+            interesting to add cases for dealing with some three-valued logics, or a case for
+            IEEE1164's std\_logic type, used often in VHDL.
 
             Another interesting point is that Coquet defines a \texttt{stream} type family, and then
-            proceeds to define several interesting function over \texttt{stream}, as well as an
+            proceeds to define several interesting functions over \texttt{stream}, as well as an
             instance for the meaning relation. The type family is defined as follows:
 
             \begin{coqcode}
