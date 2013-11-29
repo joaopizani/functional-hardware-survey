@@ -3,5 +3,5 @@ Instance HADD_Implement {a b s c} :
     (fun (x : bool * bool) =>
         match x with (a,b) => (xorb a b, andb a b) end).
 Proof.
-    unfold HADD; intros ins outs H; tac_simpl_discriminate.
+    unfold HADD; intros ins outs H; tac.
 Qed.

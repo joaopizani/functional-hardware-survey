@@ -349,12 +349,13 @@
             Template Haskell to \emph{reify} Haskell source code into a syntax tree, and use this
             syntax tree in order to simulate and/or translate the circuit model into VHDL.
 
-            On section \ref{subsec:forsyde-synchprocs} We take a closer look at synchronous process
-            constructors, as well as the mechanism by which ForSyDe translates (small fragments of)
-            Haskell source code into the ``building blocks'' of synchronous systems in VHDL.
+            On section \ref{subsubsec:forsyde-synchprocs} We take a closer look at synchronous
+            process constructors, as well as the mechanism by which ForSyDe translates (small
+            fragments of) Haskell source code into the ``building blocks'' of synchronous systems in
+            VHDL.
 
-            On section \ref{subsec:forsyde-circuits} we proceed to expose the circuits we modeled in
-            ForSyDe, using the models to make a comparative analysis of ForSyDe with the other
+            On section \ref{subsubsec:forsyde-circuits} we proceed to expose the circuits we modeled
+            in ForSyDe, using the models to make a comparative analysis of ForSyDe with the other
             EDSLs.
 
         \subsubsection{Synchronous Process Constructors}
@@ -653,7 +654,7 @@
             Now we go over the last needed subcomponent of the CPU we needed to model: a logical
             block which decides when to set the program counter and cause a jump to occur. The
             output of this circuit is connected to the \texttt{set} input of the program counter, as
-            can be seen in listing \ref{lst:cpu-parts}. The code for the ForSyDe version of the
+            can be seen in figure \ref{fig:cpu-parts}. The code for the ForSyDe version of the
             \texttt{decideJump} block is shown below:
 
             \haskellfile{code/forsyde/forsyde-circuit3-jump.hs}
@@ -688,7 +689,7 @@
             As a closing remark on ForSyDe we can emphasize a general weakness of the library, which
             is not seen \emph{particularly} in any circuit model, but contributes to some of the
             problems discussed: ForSyDe is relatively old and not actively maintained. The last
-            version available on Hackage\cite{forsyde-3.1.1-hackage} dates from 2010, and on the
+            version available on Hackage\cite{website:forsyde-hackage} dates from 2010, and on the
             library's Hackage page there are still promises of a ``next version''.
 
             This is a problem specially because ForSyDe uses some technologies which are heavily
@@ -785,7 +786,9 @@
             Below the definition of the circuit itself we state and prove the fact that our circuit
             implements the desired function (boolean negation, \texttt{negb}). More details on
             exactly what is meant by ``implements'', as well as the workings of plugs and tags, are
-            exposed further ahead. Now let's take a look at a half-adder described in Coquet:
+            exposed further ahead. A walkthrough of proofs in Coquet, where we explain the
+            ``\texttt{tac}'' tactic, is given in section~\ref{subsubsec:coquet-circuits}. Now let's
+            take a look at a half-adder described in Coquet:
 
             \coqfile{code/coquet/coquet-spec-halfadder.v}
 
@@ -941,17 +944,164 @@
             \ref{subsubsec:coquet-circuits}.
 
 
-        \subsubsection{Circuits modeled}
+        \subsubsection{Example circuits and proofs}
         \label{subsubsec:coquet-circuits}
-            TODO: Expose the studied circuits modeled in Coquet, highlighting advantages and
-            disadvantages of the Coquet approach along the way.
+            Until now we explained several aspects of the ``inner workings'' of Coquet: How
+            circuits are modeled, how the \texttt{Circuit} dependent type guarantees well-formed
+            models \emph{by construction}, what Coquet considers as the \emph{semantics} of a
+            circuit, and what does it mean to say in Coquet that a circuit satisfies a
+            specification. What was not covered, however, is how to actually write proofs of
+            correctness in Coquet.
 
-            TODO: circuit 1 (ALU) -- Model, proof of some of its components.
+            In this section we will walk over some examples of circuit models in Coquet, in
+            increasing order of complexity, and also comment on their proofs of correctness. This
+            review should give the reader an idea of the general structure of circuits and proofs in
+            Coquet. It should also serve as base for our comparative analysis of Coquet with the
+            other EDSLs.
 
-            TODO: circuit 2 (RAM) -- Model.
+            Let's start by analyzing a hierarchy of adders. The most basic of these adders is a half
+            adder:
 
-        \subsubsection{Possible improvements and future work}
+            \coqfile{code/coquet/coquet-model-halfadder.v}
+
+            This is pretty straightforward circuit model: we just combine \texttt{XOR} and
+            \texttt{AND} in parallel, and each of them provides one of the outputs of the circuit
+            (sum and carry-out). The \texttt{Fork2} \emph{plug} just ``copies'' its input into two
+            identical outputs. While there is very little to comment on the circuit model, the proof
+            of correctness will give us a bit more insight into Coquet:
+
+            \coqfile{code/coquet/coquet-proof-halfadder.v}
+
+            The proof is considerably short, but all the ``work'' is being done behind the scenes by
+            the custom tactic \texttt{tac}, introduced by Coquet. This tactic is geared towards
+            proving simple circuits concisely, and its definition reads as follows:
+
+            \coqfile{code/coquet/coquet-tac.v}
+
+            The definition of \texttt{tac} is itself just a (sequential) combination of other custom
+            tactics also defined by Coquet. We don't need to go deeper, however, as we can explain
+            the general mechanism of each line in \texttt{tac}.
+
+            First of all, \texttt{rinvert} performs \emph{inversion} using the constructors of
+            \texttt{Semantics}, and will transform the meaning relation hypothesis into a series of
+            hypotheses, one for each component of the circuit. Then \texttt{realise\_all} is called,
+            which uses the \emph{correctness proofs of the components} (stored in a hint database)
+            in order to rewrite \emph{each \texttt{Semantics} hypothesis into an equality involving
+                high-level types}. Finally, the tactic \texttt{unreify\_all} uses the isomorphisms
+            to transform the equality in the goal into one involving only booleans. From them on we
+            just \texttt{destruct} all booleans, which results in a proof by case analysis.
+
+            Going one step up in the hierarchy of adders, we have the Coquet model of a full adder:
+
+            \coqfile{code/coquet/coquet-model-fulladder.v}
+
+            In the definition of a full adder, we use a half adder as component, along with an
+            \texttt{OR} gate. The interesting point of this definition, though, is the usage of the
+            \texttt{Rewire} components. Earlier, when presenting the \texttt{Circuit} datatype in
+            Coquet, we mentioned that one of the circuit constructors (\texttt{Plug}) is meant to be
+            used to ``adapt'' the interface of two circuits which we need to combine.
+
+            In example of \texttt{FADD}, all the necessary plugs involved only regropuing of ports
+            (they are all \emph{associativity plugs}) and, in these cases, the plug functions are
+            fully defined by their type, which allows us to avoid writing the functions ourselves
+            and let Coq find the terms using \emph{proof search}. That's why we use Coq's
+            \texttt{Program} command to define the circuit: in the definition, there are some
+            \emph{holes} where the plug functions should be (we omit the full \texttt{Rewire} lines
+            for brevity), and we need to ``fill'' each of these holes after defining \texttt{FADD}
+            -- that is being done in each of the \texttt{Next Obligation} blocks.
+
+            The correctness proof for \texttt{FADD} uses the exact same tactics as the one for
+            \texttt{HADD}, we only include it here for completeness:
+
+            \coqfile{code/coquet/coquet-proof-fulladder.v}
+
+            This proof can be used as an example to understand how Coquet provides for highly
+            \emph{modular verification}. The proof \texttt{FADD\_Implement} also uses the
+            \texttt{tac} tactic that we already explained. When the \texttt{realise\_all} step of
+            \texttt{tac} is performed, we already have \emph{the correctness proof of \texttt{HADD}
+                in the hint database}, and therefore the hypothesis involving the \texttt{Semantics}
+            of \texttt{HADD} is readily rewritten as an equality involving its high-level
+            specification.
+
+            In the last step of the adder hierarchy we are presenting, there is a classic
+            ripple-carry binary adder. With this example, we demonstrate how a \emph{parametric
+                circuit} can be defined using recursion in Coquet:
+
+            \coqfile{code/coquet/coquet-model-ripple.v}
+
+            The definition is recursive on the size $n$ of inputs and outputs. The full adder
+            previously defined (\texttt{FADD}) is used to calculate the least significant bit of the
+            output, and we use \texttt{RIPPLE} recursively to calculate the remaining bits. The
+            component \texttt{high\_lows} is used to ``split'' the inputs and then they are combined
+            into the desired output shape by \texttt{combine'}. Notable in the structure of
+            \texttt{RIPPLE} is the heavy usage of \texttt{RewireE} plugs to adapt the several parts
+            of the circuit connected serially. Similarly to when defining \texttt{FADD}, we also
+            used proof search to ``fill the gaps'' left by the associativity plugs.
+
+            The proof of correctness for \texttt{RIPPLE} is not as straightforward anymore as the
+            ones we have seen until now. In fact, we are only going to show some excerpts of the
+            proof. This difference in proof complexity is due to 2 main reasons:
+
+            \begin{itemize}
+                \item It is a true \emph{proof by induction}, whereas in the previous proofs only
+                    \emph{case analysis} was performed.
+                \item We prove the compliance of \texttt{RIPPLE} to a \emph{high-level
+                        specification}: instead of proving that the circuit implements some boolean
+                    fucntion (as previously), we prove that \texttt{RIPPLE} implements integer
+                    addition on n-bit integers.
+            \end{itemize}
+
+            The function used as specification for \texttt{RIPPLE} can be seen in the following
+            excerpt:
+
+            \coqfile{code/coquet/coquet-proof-ripple-sig.v}
+
+            Besides the higher level of the specification, we can also notice that here we are
+            explicitly providing the isomorphisms between high (specification) and low
+            (implementation) types. To get an idea of how the proof for \texttt{RIPPLE} would
+            procees, we show here the base case ($n = 0$):
+
+            \coqfile{code/coquet/coquet-proof-ripple-base.v} 
+
+            There are some similarities with the previous proofs -- we also use
+            \texttt{realise\_all} and \texttt{unreify\_all} -- but tactics related to integer
+            arithmetics are now also needed, because of the way in which the specification is
+            expressed.
+
+            Now, to finish our walkthrough of Coquet's circuit models and proofs, we will look at a
+            \emph{sequential} circuit: A 1-bit register. The specification of behaviour for
+            sequential circuits in Coquet is significantly more involved and, in fact, the original
+            Coquet paper\cite{coquet2011} leaves a ``more thorough investigation of state-holding
+            devices'' for future work. But before delving into the specification, let's first look
+            at the circuit model itself:
+
+            \coqfile{code/coquet/coquet-model-register.v}
+
+            The basic building block for the register is the \texttt{DFF} flip-flop. Also, we
+            duplicate (\texttt{Fork2}) the output of the flip-flop and use the \texttt{Loop}
+            constructor to direct one of these wires back into the \texttt{MUX}. The specification
+            for the behaviour of a register is based on \emph{streams}: in the meaning relation, the
+            type \texttt{𝕋} of what is carried in the wires is not simply 𝔹, but $ ℕ \rightarrow 𝔹 $
+            (where 𝔹 stands for boolean). Also, we don't use the \emph{functional}
+            (\texttt{Implement}) model anymore, but the relational one.
+
+            \coqfile{code/coquet/coquet-proof-register-sig.v}
+
+            The specification dictates that the output stream must have a one-element \emph{prefix}
+            (\texttt{pre}) equal to \texttt{false} and, from then on, be either equal to the previous
+            value at port \texttt{a} (whenever \texttt{load} is high) or to the previous value at
+            port \texttt{out} (whenever \texttt{load} is low). From this example it is already clear
+            that sequential specification does not fit nicely into the
+            \texttt{Realise}/\texttt{Implement} model, and a more comfortable way to specify and
+            prove the behaviour of sequential circuits would be a welcome addition to Coquet.
+
+
+        \subsubsection{Closing remarks and possible improvements}
         \label{subsubsec:coquet-improv}
+            TODO: Closing remarks. Simulation with drawback of not simulating sequential. Great
+            verification, actually surpassing the very definition of verification, great genericity
+            and great extensibility. Integration with other tools is hard.
+
             The approach to circuit modelling is \emph{very} generic, and leaves room for extension
             in several aspects, even though the library is already provided with some reasnoable
             deafults.
@@ -967,14 +1117,14 @@
             instance for the meaning relation. The type family is defined as follows:
 
             \begin{coqcode}
-    Definition stream A := nat -> A.
+        Definition stream A := nat -> A.
             \end{coqcode}
 
             If instead of using \texttt{nat} in the above definition, we generalized it a bit more
             (abstracting a new type parameter), we arrive at the concept of an ``event stream'':
 
             \begin{coqcode}
-    Definition events tag A : tag -> A.
+        Definition events tag A : tag -> A.
             \end{coqcode}
 
             This is exactly how ForSyDe defines its ``signals'', so we could model circuits in

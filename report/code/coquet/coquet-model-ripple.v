@@ -7,7 +7,7 @@ match n with
         |> (ONE [:cin]  &  high_lows a b 1 p)
 
         |> RewireE (*  (c, ((a1,b1), (ap,bp))) => (c, a1, b1, (ap,bp))  *)
-        |> (FADD' a b cin s "mid"  &  ONE (sumn [:a] p + sumn [:b] p))
+        |> (FADD a b cin s "mid"  &  ONE (sumn [:a] p + sumn [:b] p))
 
         |> RewireE (*  (s, c, (a,b)) => (s, (c,a,b))  *)
         |> (ONE (sumn [:s] 1)  &  RIPPLE ("mid")%string a b cout s p)

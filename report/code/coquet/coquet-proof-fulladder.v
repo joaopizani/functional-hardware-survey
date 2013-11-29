@@ -1,4 +1,4 @@
-Instance FADD_Implement {a b cin sum cout} : 
+Instance FADD_Implement {a b cin sum cout} :
     Implement (FADD a b cin sum cout) _ _
     (fun x =>
         match x with
@@ -6,6 +6,5 @@ Instance FADD_Implement {a b cin sum cout} :
               (xorb a (xorb b c), (a && b) || c && (xorb a b))%bool
         end).
 Proof.
-    unfold FADD; intros ins outs H;
-    tac_simpl_discriminate.
+    unfold FADD; intros ins outs H; tac.
 Qed.
