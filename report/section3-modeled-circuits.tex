@@ -3,22 +3,22 @@
 
     When thinking of which circuits to model using the analyzed EDSLs, some principles guided us.
     First of all, they shouldn't be too simple but also not too complex. Some very simple circuits
-    (adders, counters, etc.) are very often shown as examples in the papers that define the EDSLs
+    (adders, counters, etc.) are often shown as examples in the papers that define the EDSLs
     themselves, as well as in tutorials. On the other hand, we also did not want to model too
     complex circuits; that would require too much effort on the hardware design itself, and diverge
     from the focus of this project, which is to evaluate and analyze the EDSLs.
 
     Another principle that guided our choice is that the circuits should be immediately familiar to
-    anyone with some minimal experience in hardware design. We avoided, therefore, considering
+    anyone with basic experience in hardware design. We avoided, therefore, considering
     application-specific circuits such as those for Digital Signal Processing (DSP), implementing
-    communication protocols, etc. Having ruled out this class of circuits, we were left to choose
-    from circuits that form a general-purpose computing machine, such as arithmetic units, memory
-    blocks, control units and so forth.
+    communication protocols, etc. Having ruled out these classes of circuits, we were left to choose
+    from circuits that are parts of a general-purpose computing machine, such as arithmetic units,
+    memory blocks, control units and so forth.
 
     Finally, we wanted to choose among circuits that already had a well-defined, \emph{behavioural}
-    description, to avoid using any of the analyzed EDSLs as ``basis'' of comparison.
+    description, to avoid using any of the analyzed EDSLs as ``basis'' for comparison.
 
-    Taking these considerations into account, we chose to implement, in each of the EDSLs analyzed,
+    Taking these considerations into account we chose to implement, in each of the EDSLs analyzed,
     three circuits originating from the book ``The Elements of Computing
     Systems''\cite{nand2tetris-book}. This book aims to give the reader a deep understanding of how
     computer systems work by taking a hands-on approach, in which the reader is given the most basic

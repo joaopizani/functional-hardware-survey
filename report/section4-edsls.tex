@@ -372,8 +372,8 @@
                     time $t$. A simple example of a combinational process constructor is:
 
                     \begin{haskellcode}
-    mapSY :: (ProcType a, ProcType b) => ProcId
-          -> ProcFun (a -> b) -> Signal a -> Signal b
+        mapSY :: (ProcType a, ProcType b) => ProcId
+              -> ProcFun (a -> b) -> Signal a -> Signal b
                     \end{haskellcode}
 
                 \item[Sequential] On the other hand, sequential process constructors build processes
@@ -382,8 +382,8 @@
                     simple example of a sequential process constructor is:
 
                     \begin{haskellcode}
-    sourceSY :: (ProcType a, ProcType b) => ProcId
-             -> ProcFun (a -> a) -> a -> Signal a
+        sourceSY :: (ProcType a, ProcType b) => ProcId
+                 -> ProcFun (a -> a) -> a -> Signal a
                     \end{haskellcode}
 
             \end{description}
@@ -453,8 +453,8 @@
             from 0:
 
             \begin{haskellcode}
-    counter :: Signal Int16
-    counter = sourceSY "counterProc" incrFunc 0
+        counter :: Signal Int16
+        counter = sourceSY "counterProc" incrFunc 0
             \end{haskellcode}
 
             Notice that we \emph{reuse} the \texttt{incrFunc} process function, as it does exactly
