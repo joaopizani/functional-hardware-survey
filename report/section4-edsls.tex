@@ -21,9 +21,8 @@
         Before diving into the inner workings of the Chalmers Lava library, we first need to make
         clear that there are two very distinct versions of this library. The original paper that
         defines the Lava language\cite{lava1998} contains the first version, while the current
-        version is the one defined in a later paper\cite{observable-sharing-1999} by Koen Claessen
-        and David Sands. This current version of Chalmers Lava is the one in which our case study is
-        implemented.
+        version is the one defined in a later thesis\cite{claessen-thesis} by Koen Claessen
+        This current version of Chalmers Lava is the one in which our case study is based.
 
         As already said, Lava uses a \emph{deep embedding}, and the datatype used to represent a
         circuit is \texttt{Signal}, defined in listing \ref{lst:lava-signal}.
@@ -109,10 +108,10 @@
             \end{listing}
 
             In the definition of the ALU itself, we would like to have a user-defined datatype to
-            represent the kinds of functions that can be computed by the ALU (functions listed on
-            table \ref{tab:alu-functions}). However, due to the limitations of the VHDL backend
-            already discussed, we have to define \texttt{ALUControlBits} as simply a \emph{type
-                synonym} for a 6-tuple of bits.
+            represent the kinds of functions that can be computed by the ALU, i.e, the functions
+            listed on table \ref{tab:alu-functions}. However, due to the limitations of the VHDL
+            backend already discussed, we have to define \texttt{ALUControlBits} as simply a
+            \emph{type synonym} for a 6-tuple of bits.
 
             Besides modeling the three circuits in Lava, we also simulated them. The definition of
             the ALU circuit in the book "The Elements of Computing Systems"\cite{nand2tetris-book}
@@ -141,11 +140,17 @@
             (module \texttt{Lava.Signal}):
 
             \begin{haskellcode}
-    instance Eq (Signal a) where
-        Signal (Symbol r1) == Signal (Symbol r2) = r1 == r2
+        instance Eq (Signal a) where
+            Signal (Symbol r1) == Signal (Symbol r2) = r1 == r2
             \end{haskellcode}
 
-            With the drawback of not having \emph{automated} testing, we can say that Lava does
+            This \texttt{Eq} instance implements a sort of \emph{reference equality}, instead of the
+            more usual \emph{value equality}. This reference equality behaviour is, however, the
+            only desirable definition in the context of how Lava represents circuits: a more
+            traditional (recursive) definition of equality could result in non-termination when
+            inspecting circuits with loops.
+
+            Even with the drawback of not having \emph{automated} testing, we can say that Lava does
             provide good \textbf{simulation} capabilities, with an interface that is easy to
             understand for functional programmers.
 
