@@ -4,14 +4,14 @@
     \subsection{Lava}
     \label{subsec:lava}
 
-        Lava\cite{lava1998} is an \ac{EDSL} for hardware description developed originally around 1998 at
-        Chalmers University of Technology, in Sweden. It uses Haskell as the host language, and
-        circuits described in Lava are \emph{deeply embedded}.
+        Lava\cite{lava1998} is an \ac{EDSL} for hardware description developed originally around
+        1998 at Chalmers University of Technology, in Sweden. It uses Haskell as the host language,
+        and circuits described in Lava are \emph{deeply embedded}.
 
-        The Lava \ac{EDSL} has several ``dialects'', among which are Xilinx-Lava, York-Lava, Kansas-Lava
-        and Chalmers-Lava. Xilinx-Lava\cite{xilinx-lava} was developed by Satnam Singh and puts a
-        greater emphasis on the \emph{layout} of the described circuits, focusing on their
-        implementation in Xilinx's FPGAs. York-Lava was developed as part of the
+        The Lava \ac{EDSL} has several ``dialects'', among which are Xilinx-Lava, York-Lava,
+        Kansas-Lava and Chalmers-Lava. Xilinx-Lava\cite{xilinx-lava} was developed by Satnam Singh
+        and puts a greater emphasis on the \emph{layout} of the described circuits, focusing on
+        their implementation in Xilinx's FPGAs. York-Lava was developed as part of the
         Reduceron\cite{reduceron} project, and is a variation of Chalmers-Lava, omitting some
         features and adding some others, like a ``Prelude'' of commonly used circuits
         ((de)multiplexers, (de)coders, RAM memory blocks, etc.). Chalmers-Lava is considered the
@@ -35,8 +35,8 @@
 
         As can be noticed from the definition, the \emph{actual} circuit type (\texttt{S}) is
         ``wrapped'' around the \texttt{Ref} type constructor. This has to do with the approach that
-        Lava takes to solving the problem of observable sharing, which is to rely on comparing
-        \emph{references to object} given by the Haskell implementation, to detect cycles in syntax
+        Lava takes to solving the problem of observable sharing, which relies on comparing
+        \emph{references to objects} given by the Haskell implementation, to detect cycles in syntax
         graphs representing circuits. This approach is the cause of some of Lava's advantages as
         well as disadvantages, which will be discussed further ahead.
 
@@ -60,7 +60,7 @@
         \subsubsection{Circuits modeled}
         \label{subsubsec:lava-circuits}
 
-            In order to be able to describe circuit 1, the ALU (described in more detail on section
+            In order to be able to describe circuit 1, the ALU (more details on section
             \ref{subsec:circuit-alu}), we first needed to model the necessary parts. The ``core'' of
             the ALU is composed of a 16-bit ripple-carry adder and a 16-bit \texttt{AND} gate. To
             model the ripple-carry adder we used full adders as parts, which in turn used half
@@ -94,7 +94,7 @@
                     approach has a good \textbf{genericity}, but is \textbf{not type-safe enough}.
                     For example, we could have a circuit assuming that its inputs are 32-bit wide.
                     There is no way to enforce, at \emph{Haskell compilation time}, that inputs with
-                    correct size are provided.  Possible problems could only be detected at
+                    correct size are provided.  Possible problems could only be detected during
                     simulation or VHDL generation.
             \end{itemize}
 
@@ -205,9 +205,9 @@
             \haskellfile{code/lava/lava-circuit2-simulation-regN.hs}
 
             The \texttt{simulateSeq} function is intended for the simulation of sequential circuits:
-            the list of inputs its given is the sequence of values present at the input ports of the
-            circuit under test -- one element of the list for each clock cycle. The list of outputs
-            given by \texttt{simulateSeq} has a similar interpretation.
+            the list of inputs it is given is the sequence of values present at the input ports of
+            the circuit under test -- one element of the list for each clock cycle. The list of
+            outputs given by \texttt{simulateSeq} has a similar interpretation.
 
             Having the core sequential component for our memory bank (\texttt{regN}), we modeled
             some other helper components (such as an \emph{address decoder} and a 64-to-1
@@ -221,13 +221,13 @@
             \texttt{load} signal is active \emph{and} (\texttt{<\&>}) that particular memory line is
             selected. Finally, to be precise, \texttt{ram64Rows} actually defines a family of
             circuits, one for each value of \texttt{n}. The one we are interested in is
-            \texttt{ram64Rows 16}, for a RAM block with 64 lines, in which each line is 16 bits
+            \texttt{ram64Rows 16}, for a RAM block with 64 lines, in which each line is 16-bit
             wide.
 
             Finally, the last circuit we studied under Lava (circuit 3) is the Hack CPU (described
             in more detail on section \ref{subsec:hack-cpu-circuit}). The CPU circuit is mostly
-            combinational, as it contains \emph{no form of pipelining} and exactly one instruction
-            is executed per clock cycle. However, there is one sequential component of the CPU: the
+            combinational, as it contains \emph{no form of pipelining} and executes exactly one
+            instruction per clock cycle. However, there is one sequential component of the CPU: the
             \emph{program counter}, shown in listing~\ref{lst:lava-circuit3-model-pc}:
 
             \begin{listing}[h!]
@@ -237,13 +237,13 @@
             \end{listing}
 
             The program counter counts cyclically between $ 0 $ and $ 2^{n-1} $, and can have its
-            value reset or set to a particular value at any moment. Having defined the program
+            value reset to 0 or set to a particular value at any moment. Having defined the program
             counter, there are still some helper parts to define before writing the model for the
             CPU itself: most importantly, we need an \emph{instruction decoder}, responsible for
             interpreting each \texttt{Hack} instruction and outputting several \emph{control bits}
             that are used to direct the data flow inside the CPU during each instruction execution
-            cycle. The Lava code for the decoder can be seen on listing
-            \ref{lst:lava-circuit3-model-decoder}.
+            cycle. The Lava code for the decoder can be seen on
+            listing~\ref{lst:lava-circuit3-model-decoder}.
 
             \begin{listing}[h!]
                 \haskellfile{code/lava/lava-circuit3-model-instruction-decoder.hs}
@@ -297,14 +297,15 @@
                 \emph{is able} to hold internal state. But, given the same input (possibly infinite)
                 signals, it produces the same output signals.
 
-            \item[Process constructor] Every circuit in ForSyDe (even simplest combinational ones) is
-                built using a \emph{process constructor}. A process constructor can be seen as a
-                skeleton of behaviour, and it clearly separates computation from synchronization
-                aspects. A process constructor takes a combinational function (called \emph{process
-                    function}) as parameter -- expressing the computation aspect of the process, and
-                possibly some extra values. There are combinational and sequential process
-                constructors, and some representative examples from each class will be described in
-                more detail in a specific subsection (\ref{subsubsec:forsyde-synchprocs}).
+            \item[Process constructor] Every circuit in ForSyDe (even the simplest combinational
+                ones) is built using a \emph{process constructor}. A process constructor can be seen
+                as a skeleton of behaviour, and it clearly separates computation from
+                synchronization aspects. A process constructor takes a combinational function
+                (called \emph{process function}) as parameter -- expressing the computation aspect
+                of the process, and possibly some extra values. There are combinational and
+                sequential process constructors, and some representative examples from each class
+                will be described in more detail in a specific subsection
+                (\ref{subsubsec:forsyde-synchprocs}).
         \end{description}
 
         \subsubsection{Models of Computation}
@@ -341,12 +342,12 @@
             First, lets take a look at the behaviour of a system which has an one integer input port
             and one integer output, and in which the value of the output is equal to the input plus
             4. The interface and internal architecture of this system (\emph{addFour}) is depicted
-            in listing~\ref{lst:forsyde-addFour}.
+            in figure~\ref{fig:forsyde-addFour}.
 
             \begin{figure}[h!]
                 \includegraphics[width=1.0\textwidth]{imgs/forsyde-addFour.pdf}
                 \caption{The addFour circuit, example of usage of the Synchronous \ac{MoC}
-                    \label{lst:forsyde-addFour}}
+                    \label{fig:forsyde-addFour}}
             \end{figure}
 
             Please bear in mind that this implementation is not by far an efficient method of adding
@@ -381,13 +382,13 @@
         \subsubsection{Synchronous Process Constructors}
         \label{subsubsec:forsyde-synchprocs}
             In the ForSyDe Haskell package, the module \texttt{ForSyDe.Process.SynchProc} provides
-            the list of process constructors that a can be used to build systems in ForSyDe's
+            the list of process constructors that can be used to build systems in ForSyDe's
             Synchronous Model of Computation (\ref{ref:forsyde-moc-synch}). The functions provided
             in that module can be divided in 2 big groups:
 
             \begin{description}
 
-                \item[Combinational] Combinations process constructors build processes in which the
+                \item[Combinational] Combinational process constructors build processes in which the
                     value on a certain output at time $t$ depends \emph{only} on the input values at
                     time $t$. A simple example of a combinational process constructor is:
 
@@ -451,7 +452,7 @@
             For VHDL to be generated from the system definition, ForSyDe imposes a series of extra
             restrictions on the form that all \texttt{ProcFun}s can take. Upon calling the
             \texttt{writeVHDL} function, the \texttt{ProcFun} objects are traversed, and a
-            \emph{runtime} error occurs if any of them does not comply with the restrictions.  These
+            \emph{runtime} error occurs if any of them does not comply with the restrictions. These
             restrictions are:
 
             \begin{description}
@@ -611,7 +612,7 @@
                     \label{lst:forsyde-circuit2-ram}}
             \end{listing}
 
-            This model is also similar to the one wrote in Lava, and that is the reason for why we
+            This model is also similar to the one written in Lava, and that is the reason for why we
             don't have separate \emph{high-level} and \emph{synthesizable} models for circuit 2. The
             ``natural'' model, i.e, the one that came to mind immediately reading the description of
             the circuit, happens to also be synthesizable. In this model, we use the parts already
@@ -840,7 +841,7 @@
             type \texttt{n} and output type \texttt{m}). Usually, in the Coquet
             paper\cite{coquet2011} and in the examples provided with the library, input and output
             types are \emph{sum types} in which the terms of the sum are \emph{tagged units}. Using
-            tags serves a form of ``documentation'', giving someone reading the circuit model an
+            tags works as a form of ``documentation'', giving someone reading the circuit model an
             idea of what role does each input/output port play. The \emph{type family} of tagged
             unit types is defined as follows:
 
@@ -910,10 +911,8 @@
             circuits \texttt{x} and \texttt{y}, we can obtain the semantics of their \emph{serial
                 composition} (\texttt{Ser x y}) by using the \texttt{KSer} constructor. This
             inductive definition of semantics can also be used in proofs. If we need to prove a
-            statement of the form: \coq;Semantics (Ser x y) ins outs;
-
-            Then we can \texttt{apply} the \texttt{KSer} constructor to split the goal into the
-            following subgoals:
+            statement of the form: \coq;Semantics (Ser x y) ins outs;, Then we can \texttt{apply} the
+            \texttt{KSer} constructor to split the goal into the following subgoals:
 
             \begin{coqcode}
         Semantics x ins middles
@@ -965,7 +964,7 @@
                     \label{lst:coquet-definition-realise-implement}}
             \end{listing}
 
-            Is we want to prove that a certain circuit \texttt{c} \emph{implements} a certain
+            If we want to prove that a certain circuit \texttt{c} \emph{implements} a certain
             function \emph{f} (the high-level specification), then our goal in Coq will be:
             \coq;Implement c f; To prove this kind of statement, one can ``break down'' the meaning
             relation hypothesis, resulting in one \texttt{Semantics} hypothesis per circuit
@@ -1110,7 +1109,7 @@
             \emph{sequential} circuit: A 1-bit register. The specification of behaviour for
             sequential circuits in Coquet is significantly more involved and, in fact, the original
             Coquet paper\cite{coquet2011} leaves a ``more thorough investigation of state-holding
-            devices'' for future work. But before delving into the specification, let's first look
+            devices'' as future work. But before delving into the specification, let's first look
             at the circuit model itself:
 
             \coqfile{code/coquet/coquet-model-register.v}

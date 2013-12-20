@@ -21,12 +21,12 @@
         combinators.
 
     \paragraph{Simulation}
-        Simulation can be performed in all studied \acp{EDSL}. In Lava, \emph{automated} test cases (in
-        which the simulation output is compared with an \emph{expected} combination) are not
+        Simulation can be performed in all studied \acp{EDSL}. In Lava, \emph{automated} test cases
+        (in which the simulation output is compared with an \emph{expected} combination) are not
         possible due to the way in which the observable sharing issue is handled. Coquet has
         simulation built into the library as one of several \emph{example interpretations} for
-        circuits, and it works just as well as in the other \acp{EDSL}, with the only shortcoming that
-        the simulation of \emph{sequential} circuits is currently \emph{not possible}.
+        circuits, and it works just as well as in the other \acp{EDSL}, with the only shortcoming
+        that simulation of \emph{sequential} circuits is currently \emph{not possible}.
 
     \paragraph{Verification}
         ForSyDe offers no capabilities for formal verification whatsoever, while Lava and Coquet
@@ -42,10 +42,10 @@
         In Lava the modeling of generic circuits is made very easy, and any parameter to a circuit
         definition which is not of type \texttt{Signal T} is considered a \emph{parameter} instead
         of a circuit input, and specific instances of these generic circuits can then be simulated
-        or synthesized. In Coquet a similar approach is taking, allowing the user to prove \emph{by
-        induction on the parameter} the correctness of the whole family of circuits being defined.
-        ForSyDe is the \ac{EDSL} with the least opportunity for generalization: the only thing we can do
-        is to have fixed-length bit vectors or fixed-size integers as inputs, and these are fixed at
+        or synthesized. In Coquet a similar approach is taken, allowing the user to prove \emph{by
+        induction on the parameter} the correctness of the whole family of circuits.  ForSyDe is the
+        \ac{EDSL} with the least opportunity for generalization: the only thing we can do is to have
+        fixed-length bit vectors or fixed-size integers as inputs, and these are fixed at
         \emph{Haskell compilation time}.
 
     \paragraph{Tool integration}

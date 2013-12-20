@@ -2,9 +2,9 @@
 \label{sec:methods}
 
     In this project, we compared a number of functional hardware \acp{EDSL} that we considered
-    representative (more details on the choice of \acp{EDSL} further ahead). The comparison was performed
-    on a number of \emph{aspects} for each \ac{EDSL}, and the analysis was done by considering a
-    \emph{sample set of circuits} used as case studies.
+    representative (more details on the choice of \acp{EDSL} further ahead). The comparison was
+    performed on a number of \emph{aspects} for each \ac{EDSL}, and the analysis was done by
+    considering a \emph{sample set of circuits} used as case studies.
 
     We tried to model all circuits in all \acp{EDSL} considered, and as similarly as possible in each
     EDSL. To avoid using any of the analyzed \acp{EDSL} as ``base'' for analysis, we provide a neutral
@@ -12,7 +12,7 @@
 
     \subsection{The languages}
     \label{subsec:languages}
-        The embedded Hardware Description Languages we decided to analyze are:
+        The Embedded Hardware Description Languages we decided to analyze are:
 
         \begin{description}
             \item[Lava] The Lava\cite{lava1998} language, developed initially at Chalmers University
@@ -28,7 +28,7 @@
             allow the designer to describe combinational functions with Haskell's own constructs.
 
             \item[Coquet] The Coquet\cite{coquet2011} \ac{EDSL} differs from the other 2 mainly because
-            it's embedded in a dependently-typed programming language (the Coq theorem prover).
+            it is embedded in a dependently-typed programming language (the Coq theorem prover).
             Coquet aims to allow the hardware designer to describe his circuits and then
             \emph{interactively} prove theorems about the behaviour of whole \emph{families} of
             circuits (using proofs by induction).
@@ -38,11 +38,11 @@
     \subsection{The aspects evaluated}
     \label{subsec:aspects}
 
-        For each of the hardware description \acp{EDSL} we experimented with, a number of \emph{aspects}
-        were evaluated. The evaluated aspects do not necessarily make sense for \emph{all}
-        \acp{EDSL},
-        therefore our presentation follows a language-centric approach, in which we expose the
-        strengths and weaknesses of each \ac{EDSL} concerning the applicable aspects.
+        For each of the hardware description \acp{EDSL} we experimented with, a number of
+        \emph{aspects} were evaluated. The evaluated aspects do not necessarily make sense for
+        \emph{all} \acp{EDSL}, therefore our presentation follows a language-centric approach, in
+        which we expose the strengths and weaknesses of each \ac{EDSL} concerning the applicable
+        aspects.
 
         Without further ado, the following aspects are considered in the analysis:
 

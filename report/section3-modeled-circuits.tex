@@ -1,12 +1,12 @@
 \section{Modeled circuits}
 \label{sec:circuits}
 
-    When thinking of which circuits to model using the analyzed \acp{EDSL}, some principles guided us.
-    First of all, they shouldn't be too simple but also not too complex. Some very simple circuits
-    (adders, counters, etc.) are often shown as examples in the papers that define the \acp{EDSL}
-    themselves, as well as in tutorials. On the other hand, we also did not want to model too
-    complex circuits; that would require too much effort on the hardware design itself, and diverge
-    from the focus of this project, which is to evaluate and analyze the \acp{EDSL}.
+    When thinking of which circuits to model using the analyzed \acp{EDSL}, some principles guided
+    us.  First of all, they shouldn't be too simple but also not too complex. Some very simple
+    circuits (adders, counters, etc.) are often shown as examples in the papers that define the
+    \acp{EDSL} themselves, as well as in tutorials. On the other hand, we also did not want to model
+    too complex circuits; that would require too much effort on the hardware design itself, and
+    diverge from the focus of this project, which is to evaluate and analyze the \acp{EDSL}.
 
     Another principle that guided our choice is that the circuits should be immediately familiar to
     anyone with basic experience in hardware design. We avoided, therefore, considering
@@ -18,8 +18,8 @@
     Finally, we wanted to choose among circuits that already had a well-defined, \emph{behavioural}
     description, to avoid using any of the analyzed \acp{EDSL} as ``basis'' for comparison.
 
-    Taking these considerations into account we chose to implement, in each of the \acp{EDSL} analyzed,
-    three circuits originating from the book ``The Elements of Computing
+    Taking these considerations into account we chose to implement, in each of the \acp{EDSL}
+    analyzed, three circuits originating from the book ``The Elements of Computing
     Systems''\cite{nand2tetris-book}. This book aims to give the reader a deep understanding of how
     computer systems work by taking a hands-on approach, in which the reader is given the most basic
     logic gates and builds, step-by-step, all the hardware and software components necessary to
@@ -30,7 +30,7 @@
     \begin{itemize}
         \item A simple Arithmetic Logic Unit (ALU), from here onwards referred to as ``circuit 1''.
 
-        \item A RAM memory block with 64 words, from here onwards referred to as ``circuit 2''.
+        \item A RAM block with 64 words, from here onwards referred to as ``circuit 2''.
 
         \item A CPU with an extremely reduced instruction set (capable of executing the \emph{Hack}
             assembly language defined in the book) from here onwards referred to as ``circuit 3''.
@@ -75,20 +75,19 @@
         that indicate predicates over the main output:
 
         \begin{description}
-            \item[zr] Is high whenever $out = 0$.
-            \item[ng] Is high whenever $out < 0$.
+            \item[zr] Is high whenever $\text{out} = 0$.
+            \item[ng] Is high whenever $\text{out} < 0$.
         \end{description}
 
         When the ALU is used in the context of a microprocessor these flags can be used, for
         example, to facilitate conditional jumps.
 
         Even though there are $2^{6} = 64$ possible combinations for the values of the control bits,
-        only 18 of these combinations result in interesting functions -- that is because several
-        combinations of control bits can be used to calculate the same function. We show these 18
-        functions that the ALU can calculate on table \ref{tab:alu-functions}.
-        \input{tables/alu-functions}
+        only 18 of these combinations result in interesting functions -- that happens because
+        several combinations of control bits can be used to calculate the same function. We show
+        these 18 functions that the ALU can calculate on table \ref{tab:alu-functions}.
 
-        %% TODO: Talk about the construction of the ALU in terms of its parts.
+        \input{tables/alu-functions}
 
 
     \subsection{Circuit 2: RAM64}
@@ -152,8 +151,7 @@
 
         The meaning of each of the CPU's input and output ports becomes much clearer when we look at
         the context in which the CPU is inserted, namely, the memory modules to which it is
-        connected. So, let's analyze the CPU's ports by taking a look at figure
-        \ref{fig:cpu-memory}.
+        connected. So, let's analyze the CPU's ports by taking a look at figure~\ref{fig:cpu-memory}.
 
         \begin{figure}[h!]
             \centerline{\includegraphics[width=0.85\textwidth]{imgs/cpu-memory.pdf}}
@@ -163,7 +161,7 @@
 
         Finally, the CPU is a circuit which is built mostly from the parts we already defined in
         circuits 1 and 2. We use the ALU, some registers, multiplexers, an instruction decoder and a
-        counter (the \emph{program counter}). Figure \ref{fig:cpu-parts} shows the CPU organization.
+        counter (the \emph{program counter}). Figure~\ref{fig:cpu-parts} shows the CPU organization.
 
         \begin{figure}[h!]
             \centerline{\includegraphics[width=1.0\textwidth]{imgs/cpu-parts.pdf}}
