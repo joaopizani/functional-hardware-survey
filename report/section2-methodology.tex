@@ -1,13 +1,13 @@
 \section{Methodology}
 \label{sec:methods}
 
-    In this project, we compared a number of functional hardware EDSLs that we considered
-    representative (more details on the choice of EDSLs further ahead). The comparison was performed
-    on a number of \emph{aspects} for each EDSL, and the analysis was done by considering a
+    In this project, we compared a number of functional hardware \acp{EDSL} that we considered
+    representative (more details on the choice of \acp{EDSL} further ahead). The comparison was performed
+    on a number of \emph{aspects} for each \ac{EDSL}, and the analysis was done by considering a
     \emph{sample set of circuits} used as case studies.
 
-    We tried to model all circuits in all EDSLs considered, and as similarly as possible in each
-    EDSL. To avoid using any of the analyzed EDSLs as ``base'' for analysis, we provide a neutral
+    We tried to model all circuits in all \acp{EDSL} considered, and as similarly as possible in each
+    EDSL. To avoid using any of the analyzed \acp{EDSL} as ``base'' for analysis, we provide a neutral
     and behavioural description of the circuits.
 
     \subsection{The languages}
@@ -21,13 +21,13 @@
             Lava available, and the one used for this project is considered the ``canonical'' one,
             originally developed at Chalmers.
 
-            \item[ForSyDe] The Haskell ForSyDe library is an EDSL based on the ``Formal System
+            \item[ForSyDe] The Haskell ForSyDe library is an \ac{EDSL} based on the ``Formal System
             Design'' approach\cite{forsyde1999}, developed at the swedish Royal Institute of
             Technology (KTH).  It offers both shallow and deep embeddings, and provides a
             significantly different approach to circuit modeling, using \emph{Template Haskell} to
             allow the designer to describe combinational functions with Haskell's own constructs.
 
-            \item[Coquet] The Coquet\cite{coquet2011} EDSL differs from the other 2 mainly because
+            \item[Coquet] The Coquet\cite{coquet2011} \ac{EDSL} differs from the other 2 mainly because
             it's embedded in a dependently-typed programming language (the Coq theorem prover).
             Coquet aims to allow the hardware designer to describe his circuits and then
             \emph{interactively} prove theorems about the behaviour of whole \emph{families} of
@@ -38,15 +38,16 @@
     \subsection{The aspects evaluated}
     \label{subsec:aspects}
 
-        For each of the hardware description EDSLs we experimented with, a number of \emph{aspects}
-        were evaluated. The evaluated aspects do not necessarily make sense for \emph{all} EDSLs,
+        For each of the hardware description \acp{EDSL} we experimented with, a number of \emph{aspects}
+        were evaluated. The evaluated aspects do not necessarily make sense for \emph{all}
+        \acp{EDSL},
         therefore our presentation follows a language-centric approach, in which we expose the
-        strengths and weaknesses of each EDSL concerning the applicable aspects.
+        strengths and weaknesses of each \ac{EDSL} concerning the applicable aspects.
 
         Without further ado, the following aspects are considered in the analysis:
 
         \begin{description}
-            \item[Simulation] The capability of simulating circuits modeled in the EDSL (and the
+            \item[Simulation] The capability of simulating circuits modeled in the \ac{EDSL} (and the
             ease with which it can be performed). Simulation is understood in this context as
             \emph{functional} simulation, i.e, obtaining the outputs calculated by the circuit for
             certain input combinations.
@@ -58,19 +59,19 @@
             \forall b \forall \text{\textit{sel}} \left( \text{MUX}(a,b,\text{\textit{sel}}) = a
             \right) \vee \left( \text{MUX}(a,b,\text{\textit{sel}}) = b \right) \]
 
-            \item[Genericity] Whether (and how well) the EDSL allows the modeling of \emph{generic}
+            \item[Genericity] Whether (and how well) the \ac{EDSL} allows the modeling of \emph{generic}
             or \emph{parameterized} circuits. An example of a generic circuit is a multiplexer with
             2 n-bit inputs and 1 n-bit output, or a multiplexer with n 1-bit inputs and 1 1-bit
             output. Besides parametrization in the \emph{size} if inputs and outputs, we will also
-            analyze whether the EDSL provides chances for parametrization on other functional and/or
+            analyze whether the \ac{EDSL} provides chances for parametrization on other functional and/or
             non-functional attributes.
 
-            \item[Depth of embedding] Whether the EDSL models circuits with a \emph{shallow}
+            \item[Depth of embedding] Whether the \ac{EDSL} models circuits with a \emph{shallow}
             embedding (using predicates or functions of the host language), a \emph{deep embedding}
             (in which circuits are members of a dedicated data type), or anything in between. The
-            depth of embedding of an EDSL might have consequences for other aspects being analyzed.
+            depth of embedding of an \ac{EDSL} might have consequences for other aspects being analyzed.
 
-            \item[Integration with other tools] How well does the EDSL allow for interaction with
+            \item[Integration with other tools] How well does the \ac{EDSL} allow for interaction with
             (getting input from / generating output for) other tools in the hardware design process.
             For example, synthesis tools for FPGAs or ASICs, timing analysis tools, model checkers,
             etc.

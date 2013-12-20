@@ -4,11 +4,11 @@
     \subsection{Lava}
     \label{subsec:lava}
 
-        Lava\cite{lava1998} is an EDSL for hardware description developed originally around 1998 at
+        Lava\cite{lava1998} is an \ac{EDSL} for hardware description developed originally around 1998 at
         Chalmers University of Technology, in Sweden. It uses Haskell as the host language, and
         circuits described in Lava are \emph{deeply embedded}.
 
-        The Lava EDSL has several ``dialects'', among which are Xilinx-Lava, York-Lava, Kansas-Lava
+        The Lava \ac{EDSL} has several ``dialects'', among which are Xilinx-Lava, York-Lava, Kansas-Lava
         and Chalmers-Lava. Xilinx-Lava\cite{xilinx-lava} was developed by Satnam Singh and puts a
         greater emphasis on the \emph{layout} of the described circuits, focusing on their
         implementation in Xilinx's FPGAs. York-Lava was developed as part of the
@@ -278,7 +278,7 @@
     \label{subsec:forsyde}
         The Haskell ForSyDe library is an implementation of the ``Formal System Design'' approach to
         hardware modeling\cite{forsyde1999}. The ForSyDe approach per se has several significant
-        differences when compared to Lava, and even when the two EDSLs agree on \emph{what to do},
+        differences when compared to Lava, and even when the two \acp{EDSL} agree on \emph{what to do},
         sometimes they differ on how to achieve those goals.
 
         To better understand what characterizes the ForSyDe methodology, we first have to establish
@@ -363,7 +363,7 @@
             significant is that only systems built \textbf{exclusively} with process constructors of
             the synchronous model can be translated into VHDL by ForSyDe.
 
-            ForSyDe is a \emph{deeply embedded} EDSL, but it takes a significantly different
+            ForSyDe is a \emph{deeply embedded} \ac{EDSL}, but it takes a significantly different
             approach than the one taken by Lava: instead of having some set of ``atomic'' circuits
             (they correspond to the constructors of the \texttt{S} type in Lava), ForSyDe uses
             Template Haskell to \emph{reify} Haskell source code into a syntax tree, and use this
@@ -376,7 +376,7 @@
 
             On section \ref{subsubsec:forsyde-circuits} we proceed to expose the circuits we modeled
             in ForSyDe, using the models to make a comparative analysis of ForSyDe with the other
-            EDSLs.
+            \acp{EDSL}.
 
         \subsubsection{Synchronous Process Constructors}
         \label{subsubsec:forsyde-synchprocs}
@@ -722,7 +722,7 @@
 
     \subsection{Coquet}
     \label{subsec:coquet}
-        The third analyzed EDSL for hardware description, Coquet\cite{coquet2011}, is strikingly
+        The third analyzed \ac{EDSL} for hardware description, Coquet\cite{coquet2011}, is strikingly
         different from both others. Most of these differences can be explained in one way or another
         by its choice of host ``language'' -- Coq\footnote{``Coq'' is not the name of a language,
             but a theorem-proving system that uses different languages for defining terms,
@@ -988,7 +988,7 @@
             increasing order of complexity, and also comment on their proofs of correctness. This
             review should give the reader an idea of the general structure of circuits and proofs in
             Coquet. It should also serve as base for our comparative analysis of Coquet with the
-            other EDSLs.
+            other \acp{EDSL}.
 
             Let's start by analyzing a hierarchy of adders. The most basic of these adders is a half
             adder:
@@ -1032,10 +1032,10 @@
             Coquet, we mentioned that one of the circuit constructors (\texttt{Plug}) is meant to be
             used to ``adapt'' the interface of two circuits which we need to combine.
 
-            In the example of \texttt{FADD}, all the necessary plugs involved only regropuing of ports
-            (they are all \emph{associativity plugs}) and, in these cases, the plug functions are
-            fully defined by their type, which allows us to avoid writing the functions ourselves
-            and let Coq find the terms using \emph{proof search}. That's why we use Coq's
+            In the example of \texttt{FADD}, all the necessary plugs involved only regropuing of
+            ports (they are all \emph{associativity plugs}) and, in these cases, the plug functions
+            are fully defined by their type, which allows us to avoid writing the functions
+            ourselves and let Coq find the terms using \emph{proof search}. That's why we use Coq's
             \texttt{Program} command to define the circuit: in the definition, there are some
             \emph{holes} where the plug functions should be (we omit the full \texttt{Rewire} lines
             for brevity), and we need to ``fill'' each of these holes after defining \texttt{FADD}
@@ -1139,10 +1139,10 @@
             Coquet employs very well several features of dependently-typed programming in general,
             and of the Coq system in particular, in order to facilitate circuit modeling and
             verification. The following advantages of Coquet make it particularly distinct from
-            the other studied EDSLs:
+            the other studied \acp{EDSL}:
 
             \begin{itemize}
-                \item The use if \textbf{dependent types} makes certain classes of design mistakes
+                \item The use of \textbf{dependent types} makes certain classes of design mistakes
                     (such as short-circuits or ``floating'' wires) \emph{impossible by design}.
 
                 \item By using \textbf{type classes} as a way to structure its definitions, Coquet
@@ -1168,7 +1168,7 @@
                     domains or probabilistic domains.
             \end{itemize}
 
-            Although Coquet is superior to the other studied EDSLs in the aforementioned aspects,
+            Although Coquet is superior to the other studied \acp{EDSL} in the aforementioned aspects,
             some other aspects of circuit modeling and verification with Coquet could benefit from
             concepts present in ForSyDe or Lava
 
