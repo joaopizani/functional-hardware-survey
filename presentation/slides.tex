@@ -1,0 +1,192 @@
+\documentclass{beamer}
+\usetheme[style=plain]{uu}
+
+%% unicode support, for text and code :)
+\usepackage[utf8x]{inputenc}
+\usepackage{ucs}
+\usepackage{autofe}
+
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{color}
+
+
+%% Haskell syntax highlighting and code font
+\usepackage{minted}
+\usepackage{fancyvrb}
+\usepackage{inconsolata}
+\usemintedstyle{default}
+
+\newmint{haskell}{mathescape,fontfamily=tt}
+\newmintedfile{haskell}{xleftmargin=20pt,mathescape,fontfamily=tt}
+
+\newminted{haskell}{xleftmargin=20pt,gobble=8,mathescape,fontfamily=tt}
+\newmint{coq}{mathescape,fontfamily=tt}
+
+\newmintedfile{coq}{xleftmargin=20pt,mathescape,fontfamily=tt}
+\newminted{coq}{gxleftmargin=20pt,obble=8,mathescape,fontfamily=tt}
+
+
+
+%% Metainformation
+%% PDF stuff
+\usepackage{datetime}
+\usepackage{ifpdf}
+\ifpdf
+\pdfinfo{
+    /Author (Joao Paulo Pizani Flor)
+    /Title (Comparing functional EDSLs for hardware description)
+    /Keywords (Hardware verification, Functional Programming, Hardware design, Dependently-typed programming, Coq, Lava, ForSyDe, Haskell, Coquet)
+    /CreationDate (D:\pdfdate)
+}
+\fi
+
+\title[Comparing functional EDSLs for hardware description]{Comparing functional Embedded Domain-Specific Languages for hardware description}
+
+\date{February 13th, 2014}
+
+\author[Pizani Flor]
+{
+    João Paulo Pizani Flor
+}
+
+\institute[Utrecht University]
+{
+    Department of Information and Computing Sciences,
+    Utrecht University
+}
+
+\subject{Function Programming, Hardware verification, Haskell, Coq, Lava, Coquet, ForSyDe}
+
+
+
+
+\begin{document}
+
+%% The document itself
+    \begin{frame}
+        \titlepage
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Table of Contents}
+        \tableofcontents
+    \end{frame}
+
+
+
+    \section{Introduction}
+    \label{sec:introduction}
+        \frame{\sectionpage}
+
+        \subsection{Hardware design}
+        \label{subsec:hardware-design}
+            \begin{frame}
+                \frametitle{Hardware design}
+            \end{frame}
+
+        \subsection{Domain-Specific Languages}
+        \label{subsec:domain-specific-languages}
+            % deep-embedded / shallow embedded
+            \begin{frame}
+                \frametitle{Domain-Specific Languages}
+            \end{frame}
+
+        \subsection{Hardware EDSLs}
+        \label{subsec:hardware-edsls}
+            \begin{frame}
+                \frametitle{Hardware EDSLs}
+            \end{frame}
+
+
+    \section{Analyzed EDSLs}
+    \label{sec:analyzed-edsls}
+        \frame{\sectionpage}
+
+        \subsection{Choice criteria}
+        \label{subsec:edsls-choice-criteria}
+            \begin{frame}
+                \frametitle{Choice criteria}
+            \end{frame}
+
+        \subsection{Chosen EDSLs}
+        \label{subsec:chosen-edsls}
+            \begin{frame}
+                \frametitle{Chosen EDSLs}
+            \end{frame}
+
+        \subsection{Evaluation criteria}
+        \label{subsec:evaluation-criteria}
+            \begin{frame}
+                \frametitle{Evaluation criteria}
+            \end{frame}
+
+
+    \section{Modeled Circuits}
+    \label{sec:modeled-circuits}
+        \frame{\sectionpage}
+
+        \subsection{Choice criteria}
+        \label{subsec:circuit-choice-criteria}
+            \begin{frame}
+                \frametitle{Choice criteria}
+            \end{frame}
+
+        \subsection{ALU}
+        \label{subsec:alu}
+            \begin{frame}
+                \frametitle{ALU}
+            \end{frame}
+
+        \subsection{Memory bank}
+        \label{subsec:memory-bank}
+            \begin{frame}
+                \frametitle{Memory bank}
+            \end{frame}
+
+        \subsection{CPU}
+        \label{subsec:cpu}
+            \begin{frame}
+                \frametitle{CPU}
+            \end{frame}
+
+
+    \section{Analysis of the EDSLs}
+    \label{sec:analysis-of-the-edsls}
+        \frame{\sectionpage}
+
+        \subsection{Lava}
+        \label{subsec:lava}
+            \begin{frame}
+                \frametitle{Lava}
+            \end{frame}
+
+        \subsection{ForSyDe}
+        \label{subsec:forsyde}
+            \begin{frame}
+                \frametitle{ForSyDe}
+            \end{frame}
+
+        \subsection{Coquet}
+        \label{subsec:coquet}
+            \begin{frame}
+                \frametitle{Coquet}
+            \end{frame}
+
+
+    \section{Conclusions}
+    \label{sec:conclusions}
+        \frame{\sectionpage}
+
+        \begin{frame}[plain]
+            \begin{center}
+                \par{\Huge{Thank you!}}
+                \vspace{2.0cm}
+                \par{\Huge{Questions?}}
+            \end{center}
+        \end{frame}
+
+
+\end{document}
