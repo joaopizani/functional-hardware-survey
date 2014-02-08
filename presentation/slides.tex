@@ -157,10 +157,12 @@
         \label{subsec:chosen-edsls}
             \begin{frame}
                 \frametitle{Chosen EDSLs}
+                The language we chose to evaluate, with the respective host language, were:
+
                 \begin{itemize}
-                    \item Lava
-                    \item ForSyDe
-                    \item Coquet
+                    \item Lava (Haskell - \texttt{chalmers-lava} \emph{dialect})
+                    \item ForSyDe (Haskell)
+                    \item Coquet (Coq)
                 \end{itemize}
             \end{frame}
 
@@ -168,6 +170,15 @@
         \label{subsec:evaluation-criteria}
             \begin{frame}
                 \frametitle{Evaluation criteria}
+
+                \begin{itemize}
+                    \item Simulation
+                    \item Verification
+                    \item Genericity
+                    \item Depth of embedding
+                    \item Tool integration
+                    \item Extensibility
+                \end{itemize}
             \end{frame}
 
 
@@ -175,28 +186,66 @@
     \label{sec:modeled-circuits}
         \frame{\sectionpage}
 
-        \subsection{Choice criteria}
+        \subsection{Choice}
         \label{subsec:circuit-choice-criteria}
             \begin{frame}
                 \frametitle{Choice criteria}
+
+                \begin{itemize}
+                    \item Not too simple, not too complex
+                    \item Familiar to any hardware designer
+                    \item Well-defined, available specification
+                \end{itemize}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Chosen circuits}
+
+                We cherry-picked circuits from the book ``Elements of Computing Systems'',
+                as they satisfied all of our demands.
+
+                \begin{figure}[h!]
+                    \includegraphics[width=0.5\textwidth]{imgs/book-cover-elements.jpg}
+                    \caption{``Elements of Computing Systems'' - Noam Nisan, Shimon Schocken,
+                        available at \url{http://www.nand2tetris.org}.
+                        \label{fig:book-cover-elements}}
+                \end{figure}
             \end{frame}
 
         \subsection{ALU}
         \label{subsec:alu}
             \begin{frame}
-                \frametitle{ALU}
+                \frametitle{ALU block diagram}
+
+                \begin{figure}[h!]
+                    \centerline{\includegraphics[width=0.6\textwidth]{imgs/alu-block.pdf}}
+                    \caption{Input/Output ports of \emph{circuit 1}, the ALU.
+                        \label{fig:alu-block}}
+                \end{figure}
             \end{frame}
 
         \subsection{Memory bank}
         \label{subsec:memory-bank}
             \begin{frame}
-                \frametitle{Memory bank}
+                \frametitle{Memory bank block diagram}
+
+                \begin{figure}[h!]
+                    \centerline{\includegraphics[width=0.45\textwidth]{imgs/ram-block.pdf}}
+                    \caption{Input/Output ports of \emph{circuit 2}, the RAM64 block.
+                        \label{fig:ram-block}}
+                \end{figure}
             \end{frame}
 
         \subsection{CPU}
         \label{subsec:cpu}
             \begin{frame}
-                \frametitle{CPU}
+                \frametitle{CPU block diagram}
+
+                \begin{figure}[h!]
+                    \centerline{\includegraphics[width=1.0\textwidth]{imgs/cpu-block.pdf}}
+                    \caption{Input/Output ports of \emph{circuit 3}, the \emph{Hack} CPU.
+                        \label{fig:cpu-block}}
+                \end{figure}
             \end{frame}
 
 
