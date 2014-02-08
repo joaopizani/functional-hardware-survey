@@ -88,6 +88,7 @@
                 \frametitle{Hardware design}
             \end{frame}
 
+
         \subsection{Domain-Specific Languages}
         \label{subsec:domain-specific-languages}
             % deep-embedded / shallow embedded
@@ -143,6 +144,7 @@
             \end{frame}
 
 
+
     \section{Analyzed EDSLs}
     \label{sec:analyzed-edsls}
         \frame{\sectionpage}
@@ -152,6 +154,7 @@
             \begin{frame}
                 \frametitle{Choice criteria}
             \end{frame}
+
 
         \subsection{Chosen EDSLs}
         \label{subsec:chosen-edsls}
@@ -182,6 +185,7 @@
             \end{frame}
 
 
+
     \section{Modeled Circuits}
     \label{sec:modeled-circuits}
         \frame{\sectionpage}
@@ -194,28 +198,69 @@
                 \begin{itemize}
                     \item Not too simple, not too complex
                     \item Familiar to any hardware designer
-                    \item Well-defined, available specification
+                        \begin{itemize}
+                            \item No signal processing, etc.
+                        \end{itemize}
+                    \item Well-defined, pre-specification
+                        \begin{itemize}
+                            \item Results to verify the models against
+                        \end{itemize}
                 \end{itemize}
             \end{frame}
 
             \begin{frame}
                 \frametitle{Chosen circuits}
 
-                We cherry-picked circuits from the book ``Elements of Computing Systems'',
-                as they satisfied all of our demands.
+                \par{We cherry-picked circuits from the book ``Elements of Computing Systems'',
+                    as they satisfied all of our demands.}
 
                 \begin{figure}[h!]
                     \includegraphics[width=0.5\textwidth]{imgs/book-cover-elements.jpg}
-                    \caption{``Elements of Computing Systems'' - Noam Nisan, Shimon Schocken,
+                    \caption{``Elements of Computing Systems'' - Nisan, Schocken, \newline
                         available at \url{http://www.nand2tetris.org}.
-                        \label{fig:book-cover-elements}}
+                        \label{fig:book-cover-elements}
+                    }
                 \end{figure}
             \end{frame}
+
+            \begin{frame}
+                \frametitle{Chosen circuits}
+
+                \begin{description}
+                    \item[Circuit 1] A 2-input, 16-bit-wide, simple ALU
+                    \item[Circuit 2] A 64-word long, 16-bit wide memory block
+                    \item[Circuit 3] An \emph{extremely} reduced instruction set CPU,
+                        the \emph{Hack} CPU.
+                \end{description}
+                \vspace{0.05\textwidth}
+
+                \par{Let's take a quick look at each of these circuit's specification\ldots}
+            \end{frame}
+
 
         \subsection{ALU}
         \label{subsec:alu}
             \begin{frame}
-                \frametitle{ALU block diagram}
+                \frametitle{Circuit 1: ALU}
+
+                \par{Some of the circuit's key characteristics:}
+
+                \begin{itemize}
+                    \item 2 \emph{operand inputs} and 1 \emph{operand output}, each 16-bit wide
+                    \item 1 \emph{output flag}
+                    \item Can execute 18 different \emph{functions}, among which:
+                        \begin{itemize}
+                            \item Addition, subtraction
+                            \item Bitwise AND / OR
+                            \item Constant outputs
+                            \item Addition of constants to an operand
+                            \item Sign inversion
+                        \end{itemize}
+                \end{itemize}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Circuit 1: block diagram}
 
                 \begin{figure}[h!]
                     \centerline{\includegraphics[width=0.6\textwidth]{imgs/alu-block.pdf}}
@@ -224,10 +269,46 @@
                 \end{figure}
             \end{frame}
 
+            \begin{frame}
+                \frametitle{Circuit 1: Specification}
+
+                \par{The behaviour of the ALU is specified by the values of the \emph{control bits} and flags:}
+
+                \begin{description}
+                    \item[\texttt{zx} and \texttt{zy}]
+                        \emph{Zeroes} the \texttt{x} and \texttt{y} inputs, respectively
+                    \item[\texttt{nx} and \texttt{ny}]
+                        \emph{bitwise negation} in the \texttt{x} and \texttt{y} inputs
+                    \item[\texttt{f}]
+                        Selects the function to be applied: \newline
+                        $f = 1$ for addition, $f = 0$ for bitwise AND
+                    \item[\texttt{no}]
+                        \emph{bitwise negation} on the output ALU output
+                    \item[\texttt{zr} and \texttt{ng}]
+                        The output \emph{flag} $\text{zr} = 1$ \emph{iff} the ALU output is zero.
+                        $\text{ng} = 1$ \emph{iff} the output is negative.
+                \end{description}
+
+                \par{Operations such as bitwise OR, subtraction, etc. can be done by setting the control bits appropriately.}
+            \end{frame}
+
+
         \subsection{Memory bank}
         \label{subsec:memory-bank}
             \begin{frame}
-                \frametitle{Memory bank block diagram}
+                \frametitle{Circuit 2: RAM64}
+
+                \par{Some of the circuit's key characteristics:}
+
+                \begin{itemize}
+                    \item \emph{Sequential} circuit, with clock input
+                    \item 64 memory words stored, each 16-bit wide
+                    \item Address port has width $\log_{2} 64 = 16$ bit
+                \end{itemize}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Circuit 2: block diagram}
 
                 \begin{figure}[h!]
                     \centerline{\includegraphics[width=0.45\textwidth]{imgs/ram-block.pdf}}
@@ -235,6 +316,7 @@
                         \label{fig:ram-block}}
                 \end{figure}
             \end{frame}
+
 
         \subsection{CPU}
         \label{subsec:cpu}
@@ -247,6 +329,7 @@
                         \label{fig:cpu-block}}
                 \end{figure}
             \end{frame}
+
 
 
     \section{Analysis of the EDSLs}
