@@ -1,16 +1,18 @@
 \documentclass{beamer}
 \usetheme[style=plain]{uu}
 
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage{float}
+
 %% unicode support, for text and code :)
 \usepackage[utf8x]{inputenc}
 \usepackage{ucs}
 \usepackage{autofe}
-
-\usepackage{mathtools}
-\usepackage{amssymb}
-\usepackage{graphicx}
-\usepackage{hyperref}
-\usepackage{color}
 
 
 %% Haskell syntax highlighting and code font
@@ -92,12 +94,43 @@
             % deep-embedded / shallow embedded
             \begin{frame}
                 \frametitle{Domain-Specific Languages}
+
+                \par{A computer language (turing-complete or \emph{not}) targeting a \emph{specific application domain.}}
+                \par{\textbf{Example DSLs:}}
+                \begin{itemize}
+                    \item SQL (database queries)
+                    \item CSS (document formatting)
+                    \item MATLAB (Matrix programming)
+                \end{itemize}
+
+                \pause
+
+                \par{A DSL can also be \emph{embedded} in a general-purpose language.}
+                \par{\textbf{Example EDSLs:}}
+                \begin{itemize}
+                    \item Boost.Proto (C++ / parser combinators)
+                    \item Diagrams (Haskell / programmatic drawing)
+                    \item HaskellDB (Haskell / database queries)
+                    \item Parsec (Haskell / parser combinators)
+                \end{itemize}
             \end{frame}
+
+            \begin{frame}[fragile]
+                \frametitle{Example of an EDSL: \texttt{Parsec}}
+
+                \begin{listing}[h!]
+                    \haskellfile{code/parsec-example.hs}
+                    \caption{Parser for a ``game-of-life-like'' input format
+                        \label{lst:parsec-example}}
+                \end{listing}
+            \end{frame}
+
 
         \subsection{Hardware EDSLs}
         \label{subsec:hardware-edsls}
             \begin{frame}
                 \frametitle{Hardware EDSLs}
+
             \end{frame}
 
 
