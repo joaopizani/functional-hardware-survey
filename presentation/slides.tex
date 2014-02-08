@@ -1,7 +1,6 @@
 \documentclass{beamer}
 \usetheme[style=plain]{uu}
 
-\usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage{mathtools}
 \usepackage{amssymb}
@@ -101,6 +100,7 @@
                     \item SQL (database queries)
                     \item CSS (document formatting)
                     \item MATLAB (Matrix programming)
+                    \item VHDL (Hardware description)
                 \end{itemize}
 
                 \pause
@@ -110,7 +110,6 @@
                 \begin{itemize}
                     \item Boost.Proto (C++ / parser combinators)
                     \item Diagrams (Haskell / programmatic drawing)
-                    \item HaskellDB (Haskell / database queries)
                     \item Parsec (Haskell / parser combinators)
                 \end{itemize}
             \end{frame}
@@ -118,19 +117,29 @@
             \begin{frame}[fragile]
                 \frametitle{Example of an EDSL: \texttt{Parsec}}
 
-                \begin{listing}[h!]
-                    \haskellfile{code/parsec-example.hs}
-                    \caption{Parser for a ``game-of-life-like'' input format
-                        \label{lst:parsec-example}}
-                \end{listing}
-            \end{frame}
+                A simple parser for a "Game of Life"-like input format:
+                \haskellfile{code/parsec-example.hs}
+\end{frame}
 
 
         \subsection{Hardware EDSLs}
         \label{subsec:hardware-edsls}
             \begin{frame}
                 \frametitle{Hardware EDSLs}
+                An EDSL used for hardware design-related tasks. Can encompass:
 
+                \begin{itemize}
+                    \item Modelling / description
+                    \item Simulation (validation)
+                    \item Formal verification
+                    \item Synthesis to other (lower-level) languages
+                \end{itemize}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Example of a hardware EDSL}
+
+                Some Lava code\ldots
             \end{frame}
 
 
@@ -148,6 +157,11 @@
         \label{subsec:chosen-edsls}
             \begin{frame}
                 \frametitle{Chosen EDSLs}
+                \begin{itemize}
+                    \item Lava
+                    \item ForSyDe
+                    \item Coquet
+                \end{itemize}
             \end{frame}
 
         \subsection{Evaluation criteria}
