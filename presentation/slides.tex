@@ -270,23 +270,23 @@
             \end{frame}
 
             \begin{frame}
-                \frametitle{Circuit 1: Specification}
+                \frametitle{Circuit 1: specification}
 
-                \par{The behaviour of the ALU is specified by the values of the \emph{control bits} and flags:}
+                \par{The behaviour of the ALU is specified by the values of the \emph{control bits} and \emph{flags}:}
 
                 \begin{description}
                     \item[\texttt{zx} and \texttt{zy}]
-                        \emph{Zeroes} the \texttt{x} and \texttt{y} inputs, respectively
+                        \emph{Zeroes} the ``\texttt{x}'' and ``\texttt{y}'' inputs, respectively
                     \item[\texttt{nx} and \texttt{ny}]
-                        \emph{bitwise negation} in the \texttt{x} and \texttt{y} inputs
+                        \emph{bitwise negation} on the ``\texttt{x}'' and ``\texttt{y}'' inputs
                     \item[\texttt{f}]
                         Selects the function to be applied: \newline
-                        $f = 1$ for addition, $f = 0$ for bitwise AND
+                        $\text{``\texttt{f}''} = 1$ for addition, $\text{``\texttt{f}''} = 0$ for bitwise AND
                     \item[\texttt{no}]
                         \emph{bitwise negation} on the output ALU output
                     \item[\texttt{zr} and \texttt{ng}]
-                        The output \emph{flag} $\text{zr} = 1$ \emph{iff} the ALU output is zero.
-                        $\text{ng} = 1$ \emph{iff} the output is negative.
+                        The output \emph{flag} $\text{``\texttt{zr}''} = 1$ \emph{iff} the ALU output is zero.
+                        $\text{``\texttt{ng}''} = 1$ \emph{iff} the output is negative.
                 \end{description}
 
                 \par{Operations such as bitwise OR, subtraction, etc. can be done by setting the control bits appropriately.}
@@ -317,16 +317,96 @@
                 \end{figure}
             \end{frame}
 
+            \begin{frame}
+                \frametitle{Circuit 2: specification}
+
+                \par{The output ``\texttt{out}'' holds the value at the memory line indicated by ``\texttt{address}''.}
+
+                \begin{itemize}
+                    \item \emph{Iff} $\text{``\texttt{load}''} = 1$,
+                        then the value at input ``\texttt{in}'' will be loaded into memory line ``\texttt{address}''.
+                    \item The loaded value will be emitted on ``\texttt{out}'' at the \emph{next} clock cycle.
+                \end{itemize}
+            \end{frame}
+
 
         \subsection{CPU}
         \label{subsec:cpu}
             \begin{frame}
-                \frametitle{CPU block diagram}
+                \frametitle{Circuit 3: Hack CPU}
+
+                \begin{itemize}
+                    \item A \emph{very} reduced instruction set CPU
+                        \begin{itemize}
+                            \item Only 2 instructions: ``\texttt{C}'' and ``\texttt{A}''
+                        \end{itemize}
+                    \item Follows the \emph{Harvard architecture}
+                        \begin{itemize}
+                            \item Separate address spaces for \emph{data} and \emph{instruction} memory.
+                        \end{itemize}
+                    \item Instructions are 16-bits wide
+                        \begin{itemize}
+                            \item As well as the memory input and output
+                        \end{itemize}
+                    \item Two \emph{internal} registers: ``\texttt{D}'' and ``\texttt{A}''
+                \end{itemize}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Circuit 3: block diagram}
 
                 \begin{figure}[h!]
                     \centerline{\includegraphics[width=1.0\textwidth]{imgs/cpu-block.pdf}}
                     \caption{Input/Output ports of \emph{circuit 3}, the \emph{Hack} CPU.
                         \label{fig:cpu-block}}
+                \end{figure}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Circuit 3: specification}
+
+                \par{Circuit 3 runs ``\texttt{A}'' and ``\texttt{C}'' instructions,
+                according to the \emph{Hack assembly specification}.}
+
+                \begin{itemize}
+                    \item The ``\texttt{A}'' instruction: sets the ``\texttt{A}'' register.
+                        \includegraphics[width=0.8\textwidth]{imgs/cpu-instruction-a.pdf}
+                    \vspace{0.5cm}
+                    \item The value in ``\texttt{A}'' can be used:
+                        \begin{itemize}
+                            \item As operand for a subsequent computation
+                            \item As address for jumps
+                        \end{itemize}
+                \end{itemize}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Circuit 3: specification}
+
+                \par{Circuit 3 runs ``\texttt{A}'' and ``\texttt{C}'' instructions,
+                according to the \emph{Hack assembly specification}.}
+
+                \begin{itemize}
+                    \item The ``\texttt{C}'' instruction:
+                        sets the ``\texttt{C}'' register, performs \emph{computation} or jumps.
+                        \includegraphics[width=0.85\textwidth]{imgs/cpu-instruction-c.pdf}
+                    \vspace{0.5cm}
+                    \item Some peculiarities:
+                        \begin{itemize}
+                            \item Bits ``\texttt{c1}'' to ``\texttt{c6}'' control the ALU
+                            \item \emph{conditional} or \emph{unconditional} jumps
+                            \item \emph{destination} of the computation result: ``\texttt{A}'', ``\texttt{D}'', ``\texttt{M}''
+                        \end{itemize}
+                \end{itemize}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Circuit 3: specification (parts)}
+
+                \begin{figure}[h!]
+                    \centerline{\includegraphics[width=1.05\textwidth]{imgs/cpu-parts.pdf}}
+                    \caption{Parts used to build the \emph{Hack} CPU, and their interconnection.
+                        \label{fig:cpu-parts}}
                 \end{figure}
             \end{frame}
 
@@ -340,6 +420,8 @@
         \label{subsec:lava}
             \begin{frame}
                 \frametitle{Lava}
+
+                \haskellfile{code/lava-adders.hs}
             \end{frame}
 
         \subsection{ForSyDe}
@@ -355,9 +437,24 @@
             \end{frame}
 
 
+
     \section{Conclusions}
     \label{sec:conclusions}
         \frame{\sectionpage}
+
+        \subsection{Results}
+        \label{subsec:results}
+            \begin{frame}
+                \frametitle{Results}
+            \end{frame}
+
+
+        \subsection{Future work}
+        \label{subsec:future-work}
+            \begin{frame}
+                \frametitle{Future work}
+            \end{frame}
+
 
         \begin{frame}[plain]
             \begin{center}
