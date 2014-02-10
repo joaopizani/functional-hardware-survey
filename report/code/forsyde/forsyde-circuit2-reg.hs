@@ -1,5 +1,3 @@
-type WordType = Int16
-
 reg :: Signal WordType -> Signal Bit -> Signal WordType
 reg input load = out
     where out = delaySY "delay" (0 :: WordType) dff

@@ -165,7 +165,7 @@
                 \begin{itemize}
                     \item Lava (Haskell - \texttt{chalmers-lava} \emph{dialect})
                     \item ForSyDe (Haskell)
-                    \item Coquet (Coq)
+                    \item Coquet (Coq interactive theorem prover)
                 \end{itemize}
             \end{frame}
 
@@ -289,7 +289,7 @@
                         $\text{``\texttt{ng}''} = 1$ \emph{iff} the output is negative.
                 \end{description}
 
-                \par{Operations such as bitwise OR, subtraction, etc. can be done by setting the control bits appropriately.}
+                \par{Formal definition and test cases in the book.}
             \end{frame}
 
 
@@ -303,7 +303,7 @@
                 \begin{itemize}
                     \item \emph{Sequential} circuit, with clock input
                     \item 64 memory words stored, each 16-bit wide
-                    \item Address port has width $\log_{2} 64 = 16$ bit
+                    \item Address port has width $\log_{2} 64 = 6$ bit
                 \end{itemize}
             \end{frame}
 
@@ -320,9 +320,8 @@
             \begin{frame}
                 \frametitle{Circuit 2: specification}
 
-                \par{The output ``\texttt{out}'' holds the value at the memory line indicated by ``\texttt{address}''.}
-
                 \begin{itemize}
+                    \item The output ``\texttt{out}'' holds the value at the memory line indicated by ``\texttt{address}''.
                     \item \emph{Iff} $\text{``\texttt{load}''} = 1$,
                         then the value at input ``\texttt{in}'' will be loaded into memory line ``\texttt{address}''.
                     \item The loaded value will be emitted on ``\texttt{out}'' at the \emph{next} clock cycle.
@@ -418,33 +417,128 @@
 
         \subsection{Lava}
         \label{subsec:lava}
+            % Lava intro
+
             \begin{frame}
-                \frametitle{Lava}
+                \frametitle{Lava: Adders}
                 \haskellfile{code/lava-adders.hs}
             \end{frame}
 
             \begin{frame}
-                \frametitle{Lava}
+                \frametitle{Lava: Simulation and verification}
+
+                \begin{itemize}
+                    \item A taste of simulation in Lava:
+                        \haskellfile{code/lava-simulation-halfadder.hs}
+                        \begin{itemize}
+                            \item Cannot be easily automated: equality of \texttt{Signal} is non-trivial
+                        \end{itemize}
+
+                    \item And verification\ldots
+                        \haskellfile{code/lava-verify-fulladder-comm.hs}
+                        \begin{itemize}
+                            \item Used in conjunction with an external SAT solver (e.g. \emph{Satzoo})
+                            \item Only verifies instances of \emph{specific size}
+                        \end{itemize}
+                \end{itemize}
+            \end{frame}
+
+            % Lava ALU
+            \begin{frame}
+                \frametitle{Lava: ALU}
                 \haskellfile{code/lava-alu.hs}
             \end{frame}
 
             \begin{frame}
-                \frametitle{Lava}
-                \haskellfile{code/lava-verify-fulladder-comm.hs}
+                \frametitle{Remarks}
+
+                \begin{itemize}
+                    \item Cannot introduce new, meaningful datatypes
+                        \begin{itemize}
+                            \item Only \texttt{Signal Bool} is synthesizable
+                            \item Or tuples/lists thereof
+                        \end{itemize}
+                    \item Input/Output types have to be \emph{uncurried}
+                    \item Weak type-safety over the inputs/outputs
+                        \begin{itemize}
+                            \item Working with tuples is tiresome and has limitations
+                            \item Lists don't enforce \emph{size} constraints
+                        \end{itemize}
+                \end{itemize}
+            \end{frame}
+
+            % Lava RAM64
+            \begin{frame}
+                \frametitle{Lava: RAM64}
+                \haskellfile{code/lava-ram64.hs}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Remarks}
+
+                \par{Positive:}
+                \begin{itemize}
+                    \item Uses host language for binding (\texttt{let}/\texttt{where}) and recursion
+                    \item Uses host language for structural combinators
+                \end{itemize}
+
+                \par{Negative:}
+                \begin{itemize}
+                    \item Again, weak type-safety of lists, can cause problems at simulation
+                    \item \emph{No modularity} in the generated VHDL code.
+                \end{itemize}
+            \end{frame}
+
+            % Lava CPU
+            \begin{frame}
+                \frametitle{Lava: \emph{Hack} CPU}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Remarks}
+
+                \par{Could benefit from:}
+                \begin{itemize}
+                    \item Fixed-length vectors
+                        \begin{itemize}
+                            \item ForSyDe-style or with type-level naturals in recent GHC.
+                        \end{itemize}
+                \end{itemize}
             \end{frame}
 
 
         \subsection{ForSyDe}
         \label{subsec:forsyde}
+            % ForSyDe intro
+
+            % ForSyDe ALU non-synth
             \begin{frame}
-                \frametitle{ForSyDe: ALU}
+                \frametitle{ForSyDe: ALU (non-synth)}
                 \haskellfile{code/forsyde-alu-slide1.hs}
             \end{frame}
 
             \begin{frame}
+                \frametitle{ForSyDe: ALU (non-synth)}
+                \haskellfile{code/forsyde-alu-slide2.hs}
+            \end{frame}
+
+            % ForSyDe Simulation
+
+            % ForSyDe ALU synth
+
+            \begin{frame}
                 \frametitle{ForSyDe: Muxes}
+                %% both advantage and disadvantage of ForSyDe
                 \haskellfile{code/forsyde-muxes.hs}
             \end{frame}
+
+            % ForSyDe RAM64
+            \begin{frame}
+                \frametitle{ForSyDe: RAM64}
+                \haskellfile{code/forsyde-ram64.hs}
+            \end{frame}
+
+            % ForSyDe CPU
 
 
         \subsection{Coquet}
@@ -463,6 +557,36 @@
                 \frametitle{Coquet}
                 \coqfile{code/coquet-fulladder.v}
             \end{frame}
+
+            % Meaning relation
+            \begin{frame}
+                \frametitle{Coquet: Meaning relation}
+                \coqfile{code/coquet-meaning-relation.v}
+            \end{frame}
+
+            % Specification definitions
+            \begin{frame}
+                \frametitle{Coquet: Specification}
+                \coqfile{code/coquet-realise-implement.v}
+            \end{frame}
+
+            % Adder proof (1)
+            \begin{frame}
+                \frametitle{Coquet: Correctness proofs}
+                \coqfile{code/coquet-halfadder-proof.v}
+            \end{frame}
+
+            % How to do proofs in Coquet (tac, etc)
+            \begin{frame}
+                \frametitle{Coquet: How to prove correctness}
+                \coqfile{code/coquet-tac.v}
+                % rinvert: invert derivation of meaning relation, following structure of circuit.
+                % realise_all: use the Implement and Realise classes as hints to transform goals.
+                % unreify_all: get rid of iso's
+                % destruct all boolean, then proof by case analysis, not so important.
+            \end{frame}
+            % Adder proof (2)
+
 
 
     \section{Conclusions}
