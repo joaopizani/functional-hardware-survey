@@ -437,8 +437,8 @@
                     \item And verification\ldots
                         \haskellfile{code/lava-verify-fulladder-comm.hs}
                         \begin{itemize}
-                            \item Used in conjunction with an external SAT solver (e.g. \emph{Satzoo})
-                            \item Only verifies instances of \emph{specific size}
+                            \item Advantage: Used in conjunction with an external SAT solver (e.g. \emph{Satzoo})
+                            \item Disadvantage: Only verifies instances of \emph{specific size}
                         \end{itemize}
                 \end{itemize}
             \end{frame}
@@ -491,7 +491,8 @@
 
             % Lava CPU
             \begin{frame}
-                \frametitle{Lava: \emph{Hack} CPU}
+                \frametitle{Lava: \emph{Hack} CPU (some parts)}
+                \haskellfile{code/lava-cpu.hs}
             \end{frame}
 
             \begin{frame}
@@ -503,6 +504,8 @@
                         \begin{itemize}
                             \item ForSyDe-style or with type-level naturals in recent GHC.
                         \end{itemize}
+                    \item Slicing operators over vectors
+                    \item \emph{Synthesizable} user-defined datatypes
                 \end{itemize}
             \end{frame}
 
@@ -526,19 +529,69 @@
 
             % ForSyDe ALU synth
 
+            % ForSyDe RAM64
             \begin{frame}
                 \frametitle{ForSyDe: Muxes}
-                %% both advantage and disadvantage of ForSyDe
                 \haskellfile{code/forsyde-muxes.hs}
             \end{frame}
 
-            % ForSyDe RAM64
+            \begin{frame}
+                \frametitle{Remarks}
+                %% both advantage and disadvantage of ForSyDe
+                \par{Positive:}
+                \begin{itemize}
+                    \item Generated VHDL is very \emph{modular}
+                        \begin{itemize}
+                            \item One VHDL \emph{entity} per ForSyDe component
+                            \item Good for tool integration
+                        \end{itemize}
+                \end{itemize}
+
+                \par{Negative:}
+                \begin{itemize}
+                    \item Interface ``conflicts'' caused by \texttt{FSVec} and process constructors
+                        \begin{itemize}
+                            \item ``zip-unzip'' pattern
+                        \end{itemize}
+                \end{itemize}
+            \end{frame}
+
             \begin{frame}
                 \frametitle{ForSyDe: RAM64}
                 \haskellfile{code/forsyde-ram64.hs}
             \end{frame}
 
+            \begin{frame}
+                \frametitle{Remarks}
+
+                \begin{itemize}
+                    \item Component \emph{instantiation}
+                        \begin{itemize}
+                            \item Introduces \emph{hierarchy} in the design
+                            \item Influences generated VHDL
+                        \end{itemize}
+                    \item \emph{Manual} name management
+                        \begin{itemize}
+                            \item Error-prone
+                            \item Every process must have a \emph{unique} identifier
+                            \item Already was a (lesser) issue with the muxes
+                        \end{itemize}
+                \end{itemize}
+            \end{frame}
+
             % ForSyDe CPU
+            \begin{frame}
+                \frametitle{ForSyDe: \emph{Hack} CPU (part)}
+                \haskellfile{code/forsyde-cpu-decoder.hs}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{ForSyDe: synthesis restrictions}
+                \begin{itemize}
+                    \item ProcFun
+                    \item Runtime VHDL generation error
+                \end{itemize}
+            \end{frame}
 
 
         \subsection{Coquet}
