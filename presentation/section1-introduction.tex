@@ -1,0 +1,64 @@
+\section{Introduction}
+\label{sec:introduction}
+    \frame{\sectionpage}
+
+    \subsection{Hardware design}
+    \label{subsec:hardware-design}
+        \begin{frame}
+            \frametitle{Hardware design}
+        \end{frame}
+
+
+    \subsection{Domain-Specific Languages}
+    \label{subsec:domain-specific-languages}
+        % deep-embedded / shallow embedded
+        \begin{frame}
+            \frametitle{Domain-Specific Languages}
+
+            \par{A computer language (turing-complete or \emph{not}) targeting a \emph{specific application domain.}}
+            \par{\textbf{Example DSLs:}}
+            \begin{itemize}
+                \item SQL (database queries)
+                \item CSS (document formatting)
+                \item MATLAB (Matrix programming)
+                \item VHDL (Hardware description)
+            \end{itemize}
+
+            \pause
+
+            \par{A DSL can also be \emph{embedded} in a general-purpose language.}
+            \par{\textbf{Example EDSLs:}}
+            \begin{itemize}
+                \item Boost.Proto (C++ / parser combinators)
+                \item Diagrams (Haskell / programmatic drawing)
+                \item Parsec (Haskell / parser combinators)
+            \end{itemize}
+        \end{frame}
+
+        \begin{frame}[fragile]
+            \frametitle{Example of an EDSL: \texttt{Parsec}}
+
+            A simple parser for a "Game of Life"-like input format:
+            \haskellfile{code/parsec-example.hs}
+\end{frame}
+
+
+    \subsection{Hardware EDSLs}
+    \label{subsec:hardware-edsls}
+        \begin{frame}
+            \frametitle{Hardware EDSLs}
+            An EDSL used for hardware design-related tasks. Can encompass:
+
+            \begin{itemize}
+                \item Modeling / description
+                \item Simulation (validation)
+                \item Formal verification
+                \item Synthesis to other (lower-level) languages
+            \end{itemize}
+        \end{frame}
+
+        \begin{frame}
+            \frametitle{Example of a hardware EDSL}
+
+            Some Lava code\ldots
+        \end{frame}
