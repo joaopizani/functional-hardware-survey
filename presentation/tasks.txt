@@ -1,18 +1,22 @@
-  * Finish off circuit descriptions
-      + CPU specially
+  * ~~Finish off circuit descriptions~~
+      + ~~CPU specially~~
 
   * Choose code fragments for EDSL analysis
-      + Lava
-      + ForSyDe
+      + ~~Lava~~
+      + ~~ForSyDe~~
       + Coquet
-          - Circuit datatype
+          - ~~Circuit datatype~~
           - Meaning relation
           - Specification: Realises, Implements
 
-          - Adders
+          - ~~Adders~~
 
   * Analyze each EDSL by using the modej samples
       + Introduce each EDSL briefly
+          - Lava
+          - ForSyDe
+          - Coquet
+              - Coq
       + Comment with help of the model samples
 
   * Present summarized comparison at results section

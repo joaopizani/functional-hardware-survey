@@ -418,6 +418,41 @@
         \subsection{Lava}
         \label{subsec:lava}
             % Lava intro
+            \begin{frame}
+                \frametitle{Lava}
+
+                \begin{itemize}
+                    \item Developed at Chalmers University of Technology, Sweden
+                        \begin{itemize}
+                            \item Initially by Koen Claessen and Mary Sheeran
+                            \item Later also Per Bjesse and David Sands
+                        \end{itemize}
+
+                    \item Has several \emph{dialects}
+                        \begin{itemize}
+                            \item \texttt{chalmers-lava}, \texttt{xilinx-lava}, \texttt{kansas-lava}, etc. 
+                            \item We focus on the ``canonical'' \texttt{chalmers-lava}
+                        \end{itemize}
+                \end{itemize}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Lava's \emph{key} characteristics}
+
+                \begin{itemize}
+                    \item Deep-embedded
+                    \item Observable sharing
+                    \item Capable of simulation, verification and synthesis
+                        \begin{itemize}
+                            \item Generates \emph{flat} VHDL
+                            \item External tools for verification
+                        \end{itemize}
+                    \item Very ``functional'' style of hardware description
+                        \begin{itemize}
+                            \item Will become clearer with examples
+                        \end{itemize}
+                \end{itemize}
+            \end{frame}
 
             \begin{frame}
                 \frametitle{Lava: Adders}
@@ -484,7 +519,10 @@
 
                 \par{Negative:}
                 \begin{itemize}
-                    \item Again, weak type-safety of lists, can cause problems at simulation
+                    \item Again, weak type-safety of lists
+                        \begin{itemize}
+                            \item Extra \texttt{Int} parameter controls port \emph{sizes}
+                        \end{itemize}
                     \item \emph{No modularity} in the generated VHDL code.
                 \end{itemize}
             \end{frame}
@@ -517,17 +555,46 @@
             % ForSyDe ALU non-synth
             \begin{frame}
                 \frametitle{ForSyDe: ALU (non-synth)}
-                \haskellfile{code/forsyde-alu-slide1.hs}
+                \haskellfile{code/forsyde-alusim-slide1.hs}
             \end{frame}
 
             \begin{frame}
                 \frametitle{ForSyDe: ALU (non-synth)}
-                \haskellfile{code/forsyde-alu-slide2.hs}
+                \haskellfile{code/forsyde-alusim-slide2.hs}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{ForSyDe: synthesis restrictions}
+                \par{Restrictions imposed on a model by ForSyDe so that it can be translated to VHDL:}
+                \begin{itemize}
+                    \item ProcFun-related:
+                        \begin{itemize}
+                            \item Limited argument types (instances of \texttt{ProcType})
+                            \item \texttt{Int}, \texttt{Int8}, \ldots, \texttt{Bool}, \texttt{Bit}
+                            \item Enumerated types (deriving \texttt{Data} and \texttt{Lift})
+                            \item Tuples and \texttt{FSVec}'s
+                        \end{itemize}
+                    \item VHDL engine-related:
+                        \begin{itemize}
+                            \item No point-free notation
+                            \item Single clause / no pattern matching
+                            \item No \texttt{where} or \texttt{let} bindings
+                        \end{itemize}
+                \end{itemize}
+            \end{frame}
+
+            % ForSyDe ALU synth
+            \begin{frame}
+                \frametitle{ForSyDe: ALU (synthesizable)}
+                \haskellfile{code/forsyde-alusyn-slide1.hs}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{ForSyDe: ALU (synthesizable)}
+                \haskellfile{code/forsyde-alusyn-slide2.hs}
             \end{frame}
 
             % ForSyDe Simulation
-
-            % ForSyDe ALU synth
 
             % ForSyDe RAM64
             \begin{frame}
@@ -585,14 +652,6 @@
                 \haskellfile{code/forsyde-cpu-decoder.hs}
             \end{frame}
 
-            \begin{frame}
-                \frametitle{ForSyDe: synthesis restrictions}
-                \begin{itemize}
-                    \item ProcFun
-                    \item Runtime VHDL generation error
-                \end{itemize}
-            \end{frame}
-
 
         \subsection{Coquet}
         \label{subsec:coquet}
@@ -646,18 +705,13 @@
     \label{sec:conclusions}
         \frame{\sectionpage}
 
-        \subsection{Results}
-        \label{subsec:results}
-            \begin{frame}
-                \frametitle{Results}
-            \end{frame}
+        \begin{frame}
+            \frametitle{Results}
+        \end{frame}
 
-
-        \subsection{Future work}
-        \label{subsec:future-work}
-            \begin{frame}
-                \frametitle{Future work}
-            \end{frame}
+        \begin{frame}
+            \frametitle{Future work}
+        \end{frame}
 
 
         \begin{frame}[plain]
