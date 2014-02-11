@@ -48,6 +48,11 @@
         \begin{frame}
             \frametitle{Lava: Adders}
             \haskellfile{code/lava-adders.hs}
+
+            \begin{itemize}
+                \item Straightforward Haskell constructs
+                \item ``\texttt{and2}'', ``\texttt{xor2}'', etc. are Lava's \emph{atomic} circuits
+            \end{itemize}
         \end{frame}
 
         \begin{frame}
@@ -315,15 +320,71 @@
             \end{itemize}
         \end{frame}
 
+        % Coquet Circuit type
         \begin{frame}
             \frametitle{Coquet: The \texttt{Circuit} type}
             \coqfile{code/coquet-circuit-type.v}
         \end{frame}
+        
+        \begin{frame}
+            \frametitle{Features from the \texttt{Circuit} type}
+
+            \begin{itemize}
+                \item Circuit \emph{structure} as constructors of the datatype
+                    \begin{itemize}
+                        \item \emph{Explicit} loops (recursion) as constructor
+                    \end{itemize}
+                \item Parameterized by one type of \emph{fundamental gate} (\texttt{Atom})
+                    \begin{itemize}
+                        \item For example, \texttt{NOR} or \texttt{NAND}
+                    \end{itemize}
+                \item Circuit I/O ports are defined by \emph{finite} types
+                    \begin{itemize}
+                        \item Instances of the ``\texttt{Fin}'' typeclass
+                    \end{itemize}
+            \end{itemize}
+        \end{frame}
 
         % Coquet quick usage example
         \begin{frame}
-            \frametitle{Coquet}
+            \frametitle{Coquet: circuit example}
             \coqfile{code/coquet-fulladder.v}
+        \end{frame}
+
+        \begin{frame}
+            \frametitle{Features from the example}
+            
+            \begin{itemize}
+                \item Circuit I/O types (finite types)
+                    \begin{itemize}
+                        \item Parameterized by strings: \emph{tagged units}
+                        \item Default ``\texttt{Fin}'' instances for sums, units
+                    \end{itemize}
+                \item Serial/Parallel composition
+                \item \emph{Associativity plugs} (reordering) automatically defined
+                    \begin{itemize}
+                        \item With help of proof search
+                    \end{itemize}
+            \end{itemize}
+        \end{frame}
+
+        % How to prove circuit correctness
+        \begin{frame}
+            \frametitle{Coquet: How to prove correctness}
+
+            \par{To understand Coquet proofs, we need 2 concepts:}
+            \begin{itemize}
+                \item Meaning relation
+                    \begin{itemize}
+                        \item Circuit → \emph{Prop}
+                    \end{itemize}
+                \item Behavioural specification
+                    \begin{itemize}
+                        \item What should a circuit \emph{do} with its inputs
+                    \end{itemize}
+            \end{itemize}
+            \vspace{0.5cm}
+            \par{Let's take a look at the definition for each of these concepts\ldots}
         \end{frame}
 
         % Meaning relation
@@ -336,6 +397,15 @@
         \begin{frame}
             \frametitle{Coquet: Specification}
             \coqfile{code/coquet-realise-implement.v}
+
+            \vspace{0.5cm}
+            \par{The semantics of a circuit \emph{entails} (implies):}
+            \begin{itemize}
+                \item A \emph{relation} between inputs and outputs
+                \item The application of a \emph{function} to the inputs
+                \item Up to isomorphisms\ldots
+            \end{itemize}
+            \par{Now for a (small) example of correctness proof\ldots}
         \end{frame}
 
         % Adder proof (1)
@@ -353,4 +423,4 @@
             % unreify_all: get rid of iso's
             % destruct all boolean, then proof by case analysis, not so important.
         \end{frame}
-        % Adder proof (2)
+

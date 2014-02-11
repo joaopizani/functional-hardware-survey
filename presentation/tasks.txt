@@ -15,7 +15,7 @@
       + Introduce each EDSL briefly
           - ~~Lava~~
           - ~~ForSyDe~~
-          - Coquet
+          - ~~Coquet~~
               - Coq
       + Comment with help of the model samples
 
