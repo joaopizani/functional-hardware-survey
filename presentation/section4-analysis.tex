@@ -292,16 +292,35 @@
 
     \subsection{Coquet}
     \label{subsec:coquet}
+        % Coquet Intro
         \begin{frame}
-            \frametitle{The \texttt{Circuit} type}
+            \frametitle{Coquet}
+
+            \begin{itemize}
+                \item Developed by Thomas Braibant (INRIA, France)
+                    \begin{itemize}
+                        \item Seminal paper published in 2011
+                    \end{itemize}
+                \item Library embedded in the \emph{Coq} proof assistant
+                    \begin{itemize}
+                        \item Deep-embedded
+                        \item Models the \emph{architecture} of circuits
+                    \end{itemize}
+                \item Allows for \emph{correctness proofs} of circuits
+                    \begin{itemize}
+                        \item According to a given \emph{specification}
+                        \item Provides \emph{tactics} to help with these proofs
+                        \item More powerful, inductive proofs
+                    \end{itemize}
+            \end{itemize}
+        \end{frame}
+
+        \begin{frame}
+            \frametitle{Coquet: The \texttt{Circuit} type}
             \coqfile{code/coquet-circuit-type.v}
         \end{frame}
 
-        \begin{frame}
-            \frametitle{Coquet}
-            \coqfile{code/coquet-halfadder.v}
-        \end{frame}
-
+        % Coquet quick usage example
         \begin{frame}
             \frametitle{Coquet}
             \coqfile{code/coquet-fulladder.v}

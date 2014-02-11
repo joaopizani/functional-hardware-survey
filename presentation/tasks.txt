@@ -13,8 +13,8 @@
 
   * Analyze each EDSL by using the modej samples
       + Introduce each EDSL briefly
-          - Lava
-          - ForSyDe
+          - ~~Lava~~
+          - ~~ForSyDe~~
           - Coquet
               - Coq
       + Comment with help of the model samples
