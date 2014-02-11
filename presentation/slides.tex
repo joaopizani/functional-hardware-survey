@@ -130,7 +130,7 @@
                 An EDSL used for hardware design-related tasks. Can encompass:
 
                 \begin{itemize}
-                    \item Modelling / description
+                    \item Modeling / description
                     \item Simulation (validation)
                     \item Formal verification
                     \item Synthesis to other (lower-level) languages
@@ -442,6 +442,10 @@
                 \begin{itemize}
                     \item Deep-embedded
                     \item Observable sharing
+                        \begin{itemize}
+                            \item ``Type-safe pointer equality'' to detect sharing and recursion
+                            \item Advantages and disadvantages clearer with examples
+                        \end{itemize}
                     \item Capable of simulation, verification and synthesis
                         \begin{itemize}
                             \item Generates \emph{flat} VHDL
@@ -551,6 +555,52 @@
         \subsection{ForSyDe}
         \label{subsec:forsyde}
             % ForSyDe intro
+            \begin{frame}
+                \frametitle{ForSyDe}
+
+                \begin{itemize}
+                    \item Based on the ``Formal System Design'' approach
+                        \begin{itemize}
+                            \item Royal Institute of Technology - KTH, Sweden
+                        \end{itemize}
+                    \item Available for Haskell and SystemC
+                    \item Has BOTH shallow and deep-embedded ``versions''
+                        \begin{itemize}
+                            \item Same library, subtle distinction
+                            \item Will become clearer with examples
+                        \end{itemize}
+                    \item \emph{Template Haskell} to express circuits with Haskell syntax
+                \end{itemize}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{ForSyDe's key concepts}
+
+                \begin{itemize}
+                    \item Models of Computation (MoCs)
+                        \begin{itemize}
+                            \item We focus on the \emph{synchronous} MoC
+                        \end{itemize}
+                    \item Processes
+                        \begin{itemize}
+                            \item A process belongs to a MoC
+                            \item Built with a \emph{process constructor}
+                        \end{itemize}
+                    \item Signals
+                        \begin{itemize}
+                            \item Connections among processes
+                        \end{itemize}
+                \end{itemize}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{ForSyDe's key concepts}
+                \begin{figure}[h!]
+                    \centerline{\includegraphics[width=0.8\textwidth]{imgs/forsyde-model.pdf}}
+                    \caption{Key concepts of the ForSyDe EDSL
+                        \label{fig:forsyde-model}}
+                \end{figure}
+            \end{frame}
 
             % ForSyDe ALU non-synth
             \begin{frame}
