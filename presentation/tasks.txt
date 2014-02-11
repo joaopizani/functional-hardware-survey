@@ -11,7 +11,7 @@
 
           - ~~Adders~~
 
-  * Analyze each EDSL by using the modej samples
+  * Analyze each EDSL by using the mode samples
       + Introduce each EDSL briefly
           - ~~Lava~~
           - ~~ForSyDe~~

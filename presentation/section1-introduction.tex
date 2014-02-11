@@ -2,20 +2,45 @@
 \label{sec:introduction}
     \frame{\sectionpage}
 
-    \subsection{Hardware design}
-    \label{subsec:hardware-design}
+    \subsection{Motivation}
+    \label{subsec:motivation}
         \begin{frame}
             \frametitle{Hardware design}
+
+            \par{Hardware design is \emph{very complex} \textbf{and} \emph{very expensive}:}
+
+            \begin{itemize}
+                \item Mistakes discovered after sales are much more serious
+                    \begin{itemize}
+                        \item No such thing as an ``update'' to a chip
+                    \end{itemize}
+                \item Thus the need for extensive simulation
+                    \begin{itemize}
+                        \item Sometimes even \emph{exhaustive} simulation
+                        \item Using specific and \emph{expensive} systems
+                    \end{itemize}
+                \item The downfall of \emph{Moore's Law} doesn't help either
+                    \begin{itemize}
+                        \item More need for parallelism, fault-tolerance, etc.
+                        \item Design \emph{even more} \emph{error-prone} and validation \emph{even more} complex
+                    \end{itemize}
+            \end{itemize}
+        \end{frame}
+
+        \begin{frame}
+            \frametitle{Goals of this project}
         \end{frame}
 
 
-    \subsection{Domain-Specific Languages}
-    \label{subsec:domain-specific-languages}
+    \subsection{Hardware EDSLs}
+    \label{subsec:hardware-edsls}
         % deep-embedded / shallow embedded
         \begin{frame}
             \frametitle{Domain-Specific Languages}
 
-            \par{A computer language (turing-complete or \emph{not}) targeting a \emph{specific application domain.}}
+            \par{A computer language (turing-complete or \emph{not})
+                targeting a \emph{specific application domain.}}
+
             \par{\textbf{Example DSLs:}}
             \begin{itemize}
                 \item SQL (database queries)
@@ -35,16 +60,13 @@
             \end{itemize}
         \end{frame}
 
-        \begin{frame}[fragile]
+        \begin{frame}
             \frametitle{Example of an EDSL: \texttt{Parsec}}
 
             A simple parser for a "Game of Life"-like input format:
             \haskellfile{code/parsec-example.hs}
-\end{frame}
+        \end{frame}
 
-
-    \subsection{Hardware EDSLs}
-    \label{subsec:hardware-edsls}
         \begin{frame}
             \frametitle{Hardware EDSLs}
             An EDSL used for hardware design-related tasks. Can encompass:
@@ -55,10 +77,10 @@
                 \item Formal verification
                 \item Synthesis to other (lower-level) languages
             \end{itemize}
+
+            \vspace{0.5cm}
+            \par{Example of a hardware EDSL (Lava):}
+            \vspace{0.2cm}
+            \haskellfile{code/hardware-edsl-example.hs}
         \end{frame}
 
-        \begin{frame}
-            \frametitle{Example of a hardware EDSL}
-
-            Some Lava code\ldots
-        \end{frame}
