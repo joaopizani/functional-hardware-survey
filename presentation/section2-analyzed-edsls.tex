@@ -4,6 +4,15 @@
 
     \begin{frame}
         \frametitle{Choice criteria}
+
+        \par{When choosing which EDSLs to study, our requirements were:}
+        \vspace{0.3cm}
+        \begin{itemize}
+            \item Hosted on already-known languages
+            \item Covered a wide range in the criteria we defined (variety)
+            \item Originals instead of variants or improvements
+            \item Relatively well-known, frequently cited
+        \end{itemize}
     \end{frame}
 
 
@@ -11,10 +20,10 @@
     \label{subsec:chosen-edsls}
         \begin{frame}
             \frametitle{Chosen EDSLs}
-            The language we chose to evaluate, with the respective host language, were:
-
+            \par{The language we chose to evaluate, with the respective host language, were:}
+            \vspace{0.3cm}
             \begin{itemize}
-                \item Lava (Haskell - \texttt{chalmers-lava} \emph{dialect})
+                \item Lava (Haskell - \texttt{chalmers-lava} variant)
                 \item ForSyDe (Haskell)
                 \item Coquet (Coq interactive theorem prover)
             \end{itemize}
@@ -24,13 +33,36 @@
     \label{subsec:evaluation-criteria}
         \begin{frame}
             \frametitle{Evaluation criteria}
-
+            \par{As \emph{orthogonal} as possible:}
+            \vspace{0.3cm}
             \begin{itemize}
-                \item Simulation
-                \item Verification
-                \item Genericity
+                \item Simulation (validation)
+                \item (Formal) verification
+                \item Genericity (data, structure)
                 \item Depth of embedding
                 \item Tool integration
                 \item Extensibility
             \end{itemize}
+            \vspace{0.2cm}
+            \par{Even though \emph{depth of embedding} can influence other criteria\ldots}
+
+            \note{
+                \begin{itemize}
+                    \item Orthogonal means independent
+
+                    \item Functional simulation (inputs/outputs)
+                    \item Diff validation/verification:
+                        \begin{itemize}
+                            \item Did we build the thing right? (validation)
+                            \item Did we build the right thing? (verification)
+                        \end{itemize}
+                    \item Generic or parameterized families of circuits
+                        \begin{itemize}
+                            \item I/O sizes
+                            \item Other: \emph{iterations} in a crypto circuit, etc.
+                        \end{itemize}
+                    \item Depth of embedding: deep means datatype for circuits
+                    \item Integration with other hardware tools: synthesis, timing, model checkers
+                \end{itemize}
+            }
         \end{frame}
