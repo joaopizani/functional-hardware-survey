@@ -275,32 +275,6 @@
 
         % ForSyDe RAM64
         \begin{frame}
-            \frametitle{ForSyDe: Muxes}
-            \haskellfile{code/forsyde-muxes.hs}
-        \end{frame}
-
-        \begin{frame}
-            \frametitle{Remarks}
-            %% both advantage and disadvantage of ForSyDe
-            \par{Positive:}
-            \begin{itemize}
-                \item Generated VHDL is very \emph{modular}
-                    \begin{itemize}
-                        \item One VHDL \emph{entity} per ForSyDe component
-                        \item Good for tool integration
-                    \end{itemize}
-            \end{itemize}
-
-            \par{Negative:}
-            \begin{itemize}
-                \item Interface ``conflicts'' caused by \texttt{FSVec} and process constructors
-                    \begin{itemize}
-                        \item ``zip-unzip'' pattern
-                    \end{itemize}
-            \end{itemize}
-        \end{frame}
-
-        \begin{frame}
             \frametitle{ForSyDe: RAM64}
             \haskellfile{code/forsyde-ram64.hs}
         \end{frame}
