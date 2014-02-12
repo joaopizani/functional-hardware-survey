@@ -68,10 +68,16 @@
                 \item And verification\ldots
                     \haskellfile{code/lava-verify-fulladder-comm.hs}
                     \begin{itemize}
-                        \item Advantage: Used in conjunction with an external SAT solver (e.g. \emph{Satzoo})
+                        \item Advantage: Fully automated (external SAT solver)
                         \item Disadvantage: Only verifies instances of \emph{specific size}
                     \end{itemize}
             \end{itemize}
+
+            \note{
+                \begin{itemize}
+                    \item Safety properties: circuit with one output always True
+                \end{itemize}
+            }
         \end{frame}
 
         % Lava ALU
@@ -96,6 +102,13 @@
                         \item Lists don't enforce \emph{size} constraints
                     \end{itemize}
             \end{itemize}
+
+            \note{
+                \begin{itemize}
+                    \item Signal Int exists, but not synthesizable
+                    \item Max tuple size implementation-dependent
+                \end{itemize}
+            }
         \end{frame}
 
         % Lava RAM64
@@ -118,21 +131,35 @@
                 \item Again, weak type-safety of lists
                     \begin{itemize}
                         \item Extra \texttt{Int} parameter controls port \emph{sizes}
+                        \item But not \emph{type-safe}
                     \end{itemize}
                 \item \emph{No modularity} in the generated VHDL code.
             \end{itemize}
+
+            \note{
+                \begin{itemize}
+                    \item Lists type un-safety: user can control, but not \emph{forced to} control
+                \end{itemize}
+            }
         \end{frame}
 
         % Lava CPU
         \begin{frame}
-            \frametitle{Lava: \emph{Hack} CPU (some parts)}
+            \frametitle{Lava: \emph{Hack} CPU (new parts)}
             \haskellfile{code/lava-cpu.hs}
+
+            \note{
+                \begin{itemize}
+                    \item Decoder is basically just slicing the instruction
+                \end{itemize}
+            }
         \end{frame}
 
         \begin{frame}
-            \frametitle{Remarks}
+            \frametitle{Final remarks}
 
-            \par{Could benefit from:}
+            \par{Lava could benefit from:}
+            \vspace{0.2cm}
             \begin{itemize}
                 \item Fixed-length vectors
                     \begin{itemize}
@@ -140,6 +167,7 @@
                     \end{itemize}
                 \item Slicing operators over vectors
                 \item \emph{Synthesizable} user-defined datatypes
+                \item Better way of providing observable sharing
             \end{itemize}
         \end{frame}
 
@@ -153,7 +181,7 @@
             \begin{itemize}
                 \item Based on the ``Formal System Design'' approach
                     \begin{itemize}
-                        \item Royal Institute of Technology - KTH, Sweden
+                        \item Royal Institute of Technology - KTH, Stockholm
                     \end{itemize}
                 \item Available for Haskell and SystemC
                 \item Has BOTH shallow and deep-embedded ``versions''
@@ -175,6 +203,7 @@
                     \end{itemize}
                 \item Processes
                     \begin{itemize}
+                        \item Basic unit of computation
                         \item A process belongs to a MoC
                         \item Built with a \emph{process constructor}
                     \end{itemize}
@@ -183,6 +212,12 @@
                         \item Connections among processes
                     \end{itemize}
             \end{itemize}
+
+            \note{
+                \begin{itemize}
+                    \item Process and MoC intertwinned concepts
+                \end{itemize}
+            }
         \end{frame}
 
         \begin{frame}
@@ -318,6 +353,12 @@
                         \item More powerful, inductive proofs
                     \end{itemize}
             \end{itemize}
+
+            \note{
+                \begin{itemize}
+                    \item More powerful than SAT-solver based formal verification
+                \end{itemize}
+            }
         \end{frame}
 
         % Coquet Circuit type

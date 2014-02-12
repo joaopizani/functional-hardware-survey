@@ -8,7 +8,7 @@
             \frametitle{Hardware design}
 
             \par{Hardware design is \emph{very complex} \textbf{and} \emph{very expensive}:}
-
+            \vspace{0.2cm}
             \begin{itemize}
                 \item Mistakes discovered after sales are much more serious
                     \begin{itemize}
@@ -16,7 +16,6 @@
                     \end{itemize}
                 \item Thus the need for extensive simulation
                     \begin{itemize}
-                        \item Sometimes even \emph{exhaustive} simulation
                         \item Using specific and \emph{expensive} systems
                     \end{itemize}
                 \item The downfall of \emph{Moore's Law} doesn't help either
@@ -25,6 +24,10 @@
                         \item Design \emph{even more} \emph{error-prone} and validation \emph{even more} complex
                     \end{itemize}
             \end{itemize}
+
+            \note{
+                \item Sometimes even \emph{exhaustive} simulation
+            }
         \end{frame}
 
         \begin{frame}
@@ -52,6 +55,7 @@
 
             \note{
                 \begin{itemize}
+                    \item Verilog in 1985, VHDL afterwards
                     \item Wouldn't it be nice to have developments from functional programming also?
                 \end{itemize}
             }
@@ -68,9 +72,12 @@
                 \item Practical analysis, with a set of circuits as \emph{case studies}
             \end{itemize}
 
+            \vspace{0.2cm}
+            \par{Detect possible improvements as future work}
+
             \pause
             \vspace{0.4cm}
-            \par{Let's first review out object of study}
+            \par{Let's first review our object of study}
 
             \note{
                 \begin{itemize}
@@ -106,9 +113,15 @@
                 \item Diagrams (Haskell / programmatic drawing)
                 \item Parsec (Haskell / parser combinators)
             \end{itemize}
+
+            \note{
+                \begin{itemize}
+                    \item Turing-complete DSLs not \emph{exclusive}, just \emph{targeted} (MatLab)
+                    \item Parsec by Daan Leijen and Erik Meijer (UU), 2001
+                \end{itemize}
+            }
         \end{frame}
 
-        \note{Parsec by Daan Leijen and Erik Meijer (UU), 2001}
 
         \begin{frame}
             \frametitle{Example of an EDSL: \texttt{Parsec}}
@@ -127,6 +140,7 @@
             \note{
                 \begin{itemize}
                     \item YACC (parser \emph{generator}) would de a deep-``embedded'' DSL)
+                    \item Diagrams also deep
                     \item deep EDSLs can have multiple \emph{interpretations}
                 \end{itemize}
             }

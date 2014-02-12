@@ -11,11 +11,19 @@
                 \begin{itemize}
                     \item No signal processing, etc.
                 \end{itemize}
-            \item Well-defined, pre-specification
+            \item Well-defined, language-agnostic specification
                 \begin{itemize}
-                    \item Results to verify the models against
+                    \item Results to validate the models against
                 \end{itemize}
         \end{itemize}
+
+        \note{
+            \begin{itemize}
+                \item Too simple: tutorials, every EDSL would shine
+                \item Too complex: too much effort in design, too little in analysis
+                \item Language-agnostic: Not base the correctness in an EDSL version
+            \end{itemize}
+        }
     \end{frame}
 
     \begin{frame}
@@ -38,7 +46,7 @@
 
         \begin{description}
             \item[Circuit 1] A 2-input, 16-bit-wide, simple ALU
-            \item[Circuit 2] A 64-word long, 16-bit wide memory block
+            \item[Circuit 2] A 64-word long, 16-bit wide memory bank
             \item[Circuit 3] An \emph{extremely} reduced instruction set CPU,
                 the \emph{Hack} CPU.
         \end{description}
@@ -63,10 +71,16 @@
                         \item Addition, subtraction
                         \item Bitwise AND / OR
                         \item Constant outputs
-                        \item Addition of constants to an operand
+                        \item Increment / decrement
                         \item Sign inversion
                     \end{itemize}
             \end{itemize}
+
+            \note{
+                \begin{itemize}
+                    \item Operands in two's complement notation
+                \end{itemize}
+            }
         \end{frame}
 
         \begin{frame}
@@ -77,6 +91,12 @@
                 \caption{Input/Output ports of \emph{circuit 1}, the ALU.
                     \label{fig:alu-block}}
             \end{figure}
+
+            \note{
+                \begin{itemize}
+                    \item Operands -- control -- flags
+                \end{itemize}
+            }
         \end{frame}
 
         \begin{frame}
@@ -99,7 +119,14 @@
                     $\text{``\texttt{ng}''} = 1$ \emph{iff} the output is negative.
             \end{description}
 
+            \vspace{0.3cm}
             \par{Formal definition and test cases in the book.}
+
+            \note{
+                \begin{itemize}
+                    \item Specification: rules defining output/flags in terms of the inputs/ctrl
+                \end{itemize}
+            }
         \end{frame}
 
 
@@ -115,6 +142,12 @@
                 \item 64 memory words stored, each 16-bit wide
                 \item Address port has width $\log_{2} 64 = 6$ bit
             \end{itemize}
+
+            \note{
+                \begin{itemize}
+                    \item Clock input not present in the models (implicit)
+                \end{itemize}
+            }
         \end{frame}
 
         \begin{frame}
@@ -136,6 +169,12 @@
                     then the value at input ``\texttt{in}'' will be loaded into memory line ``\texttt{address}''.
                 \item The loaded value will be emitted on ``\texttt{out}'' at the \emph{next} clock cycle.
             \end{itemize}
+
+            \note{
+                \begin{itemize}
+                    \item Starting value not mentioned in the spec. Chose zero
+                \end{itemize}
+            }
         \end{frame}
 
 
@@ -151,7 +190,7 @@
                     \end{itemize}
                 \item Follows the \emph{Harvard architecture}
                     \begin{itemize}
-                        \item Separate address spaces for \emph{data} and \emph{instruction} memory.
+                        \item Separate \emph{data} and \emph{instruction} memory blocks
                     \end{itemize}
                 \item Instructions are 16-bits wide
                     \begin{itemize}
@@ -174,8 +213,8 @@
         \begin{frame}
             \frametitle{Circuit 3: specification}
 
-            \par{Circuit 3 runs ``\texttt{A}'' and ``\texttt{C}'' instructions,
-            according to the \emph{Hack assembly specification}.}
+            \par{Circuit 3 runs ``\texttt{A}'' and ``\texttt{C}'' instructions, according to the \emph{Hack assembly specification}.}
+            \vspace{0.3cm}
 
             \begin{itemize}
                 \item The ``\texttt{A}'' instruction: sets the ``\texttt{A}'' register.
@@ -187,13 +226,19 @@
                         \item As address for jumps
                     \end{itemize}
             \end{itemize}
+
+            \note{
+                \begin{itemize}
+                    \item 1-bit instruction code
+                \end{itemize}
+            }
         \end{frame}
 
         \begin{frame}
             \frametitle{Circuit 3: specification}
 
-            \par{Circuit 3 runs ``\texttt{A}'' and ``\texttt{C}'' instructions,
-            according to the \emph{Hack assembly specification}.}
+            \par{Circuit 3 runs ``\texttt{A}'' and ``\texttt{C}'' instructions, according to the \emph{Hack assembly specification}.}
+            \vspace{0.3cm}
 
             \begin{itemize}
                 \item The ``\texttt{C}'' instruction:
