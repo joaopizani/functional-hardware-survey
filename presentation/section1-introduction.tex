@@ -49,6 +49,12 @@
                             \end{itemize}
                     \end{itemize}
             \end{itemize}
+
+            \note{
+                \begin{itemize}
+                    \item Wouldn't it be nice to have developments from functional programming also?
+                \end{itemize}
+            }
         \end{frame}
 
         \begin{frame}
@@ -65,6 +71,13 @@
             \pause
             \vspace{0.4cm}
             \par{Let's first review out object of study}
+
+            \note{
+                \begin{itemize}
+                    \item More details on the choice of EDSLs later
+                    \item Also more details on the criteria and circuits
+                \end{itemize}
+            }
         \end{frame}
 
 
@@ -95,11 +108,28 @@
             \end{itemize}
         \end{frame}
 
+        \note{Parsec by Daan Leijen and Erik Meijer (UU), 2001}
+
         \begin{frame}
             \frametitle{Example of an EDSL: \texttt{Parsec}}
 
             A simple parser for a "Game of Life"-like input format:
             \haskellfile{code/parsec-example.hs}
+
+            \vspace{0.2cm}
+            \begin{itemize}
+                \item The shallow vs. deep-embedded divide
+                    \begin{itemize}
+                        \item Parsec is \emph{shallow}-embedded
+                    \end{itemize}
+            \end{itemize}
+
+            \note{
+                \begin{itemize}
+                    \item YACC (parser \emph{generator}) would de a deep-``embedded'' DSL)
+                    \item deep EDSLs can have multiple \emph{interpretations}
+                \end{itemize}
+            }
         \end{frame}
 
         \begin{frame}

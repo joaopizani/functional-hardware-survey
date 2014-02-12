@@ -19,6 +19,10 @@
               - Coq
       + Comment with help of the model samples
 
+  * Introduction
+      + ~~Motivation~~
+      + ~~Goals of the project~~
+
   * Present summarized comparison at results section
       + Table?
 
