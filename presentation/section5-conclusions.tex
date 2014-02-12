@@ -4,6 +4,76 @@
 
     \begin{frame}
         \frametitle{Results}
+        \par{Summary of our findings, by aspect:}
+        \vspace{0.2cm}
+        \begin{itemize}
+            \item \textbf{Depth of embedding}
+                \begin{itemize}
+                    \item Lava: deep-embedded, recursion and sharing through host
+                    \item ForSyDe: \emph{both} shallow and deep-embedded signals
+                    \item Coquet: the \emph{deepest} of all, circuit \emph{structure in the AST}
+                \end{itemize}
+            \item \textbf{Simulation}
+                \begin{itemize}
+                    \item Lava: straightforward, but not easily \emph{automated}
+                    \item ForSyDe: easy in both embedding depths
+                    \item Coquet: one of the \emph{example} interpretations, not sequential
+                \end{itemize}
+            \item \textbf{Verification}
+                \begin{itemize}
+                    \item Lava: \emph{safety properties} through external SAT solver
+                    \item ForSyDe: no capabilities of verification whatsoever
+                    \item Coquet: Interactive theorem proving, verifies \emph{families} of circuits.
+                \end{itemize}
+        \end{itemize}
+
+        \note{
+            \begin{itemize}
+                \item We focused on ForSyDe's deep model
+                \item ForSyDe diff. libraries promised for shallow and deep embedding
+                \item Coquet avois observable sharing issues by using a nameless setting, and looping only with a specific constructor
+                \item Coquet Simulation not commented in the paper, also case for Loop simply omitted
+                \item Lava safety property: boolean value true for all input combs. CNF. FIXED SIZE.
+            \end{itemize}
+        }
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Results}
+        \par{Summary of our findings, by aspect:}
+        \vspace{0.2cm}
+        \begin{itemize}
+            \item \textbf{Genericity}
+                \begin{itemize}
+                    \item Lava: \emph{families} of circuits, with extra arguments
+                    \item ForSyDe: weak genericity, monomorphic types in \texttt{ProcFun}'s
+                    \item Coquet: similar approach to Lava
+                \end{itemize}
+            \item \textbf{Tool integration}
+                \begin{itemize}
+                    \item Lava: \emph{flat} VHDL code (\texttt{Signal Bool}) and CNF formulas
+                    \item ForSyDe: \emph{modular} VHDL code and GraphML files
+                    \item Coquet: no circuit extraction whatsoever
+                \end{itemize}
+            \item \textbf{Extensibility}
+                \begin{itemize}
+                    \item Lava: no \emph{data} extensibility, high \emph{structural} extensibility
+                    \item ForSyDe: possible to use custom \emph{enumerated} types
+                    \item Coquet: flexible approach to data extensibility with meaning relation
+                \end{itemize}
+        \end{itemize}
+
+        \note{
+            \begin{itemize}
+                \item Lava arguments diff. than (Signal a) are taken as parameters, not inputs
+                \item ForSyDe most genericity you can do is define type synonyms (not really)
+                \item It is POSSIBLE to generate VHDL output containing generic constructs
+                \item Coquet has a gate-count as an example, so netlist generation isn't far-fetched
+                \item Lava can only work with signals of Bool and Int (only Bool synthesizable)
+                \item Lava can use the host language's ordinary higher-order functions as combinators
+                \item Coquet has VERY WEAK \emph{structural} extensibility
+            \end{itemize}
+        }
     \end{frame}
 
     \begin{frame}

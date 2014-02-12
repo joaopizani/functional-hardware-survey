@@ -23,7 +23,6 @@
       + ~~Motivation~~
       + ~~Goals of the project~~
 
-  * Present summarized comparison at results section
-      + Table?
+  * ~~Present summarized comparison at results section~~
 
   * Future work as in the report
