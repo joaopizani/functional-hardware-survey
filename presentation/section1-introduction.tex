@@ -33,18 +33,38 @@
             \begin{itemize}
                 \item The level of abstraction has been lifted already\ldots
                     \begin{itemize}
-                        \item VHDL in the 1980s
+                        \item Verilog and VHDL in the 1980s
+                        \item Popular, \emph{de facto} industry standards
                     \end{itemize}
-                \item \emph{Functional languages} suggested for hardware design, also since the 1980s
+                \vspace{0.3cm}
+                \item \emph{Functional} hardware design languages, also since the 1980s
                     \begin{itemize}
+                        \item Expressive type systems, equational reasoning, etc.
                         \item First, languages designed \emph{from scratch}
-                        \item Then, embedded in general-purpose functional languages
+                        \item Then, \emph{embedded} in general-purpose functional languages
+                            \begin{itemize}
+                                \item Prominently, in Haskell
+                                \item Several of them available nowadays
+                                \item Each with its own strengths and weaknesses
+                            \end{itemize}
                     \end{itemize}
             \end{itemize}
         \end{frame}
 
         \begin{frame}
             \frametitle{Goals of this project}
+
+            \par{Compare exisiting functional Embedded Domain-Specific Languages (EDSLs) for hardware description.}
+            \vspace{0.2cm}
+            \begin{itemize}
+                \item A representative sample of EDSLs
+                \item Analyze a well-defined set of \emph{criteria}
+                \item Practical analysis, with a set of circuits as \emph{case studies}
+            \end{itemize}
+
+            \pause
+            \vspace{0.4cm}
+            \par{Let's first review out object of study}
         \end{frame}
 
 
@@ -54,9 +74,7 @@
         \begin{frame}
             \frametitle{Domain-Specific Languages}
 
-            \par{A computer language (turing-complete or \emph{not})
-                targeting a \emph{specific application domain.}}
-
+            \par{A computer language (turing-complete or \emph{not}) targeting a \emph{specific application domain.}}
             \par{\textbf{Example DSLs:}}
             \begin{itemize}
                 \item SQL (database queries)
@@ -67,6 +85,7 @@
 
             \pause
 
+            \vspace{0.3cm}
             \par{A DSL can also be \emph{embedded} in a general-purpose language.}
             \par{\textbf{Example EDSLs:}}
             \begin{itemize}
